@@ -1,3 +1,4 @@
+import { Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import Header from "./shared/components/navigation/Header";
 import GlobalStyle from "./shared/styles/GlobalStyle";
@@ -10,7 +11,13 @@ function App() {
 
       <Header />
 
-      <h1>Hello World test 4</h1>
+      <Routes>
+        <Route path="/" element={<h1>Home Page</h1>} />
+        <Route path="/new-post" element={<h1>new-post</h1>} />
+        <Route path="/explore" element={<h1>explore</h1>} />
+        <Route path="/posts-liked" element={<h1>Home Page</h1>} />
+        <Route path="/profile" element={<h1>profile</h1>} />
+      </Routes>
     </ThemeProvider>
   );
 }
