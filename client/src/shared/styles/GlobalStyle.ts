@@ -8,12 +8,29 @@ const GlobalStyle = createGlobalStyle`
     }
 
     :root{
-        --primary:${(props) => props.theme.colors.primary};
+        --background:${(props) => props.theme.colors.background};
+        --color: ${(props) => props.theme.colors.color};
+        --accent-color: ${(props) => props.theme.colors.accent};
+        --call-to-action-color: ${(props) => props.theme.colors.callToAcction};
+        
+        --font-size-small: ${(props) => props.theme.fontSizes.small};
+        --font-size-medium: ${(props) => props.theme.fontSizes.medium};
+        --font-size-large: ${(props) => props.theme.fontSizes.large};
+        --font-size-extra-large: ${(props) => props.theme.fontSizes.extraLarge};
+        
+        --font-weight-light: ${(props) => props.theme.fontWeights.light};
+        --font-weight-regular: ${(props) => props.theme.fontWeights.regular};
+        --font-weight-bold: ${(props) => props.theme.fontWeights.bold};
+
+        --border-radius: ${(props) => props.theme.sizes.borderRadius};
+        --border-height: ${(props) => props.theme.sizes.borderHeight};
     }
 
     body {
-        background: var(--primary);
+        background: var(--background);
         font-family: 'Poppins', sans-serif;
+        font-size: var(--font-size-medium);
+        font-weight: var(--font-weight-regular);
     }
 `;
 
