@@ -1,28 +1,24 @@
 import paths from "../../../utils/paths";
-import { HeaderList, HeaderListItem, HeaderListLink } from "./Header.styled";
+import {
+  HeaderContainer,
+  HeaderList,
+  HeaderNav,
+  HeaderTitle,
+} from "./Header.styled";
+import TabItem from "./TabItem";
 
 const Header = () => {
   return (
-    <header>
-      <nav>
+    <HeaderContainer>
+      <HeaderNav>
         <HeaderList>
+          <HeaderTitle>HelloWorld</HeaderTitle>
           {Object.keys(paths).map((path) => (
-            <HeaderListItem key={path}>
-              <HeaderListLink to={paths[path].path}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                >
-                  <path d={paths[path].inactive} />
-                </svg>
-              </HeaderListLink>
-            </HeaderListItem>
+            <TabItem path={path} />
           ))}
         </HeaderList>
-      </nav>
-    </header>
+      </HeaderNav>
+    </HeaderContainer>
   );
 };
 

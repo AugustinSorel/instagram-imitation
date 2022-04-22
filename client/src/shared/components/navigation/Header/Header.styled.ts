@@ -1,9 +1,14 @@
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-export const Header = styled.header``;
+export const HeaderContainer = styled.header``;
 
 export const HeaderNav = styled.nav``;
+
+export const HeaderTitle = styled.h1`
+  font-size: var(--font-size-meduim);
+  font-weight: var(--font-weight-light);
+  flex: 1;
+`;
 
 export const HeaderList = styled.ul`
   display: flex;
@@ -11,7 +16,3 @@ export const HeaderList = styled.ul`
   padding: 1rem;
   gap: 1rem;
 `;
-
-export const HeaderListItem = styled.li``;
-
-export const HeaderListLink = styled(Link)``;

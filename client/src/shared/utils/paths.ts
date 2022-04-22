@@ -1,4 +1,4 @@
-interface Paths {
+export interface Paths {
   [key: string]: {
     path: string;
     active: string;
