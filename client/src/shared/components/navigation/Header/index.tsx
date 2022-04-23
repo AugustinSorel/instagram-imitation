@@ -13,15 +13,11 @@ const Header = () => {
   const isMobile = useIsMobile();
 
   const GetHeaderTitle = () => {
-    if (!isMobile) {
-      return (
-        <HeaderListItem>
-          <HeaderTitle to={"/"}>instagram clone</HeaderTitle>
-        </HeaderListItem>
-      );
-    }
-
-    return null;
+    return !isMobile ? (
+      <HeaderListItem>
+        <HeaderTitle to={"/"}>instagram clone</HeaderTitle>
+      </HeaderListItem>
+    ) : null;
   };
 
   return (

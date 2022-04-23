@@ -4,6 +4,10 @@ import styled from "styled-components";
 export const HeaderContainer = styled.header`
   background-color: var(--accent-color);
   border-bottom: 1px solid lightgray;
+
+  @media screen and (max-width: 768px) {
+    border-top: 1px solid lightgray;
+  }
 `;
 
 export const HeaderNav = styled.nav`
