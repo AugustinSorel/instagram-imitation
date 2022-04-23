@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { useMatch, useResolvedPath } from "react-router-dom";
-import theme from "../../../../styles/theme";
 import { Path } from "../../../../utils/paths";
+import SvgIcon from "../../../UIElements/SvgIcon";
 import {
   HeaderListItem,
   HeaderListLink,
@@ -16,20 +16,21 @@ const TabItem: FC<Props> = ({ path: { active, inactive, path } }) => {
   const resolved = useResolvedPath(path);
   const match = useMatch({ path: resolved.pathname, end: true });
 
+  const getPath = () => {
+    return match ? active : inactive;
+  };
+
+  const GetLinkUnderline = () => {
+    return match && <LinkUnderline layoutId="linkUnderline" />;
+  };
+
   return (
     <HeaderListItem>
       <HeaderListLink to={path}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill={theme.colors.color}
-        >
-          <path d={match ? active : inactive} />
-        </svg>
+        <SvgIcon path={getPath()} />
       </HeaderListLink>
-      {match && <LinkUnderline layoutId="linkUnderline" />}
+
+      <GetLinkUnderline />
     </HeaderListItem>
   );
 };
