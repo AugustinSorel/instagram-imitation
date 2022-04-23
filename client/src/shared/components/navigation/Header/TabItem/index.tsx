@@ -16,13 +16,10 @@ const TabItem: FC<Props> = ({ path: { active, inactive, path } }) => {
   const resolved = useResolvedPath(path);
   const match = useMatch({ path: resolved.pathname, end: true });
 
-  const getPath = () => {
-    return match ? active : inactive;
-  };
+  const getPath = () => (match ? active : inactive);
 
-  const GetLinkUnderline = () => {
-    return match && <LinkUnderline layoutId="linkUnderline" />;
-  };
+  const GetLinkUnderline = () =>
+    match && <LinkUnderline layoutId="linkUnderline" />;
 
   return (
     <HeaderListItem>

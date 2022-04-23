@@ -25,4 +25,8 @@ export const HeaderList = styled.ul`
   list-style: none;
   padding: 1rem;
   gap: 2rem;
+
+  @media screen and (max-width: 768px) {
+    justify-content: space-around;
+  }
 `;

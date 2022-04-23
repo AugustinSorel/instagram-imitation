@@ -8,6 +8,12 @@ export const HeaderListItem = styled.li`
   &:first-child {
     flex: 1;
   }
+
+  @media screen and (max-width: 768px) {
+    &:first-child {
+      flex: 0;
+    }
+  }
 `;
 
 export const HeaderListLink = styled(NavLink)`

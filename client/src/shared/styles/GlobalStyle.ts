@@ -32,6 +32,16 @@ const GlobalStyle = createGlobalStyle`
         font-size: var(--font-size-medium);
         font-weight: var(--font-weight-regular);
     }
+
+    #root{
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+
+        @media screen and (max-width: 768px) {
+            flex-direction: column-reverse;
+        }
+    }
 `;
 
 export default GlobalStyle;
