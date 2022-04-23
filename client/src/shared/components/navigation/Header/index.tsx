@@ -6,15 +6,18 @@ import {
   HeaderTitle,
 } from "./Header.styled";
 import TabItem from "./TabItem";
+import { HeaderListItem } from "./TabItem/TabItem.styled";
 
 const Header = () => {
   return (
     <HeaderContainer>
       <HeaderNav>
         <HeaderList>
-          <HeaderTitle>HelloWorld</HeaderTitle>
-          {Object.keys(paths).map((path) => (
-            <TabItem path={path} />
+          <HeaderListItem>
+            <HeaderTitle to={"/"}>instagram clone</HeaderTitle>
+          </HeaderListItem>
+          {Object.entries(paths).map(([key, path]) => (
+            <TabItem key={key} path={path} />
           ))}
         </HeaderList>
       </HeaderNav>

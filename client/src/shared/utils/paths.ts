@@ -1,10 +1,12 @@
-export interface Paths {
-  [key: string]: {
-    path: string;
-    active: string;
-    inactive: string;
-  };
-}
+export type Path = {
+  path: string;
+  active: string;
+  inactive: string;
+};
+
+export type Paths = {
+  [key: string]: Path;
+};
 
 const paths: Paths = {
   home: {
