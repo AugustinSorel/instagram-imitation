@@ -1,3 +1,4 @@
+import { Outlet } from "react-router-dom";
 import useIsMobile from "../../../hooks/useIsMobile";
 import paths from "../../../utils/paths";
 import {
@@ -21,17 +22,21 @@ const Header = () => {
   };
 
   return (
-    <HeaderContainer>
-      <HeaderNav>
-        <HeaderList>
-          <GetHeaderTitle />
+    <>
+      <HeaderContainer>
+        <HeaderNav>
+          <HeaderList>
+            <GetHeaderTitle />
 
-          {Object.entries(paths).map(([key, path]) => (
-            <TabItem key={key} path={path} />
-          ))}
-        </HeaderList>
-      </HeaderNav>
-    </HeaderContainer>
+            {Object.entries(paths).map(([key, path]) => (
+              <TabItem key={key} path={path} />
+            ))}
+          </HeaderList>
+        </HeaderNav>
+      </HeaderContainer>
+
+      <Outlet />
+    </>
   );
 };
 

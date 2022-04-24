@@ -26,22 +26,28 @@ const GlobalStyle = createGlobalStyle`
         --border-height: ${(props) => props.theme.sizes.borderHeight};
     }
 
+    html, body, #root {
+        height: 100%;
+    }
+
     body {
         background: var(--background);
         font-family: 'Poppins', sans-serif;
         font-size: var(--font-size-medium);
         font-weight: var(--font-weight-regular);
+        -webkit-tap-highlight-color: transparent;
     }
 
     #root{
         display: flex;
         flex-direction: column;
-        height: 100vh;
 
         @media screen and (max-width: 768px) {
             flex-direction: column-reverse;
         }
+
     }
+
 `;
 
 export default GlobalStyle;
