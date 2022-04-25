@@ -3,7 +3,7 @@ import AuthenticationForm from "../../shared/components/UIElements/authenticatio
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
 
 const defaultSignUpDetails = {
-  name: "",
+  userName: "",
   email: "",
   age: "",
   password: "",

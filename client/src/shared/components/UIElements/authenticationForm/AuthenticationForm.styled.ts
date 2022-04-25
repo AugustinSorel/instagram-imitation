@@ -40,4 +40,8 @@ export const AuthenticationFormNavigation = styled.nav`
 export const AuthenticationFormNavigationLink = styled(Link)`
   color: var(--call-to-action-color);
   text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;

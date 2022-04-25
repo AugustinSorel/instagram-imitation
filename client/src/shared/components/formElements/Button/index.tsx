@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { scaleDown, scaleUp } from "../../../framerMotion/whileVariants";
 import { ButtonContainer } from "./Button.styled";
 
 interface Props {
@@ -6,7 +7,15 @@ interface Props {
 }
 
 const Button: FC<Props> = ({ text }) => {
-  return <ButtonContainer>{text}</ButtonContainer>;
+  return (
+    <ButtonContainer
+      whileHover={{ ...scaleUp }}
+      whileFocus={{ ...scaleUp }}
+      whileTap={{ ...scaleDown }}
+    >
+      {text}
+    </ButtonContainer>
+  );
 };
 
 export default Button;

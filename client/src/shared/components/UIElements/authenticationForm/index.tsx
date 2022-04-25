@@ -1,4 +1,4 @@
-import { FC, useReducer } from "react";
+import { FC } from "react";
 import Button from "../../formElements/Button";
 import Input from "../../formElements/input";
 import {
@@ -41,11 +41,11 @@ const AuthenticationForm: FC<Props> = ({
         <AuthenticationFormStyle onSubmit={submitHandler}>
           {isSignUp && (
             <Input
-              placeholder="name"
-              value={state.name || ""}
+              placeholder="username"
+              value={state.userName || ""}
               onChange={(e) =>
                 dispatch({
-                  type: AuthenticationFormActionType.CHANGE_NAME,
+                  type: AuthenticationFormActionType.CHANGE_USERNAME,
                   payload: e.target.value,
                 })
               }

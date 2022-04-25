@@ -1,5 +1,5 @@
 export enum AuthenticationFormActionType {
-  CHANGE_NAME,
+  CHANGE_USERNAME,
   CHANGE_EMAIL,
   CHANGE_AGE,
   CHANGE_PASSWORD,
@@ -11,7 +11,7 @@ export interface AuthenticationFormAction {
 }
 
 export interface AuthenticationFormState {
-  name?: string;
+  userName?: string;
   email: string;
   age?: string;
   password: string;
@@ -24,10 +24,10 @@ export const authenticationFormReducer = (
   const { type, payload } = action;
 
   switch (type) {
-    case AuthenticationFormActionType.CHANGE_NAME:
+    case AuthenticationFormActionType.CHANGE_USERNAME:
       return {
         ...state,
-        name: payload,
+        userName: payload,
       };
 
     case AuthenticationFormActionType.CHANGE_EMAIL:

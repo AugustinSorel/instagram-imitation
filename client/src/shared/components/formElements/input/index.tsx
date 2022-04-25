@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { scaleUp } from "../../../framerMotion/whileVariants";
 import { InputContainer } from "./Input.styled";
 
 interface Props {
@@ -9,7 +10,14 @@ interface Props {
 }
 
 const Input: FC<Props> = ({ ...rest }) => {
-  return <InputContainer {...rest} autoComplete="no" />;
+  return (
+    <InputContainer
+      {...rest}
+      whileHover={{ ...scaleUp }}
+      whileFocus={{ ...scaleUp }}
+      autoComplete="no"
+    />
+  );
 };
 
 export default Input;

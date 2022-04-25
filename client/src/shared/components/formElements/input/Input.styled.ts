@@ -1,7 +1,8 @@
+import { motion } from "framer-motion";
 import styled from "styled-components";
 import { FormElementsShared } from "../../../styles/FormElements.styled";
 
-export const InputContainer = styled.input`
+export const InputContainer = styled(motion.input)`
   ${FormElementsShared}
 
   background-color: var(--background);
