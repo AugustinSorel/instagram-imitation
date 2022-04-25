@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useReducer } from "react";
 import Button from "../../formElements/Button";
 import Input from "../../formElements/input";
 import {
@@ -9,12 +9,19 @@ import {
   AuthenticationFormStyle,
   AuthenticationFormTitle,
 } from "./AuthenticationForm.styled";
+import {
+  AuthenticationFormActionType,
+  AuthenticationFormState,
+} from "./AuthenticationReducer";
 
 interface Props {
   isSignUp: boolean;
   navigationLink: string;
   navigationText: string;
   navigationTextBody: string;
+  state: AuthenticationFormState;
+  dispatch: React.Dispatch<any>;
+  submitHandler: (e: React.FormEvent) => void;
 }
 
 const AuthenticationForm: FC<Props> = ({
@@ -22,17 +29,60 @@ const AuthenticationForm: FC<Props> = ({
   navigationLink,
   navigationText,
   navigationTextBody,
+  submitHandler,
+  state,
+  dispatch,
 }) => {
   return (
     <AuthenticationFormContainer>
       <AuthenticationFormBody>
         <AuthenticationFormTitle>instagram</AuthenticationFormTitle>
 
-        <AuthenticationFormStyle>
-          {isSignUp && <Input placeholder="name" />}
-          <Input placeholder="email" />
-          {isSignUp && <Input placeholder="age" />}
-          <Input placeholder="password" />
+        <AuthenticationFormStyle onSubmit={submitHandler}>
+          {isSignUp && (
+            <Input
+              placeholder="name"
+              value={state.name || ""}
+              onChange={(e) =>
+                dispatch({
+                  type: AuthenticationFormActionType.CHANGE_NAME,
+                  payload: e.target.value,
+                })
+              }
+            />
+          )}
+          <Input
+            placeholder="email"
+            value={state.email}
+            onChange={(e) =>
+              dispatch({
+                type: AuthenticationFormActionType.CHANGE_EMAIL,
+                payload: e.target.value,
+              })
+            }
+          />
+          {isSignUp && (
+            <Input
+              placeholder="age"
+              value={state.age || ""}
+              onChange={(e) =>
+                dispatch({
+                  type: AuthenticationFormActionType.CHANGE_AGE,
+                  payload: e.target.value,
+                })
+              }
+            />
+          )}
+          <Input
+            placeholder="password"
+            value={state.password}
+            onChange={(e) =>
+              dispatch({
+                type: AuthenticationFormActionType.CHANGE_PASSWORD,
+                payload: e.target.value,
+              })
+            }
+          />
           <Button text="submit" />
         </AuthenticationFormStyle>
       </AuthenticationFormBody>
