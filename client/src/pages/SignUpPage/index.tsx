@@ -1,5 +1,14 @@
+import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
+
 const SignUpPage = () => {
-  return <div>SignUpPage</div>;
+  return (
+    <AuthenticationForm
+      isSignUp
+      navigationLink="/login"
+      navigationText="Login"
+      navigationTextBody={"Already have an account? "}
+    />
+  );
 };
 
 export default SignUpPage;
