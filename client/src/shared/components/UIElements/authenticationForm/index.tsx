@@ -1,4 +1,5 @@
 import { FC } from "react";
+import errorVariants from "../../../framerMotion/errorVariants";
 import Button from "../../formElements/Button";
 import Input from "../../formElements/input";
 import {
@@ -19,8 +20,8 @@ interface Props {
   navigationLink: string;
   navigationText: string;
   navigationTextBody: string;
-  state: AuthenticationFormState;
-  dispatch: React.Dispatch<any>;
+  inputState: AuthenticationFormState;
+  inputDispatch: React.Dispatch<any>;
   submitHandler: (e: React.FormEvent) => void;
 }
 
@@ -30,8 +31,8 @@ const AuthenticationForm: FC<Props> = ({
   navigationText,
   navigationTextBody,
   submitHandler,
-  state,
-  dispatch,
+  inputState,
+  inputDispatch,
 }) => {
   return (
     <AuthenticationFormContainer>
@@ -42,20 +43,21 @@ const AuthenticationForm: FC<Props> = ({
           {isSignUp && (
             <Input
               placeholder="username"
-              value={state.userName || ""}
+              value={inputState.userName || ""}
               onChange={(e) =>
-                dispatch({
+                inputDispatch({
                   type: AuthenticationFormActionType.CHANGE_USERNAME,
                   payload: e.target.value,
                 })
               }
             />
           )}
+
           <Input
             placeholder="email"
-            value={state.email}
+            value={inputState.email}
             onChange={(e) =>
-              dispatch({
+              inputDispatch({
                 type: AuthenticationFormActionType.CHANGE_EMAIL,
                 payload: e.target.value,
               })
@@ -64,9 +66,9 @@ const AuthenticationForm: FC<Props> = ({
           {isSignUp && (
             <Input
               placeholder="age"
-              value={state.age || ""}
+              value={inputState.age || ""}
               onChange={(e) =>
-                dispatch({
+                inputDispatch({
                   type: AuthenticationFormActionType.CHANGE_AGE,
                   payload: e.target.value,
                 })
@@ -75,15 +77,15 @@ const AuthenticationForm: FC<Props> = ({
           )}
           <Input
             placeholder="password"
-            value={state.password}
+            value={inputState.password}
             onChange={(e) =>
-              dispatch({
+              inputDispatch({
                 type: AuthenticationFormActionType.CHANGE_PASSWORD,
                 payload: e.target.value,
               })
             }
           />
-          <Button text="submit" />
+          <Button text={"submit"} />
         </AuthenticationFormStyle>
       </AuthenticationFormBody>
 

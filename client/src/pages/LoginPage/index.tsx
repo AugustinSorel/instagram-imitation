@@ -8,7 +8,7 @@ const defaultLoginDetails = {
 };
 
 const LoginPage = () => {
-  const [state, dispatch] = useReducer(
+  const [inputState, inputDispatch] = useReducer(
     authenticationFormReducer,
     defaultLoginDetails
   );
@@ -16,7 +16,7 @@ const LoginPage = () => {
   const loginHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    console.log("state:", state);
+    console.log("state:", inputState);
   };
 
   return (
@@ -26,8 +26,8 @@ const LoginPage = () => {
       navigationText={"Sign up"}
       navigationTextBody={"Don't have an account? "}
       submitHandler={loginHandler}
-      state={state}
-      dispatch={dispatch}
+      inputState={inputState}
+      inputDispatch={inputDispatch}
     />
   );
 };
