@@ -1,4 +1,3 @@
-import { useAnimation } from "framer-motion";
 import { FormEvent, useReducer } from "react";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
 import {
@@ -6,13 +5,12 @@ import {
   authenticationAnimationReducer,
 } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
-
-const defaultLoginDetails = {
-  email: "",
-  password: "",
-};
+import useLoginPageDefaultValues from "./useLoginPageDefaultValues";
 
 const LoginPage = () => {
+  const { defaultLoginAnimation, defaultLoginDetails } =
+    useLoginPageDefaultValues();
+
   const [inputState, inputDispatch] = useReducer(
     authenticationFormReducer,
     defaultLoginDetails
@@ -20,11 +18,7 @@ const LoginPage = () => {
 
   const [animationState, animationDispatch] = useReducer(
     authenticationAnimationReducer,
-    {
-      errorMessage: "",
-      emailAnimation: useAnimation(),
-      passwordAnimation: useAnimation(),
-    }
+    defaultLoginAnimation
   );
 
   const loginHandler = (e: FormEvent) => {

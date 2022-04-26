@@ -6,15 +6,12 @@ import {
   authenticationAnimationReducer,
 } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
-
-const defaultSignUpDetails = {
-  userName: "",
-  email: "",
-  age: "",
-  password: "",
-};
+import useSignUpPageDefaultValues from "./useSignUpPageDefaultValues";
 
 const SignUpPage = () => {
+  const { defaultSignUpAnimation, defaultSignUpDetails } =
+    useSignUpPageDefaultValues();
+
   const [inputState, inputDispatch] = useReducer(
     authenticationFormReducer,
     defaultSignUpDetails
@@ -22,13 +19,7 @@ const SignUpPage = () => {
 
   const [animationState, animationDispatch] = useReducer(
     authenticationAnimationReducer,
-    {
-      errorMessage: "",
-      emailAnimation: useAnimation(),
-      passwordAnimation: useAnimation(),
-      usernameAnimation: useAnimation(),
-      ageAnimation: useAnimation(),
-    }
+    defaultSignUpAnimation
   );
 
   const signUpHandler = (e: FormEvent) => {

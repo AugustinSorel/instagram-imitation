@@ -95,7 +95,7 @@ const AuthenticationForm: FC<Props> = ({
               })
             }
           />
-          <Button text={"submit"} />
+          <Button text={animationState.errorMessage || "submit"} />
         </AuthenticationFormStyle>
       </AuthenticationFormBody>
 
