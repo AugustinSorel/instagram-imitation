@@ -1,6 +1,10 @@
 import { useAnimation } from "framer-motion";
 import { FormEvent, useReducer } from "react";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
+import {
+  AuthenticationAnimationActionType,
+  authenticationAnimationReducer,
+} from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
 
 const defaultSignUpDetails = {
@@ -11,20 +15,29 @@ const defaultSignUpDetails = {
 };
 
 const SignUpPage = () => {
-  const usernameAnimation = useAnimation();
-  const emailAnimation = useAnimation();
-  const passwordAnimation = useAnimation();
-  const ageAnimation = useAnimation();
-
   const [inputState, inputDispatch] = useReducer(
     authenticationFormReducer,
     defaultSignUpDetails
   );
 
+  const [animationState, animationDispatch] = useReducer(
+    authenticationAnimationReducer,
+    {
+      errorMessage: "",
+      emailAnimation: useAnimation(),
+      passwordAnimation: useAnimation(),
+      usernameAnimation: useAnimation(),
+      ageAnimation: useAnimation(),
+    }
+  );
+
   const signUpHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    usernameAnimation.start("animate");
+    animationDispatch({
+      type: AuthenticationAnimationActionType.SET_PASSWORD_ANIMATION,
+      payload: "LOL",
+    });
 
     console.log("Sign up state: ", inputState);
   };
@@ -32,16 +45,10 @@ const SignUpPage = () => {
   return (
     <AuthenticationForm
       isSignUp
-      navigationLink="/login"
-      navigationText="Login"
-      navigationTextBody={"Already have an account? "}
       submitHandler={signUpHandler}
       inputState={inputState}
       inputDispatch={inputDispatch}
-      usernameAnimation={usernameAnimation}
-      emailAnimation={emailAnimation}
-      passwordAnimation={passwordAnimation}
-      ageAnimation={ageAnimation}
+      animationState={animationState}
     />
   );
 };

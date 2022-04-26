@@ -1,8 +1,8 @@
-import { AnimationControls } from "framer-motion";
 import { FC } from "react";
 import errorVariants from "../../../framerMotion/errorVariants";
 import Button from "../../formElements/Button";
 import Input from "../../formElements/input";
+import { AuthenticationAnimationState } from "./authenticationAnimationReducer";
 import {
   AuthenticationFormBody,
   AuthenticationFormContainer,
@@ -18,31 +18,23 @@ import {
 
 interface Props {
   isSignUp: boolean;
-  navigationLink: string;
-  navigationText: string;
-  navigationTextBody: string;
   inputState: AuthenticationFormState;
   inputDispatch: React.Dispatch<any>;
-  submitHandler: (e: React.FormEvent) => void;
 
-  usernameAnimation?: AnimationControls;
-  ageAnimation?: AnimationControls;
-  emailAnimation: AnimationControls;
-  passwordAnimation: AnimationControls;
+  animationState: AuthenticationAnimationState;
+
+  submitHandler: (e: React.FormEvent) => void;
 }
 
 const AuthenticationForm: FC<Props> = ({
   isSignUp,
-  navigationLink,
-  navigationText,
-  navigationTextBody,
-  submitHandler,
+
   inputState,
   inputDispatch,
-  ageAnimation,
-  emailAnimation,
-  passwordAnimation,
-  usernameAnimation,
+
+  animationState,
+
+  submitHandler,
 }) => {
   return (
     <AuthenticationFormContainer>
@@ -53,7 +45,7 @@ const AuthenticationForm: FC<Props> = ({
           {isSignUp && (
             <Input
               variants={errorVariants}
-              animate={usernameAnimation!}
+              animate={animationState.usernameAnimation!}
               placeholder="username"
               value={inputState.userName || ""}
               onChange={(e) =>
@@ -67,7 +59,7 @@ const AuthenticationForm: FC<Props> = ({
 
           <Input
             variants={errorVariants}
-            animate={emailAnimation}
+            animate={animationState.emailAnimation!}
             placeholder="email"
             value={inputState.email}
             onChange={(e) =>
@@ -80,7 +72,7 @@ const AuthenticationForm: FC<Props> = ({
           {isSignUp && (
             <Input
               variants={errorVariants}
-              animate={ageAnimation!}
+              animate={animationState.ageAnimation!}
               placeholder="age"
               value={inputState.age || ""}
               onChange={(e) =>
@@ -93,7 +85,7 @@ const AuthenticationForm: FC<Props> = ({
           )}
           <Input
             variants={errorVariants}
-            animate={passwordAnimation}
+            animate={animationState.passwordAnimation!}
             placeholder="password"
             value={inputState.password}
             onChange={(e) =>
@@ -108,9 +100,9 @@ const AuthenticationForm: FC<Props> = ({
       </AuthenticationFormBody>
 
       <AuthenticationFormNavigation>
-        {navigationTextBody}
-        <AuthenticationFormNavigationLink to={navigationLink}>
-          {navigationText}
+        {isSignUp ? "Already have an account? " : "Don't have an account? "}
+        <AuthenticationFormNavigationLink to={isSignUp ? "/login" : "/sign-up"}>
+          {isSignUp ? "Login" : "Sign up"}
         </AuthenticationFormNavigationLink>
       </AuthenticationFormNavigation>
     </AuthenticationFormContainer>

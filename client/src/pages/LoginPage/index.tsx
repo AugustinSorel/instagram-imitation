@@ -1,6 +1,10 @@
 import { useAnimation } from "framer-motion";
 import { FormEvent, useReducer } from "react";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
+import {
+  AuthenticationAnimationActionType,
+  authenticationAnimationReducer,
+} from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
 
 const defaultLoginDetails = {
@@ -9,16 +13,27 @@ const defaultLoginDetails = {
 };
 
 const LoginPage = () => {
-  const emailAnimation = useAnimation();
-  const passwordAnimation = useAnimation();
-
   const [inputState, inputDispatch] = useReducer(
     authenticationFormReducer,
     defaultLoginDetails
   );
 
+  const [animationState, animationDispatch] = useReducer(
+    authenticationAnimationReducer,
+    {
+      errorMessage: "",
+      emailAnimation: useAnimation(),
+      passwordAnimation: useAnimation(),
+    }
+  );
+
   const loginHandler = (e: FormEvent) => {
     e.preventDefault();
+
+    animationDispatch({
+      type: AuthenticationAnimationActionType.SET_PASSWORD_ANIMATION,
+      payload: "LOL",
+    });
 
     console.log("state:", inputState);
   };
@@ -26,14 +41,10 @@ const LoginPage = () => {
   return (
     <AuthenticationForm
       isSignUp={false}
-      navigationLink={"/sign-up"}
-      navigationText={"Sign up"}
-      navigationTextBody={"Don't have an account? "}
       submitHandler={loginHandler}
       inputState={inputState}
       inputDispatch={inputDispatch}
-      emailAnimation={emailAnimation}
-      passwordAnimation={passwordAnimation}
+      animationState={animationState}
     />
   );
 };
