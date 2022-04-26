@@ -1,3 +1,4 @@
+import { AnimationControls } from "framer-motion";
 import { FC } from "react";
 import errorVariants from "../../../framerMotion/errorVariants";
 import Button from "../../formElements/Button";
@@ -23,6 +24,11 @@ interface Props {
   inputState: AuthenticationFormState;
   inputDispatch: React.Dispatch<any>;
   submitHandler: (e: React.FormEvent) => void;
+
+  usernameAnimation?: AnimationControls;
+  ageAnimation?: AnimationControls;
+  emailAnimation: AnimationControls;
+  passwordAnimation: AnimationControls;
 }
 
 const AuthenticationForm: FC<Props> = ({
@@ -33,6 +39,10 @@ const AuthenticationForm: FC<Props> = ({
   submitHandler,
   inputState,
   inputDispatch,
+  ageAnimation,
+  emailAnimation,
+  passwordAnimation,
+  usernameAnimation,
 }) => {
   return (
     <AuthenticationFormContainer>
@@ -42,6 +52,8 @@ const AuthenticationForm: FC<Props> = ({
         <AuthenticationFormStyle onSubmit={submitHandler}>
           {isSignUp && (
             <Input
+              variants={errorVariants}
+              animate={usernameAnimation!}
               placeholder="username"
               value={inputState.userName || ""}
               onChange={(e) =>
@@ -54,6 +66,8 @@ const AuthenticationForm: FC<Props> = ({
           )}
 
           <Input
+            variants={errorVariants}
+            animate={emailAnimation}
             placeholder="email"
             value={inputState.email}
             onChange={(e) =>
@@ -65,6 +79,8 @@ const AuthenticationForm: FC<Props> = ({
           />
           {isSignUp && (
             <Input
+              variants={errorVariants}
+              animate={ageAnimation!}
               placeholder="age"
               value={inputState.age || ""}
               onChange={(e) =>
@@ -76,6 +92,8 @@ const AuthenticationForm: FC<Props> = ({
             />
           )}
           <Input
+            variants={errorVariants}
+            animate={passwordAnimation}
             placeholder="password"
             value={inputState.password}
             onChange={(e) =>

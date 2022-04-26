@@ -1,3 +1,4 @@
+import { useAnimation } from "framer-motion";
 import { FormEvent, useReducer } from "react";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
@@ -8,6 +9,9 @@ const defaultLoginDetails = {
 };
 
 const LoginPage = () => {
+  const emailAnimation = useAnimation();
+  const passwordAnimation = useAnimation();
+
   const [inputState, inputDispatch] = useReducer(
     authenticationFormReducer,
     defaultLoginDetails
@@ -28,6 +32,8 @@ const LoginPage = () => {
       submitHandler={loginHandler}
       inputState={inputState}
       inputDispatch={inputDispatch}
+      emailAnimation={emailAnimation}
+      passwordAnimation={passwordAnimation}
     />
   );
 };

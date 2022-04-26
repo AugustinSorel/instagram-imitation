@@ -11,6 +11,11 @@ const defaultSignUpDetails = {
 };
 
 const SignUpPage = () => {
+  const usernameAnimation = useAnimation();
+  const emailAnimation = useAnimation();
+  const passwordAnimation = useAnimation();
+  const ageAnimation = useAnimation();
+
   const [inputState, inputDispatch] = useReducer(
     authenticationFormReducer,
     defaultSignUpDetails
@@ -18,6 +23,8 @@ const SignUpPage = () => {
 
   const signUpHandler = (e: FormEvent) => {
     e.preventDefault();
+
+    usernameAnimation.start("animate");
 
     console.log("Sign up state: ", inputState);
   };
@@ -31,6 +38,10 @@ const SignUpPage = () => {
       submitHandler={signUpHandler}
       inputState={inputState}
       inputDispatch={inputDispatch}
+      usernameAnimation={usernameAnimation}
+      emailAnimation={emailAnimation}
+      passwordAnimation={passwordAnimation}
+      ageAnimation={ageAnimation}
     />
   );
 };
