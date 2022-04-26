@@ -1,18 +1,18 @@
 import { AnimationControls } from "framer-motion";
 
-export enum AuthenticationAnimationActionType {
-  SET_EMAIL_ANIMATION,
-  SET_PASSWORD_ANIMATION,
-  SET_USERNAME_ANIMATION,
-  SET_AGE_ANIMATION,
+export enum AuthenticationErrorAnimationActionType {
+  START_EMAIL_ANIMATION,
+  START_PASSWORD_ANIMATION,
+  START_USERNAME_ANIMATION,
+  START_AGE_ANIMATION,
 }
 
 export interface AuthenticationFormAction {
-  type: AuthenticationAnimationActionType;
+  type: AuthenticationErrorAnimationActionType;
   payload: string;
 }
 
-export interface AuthenticationAnimationState {
+export interface AuthenticationErrorAnimationState {
   errorMessage: string;
   emailAnimation: AnimationControls;
   passwordAnimation: AnimationControls;
@@ -20,35 +20,35 @@ export interface AuthenticationAnimationState {
   ageAnimation?: AnimationControls;
 }
 
-export const authenticationAnimationReducer = (
-  state: AuthenticationAnimationState,
+export const authenticationFormErrorAnimationReducer = (
+  state: AuthenticationErrorAnimationState,
   action: AuthenticationFormAction
-): AuthenticationAnimationState => {
+): AuthenticationErrorAnimationState => {
   const { type, payload } = action;
 
   switch (type) {
-    case AuthenticationAnimationActionType.SET_EMAIL_ANIMATION:
+    case AuthenticationErrorAnimationActionType.START_EMAIL_ANIMATION:
       state.emailAnimation.start("animate");
       return {
         ...state,
         errorMessage: payload,
       };
 
-    case AuthenticationAnimationActionType.SET_PASSWORD_ANIMATION:
+    case AuthenticationErrorAnimationActionType.START_PASSWORD_ANIMATION:
       state.passwordAnimation.start("animate");
       return {
         ...state,
         errorMessage: payload,
       };
 
-    case AuthenticationAnimationActionType.SET_USERNAME_ANIMATION:
+    case AuthenticationErrorAnimationActionType.START_USERNAME_ANIMATION:
       state.usernameAnimation?.start("animate");
       return {
         ...state,
         errorMessage: payload,
       };
 
-    case AuthenticationAnimationActionType.SET_AGE_ANIMATION:
+    case AuthenticationErrorAnimationActionType.START_AGE_ANIMATION:
       state.ageAnimation?.start("animate");
       return {
         ...state,

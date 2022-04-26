@@ -1,15 +1,14 @@
-import { useAnimation } from "framer-motion";
 import { FormEvent, useReducer } from "react";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
 import {
-  AuthenticationAnimationActionType,
-  authenticationAnimationReducer,
+  AuthenticationErrorAnimationActionType,
+  authenticationFormErrorAnimationReducer,
 } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
 import useSignUpPageDefaultValues from "./useSignUpPageDefaultValues";
 
 const SignUpPage = () => {
-  const { defaultSignUpAnimation, defaultSignUpDetails } =
+  const { defaultSignUErrorAnimation, defaultSignUpDetails } =
     useSignUpPageDefaultValues();
 
   const [inputState, inputDispatch] = useReducer(
@@ -17,16 +16,16 @@ const SignUpPage = () => {
     defaultSignUpDetails
   );
 
-  const [animationState, animationDispatch] = useReducer(
-    authenticationAnimationReducer,
-    defaultSignUpAnimation
+  const [errorAnimationState, errorAnimationDispatch] = useReducer(
+    authenticationFormErrorAnimationReducer,
+    defaultSignUErrorAnimation
   );
 
   const signUpHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    animationDispatch({
-      type: AuthenticationAnimationActionType.SET_PASSWORD_ANIMATION,
+    errorAnimationDispatch({
+      type: AuthenticationErrorAnimationActionType.START_EMAIL_ANIMATION,
       payload: "LOL",
     });
 
@@ -39,7 +38,7 @@ const SignUpPage = () => {
       submitHandler={signUpHandler}
       inputState={inputState}
       inputDispatch={inputDispatch}
-      animationState={animationState}
+      errorAnimationState={errorAnimationState}
     />
   );
 };

@@ -2,7 +2,7 @@ import { FC } from "react";
 import errorVariants from "../../../framerMotion/errorVariants";
 import Button from "../../formElements/Button";
 import Input from "../../formElements/input";
-import { AuthenticationAnimationState } from "./authenticationAnimationReducer";
+import { AuthenticationErrorAnimationState } from "./authenticationAnimationReducer";
 import {
   AuthenticationFormBody,
   AuthenticationFormContainer,
@@ -21,7 +21,7 @@ interface Props {
   inputState: AuthenticationFormState;
   inputDispatch: React.Dispatch<any>;
 
-  animationState: AuthenticationAnimationState;
+  errorAnimationState: AuthenticationErrorAnimationState;
 
   submitHandler: (e: React.FormEvent) => void;
 }
@@ -32,7 +32,7 @@ const AuthenticationForm: FC<Props> = ({
   inputState,
   inputDispatch,
 
-  animationState,
+  errorAnimationState: animationState,
 
   submitHandler,
 }) => {
@@ -45,9 +45,9 @@ const AuthenticationForm: FC<Props> = ({
           {isSignUp && (
             <Input
               variants={errorVariants}
-              animate={animationState.usernameAnimation!}
+              animate={animationState.usernameAnimation}
               placeholder="username"
-              value={inputState.userName || ""}
+              value={inputState.userName as string}
               onChange={(e) =>
                 inputDispatch({
                   type: AuthenticationFormActionType.CHANGE_USERNAME,
@@ -56,10 +56,9 @@ const AuthenticationForm: FC<Props> = ({
               }
             />
           )}
-
           <Input
             variants={errorVariants}
-            animate={animationState.emailAnimation!}
+            animate={animationState.emailAnimation}
             placeholder="email"
             value={inputState.email}
             onChange={(e) =>
@@ -74,7 +73,7 @@ const AuthenticationForm: FC<Props> = ({
               variants={errorVariants}
               animate={animationState.ageAnimation!}
               placeholder="age"
-              value={inputState.age || ""}
+              value={inputState.age as string}
               onChange={(e) =>
                 inputDispatch({
                   type: AuthenticationFormActionType.CHANGE_AGE,

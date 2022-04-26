@@ -1,5 +1,5 @@
 import { useAnimation } from "framer-motion";
-import { AuthenticationAnimationState } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
+import { AuthenticationErrorAnimationState } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { AuthenticationFormState } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
 
 const useSignUpPageDefaultValues = () => {
@@ -10,7 +10,7 @@ const useSignUpPageDefaultValues = () => {
     password: "",
   };
 
-  const defaultSignUpAnimation: AuthenticationAnimationState = {
+  const defaultSignUErrorAnimation: AuthenticationErrorAnimationState = {
     errorMessage: "",
     emailAnimation: useAnimation(),
     passwordAnimation: useAnimation(),
@@ -18,7 +18,7 @@ const useSignUpPageDefaultValues = () => {
     ageAnimation: useAnimation(),
   };
 
-  return { defaultSignUpDetails, defaultSignUpAnimation };
+  return { defaultSignUpDetails, defaultSignUErrorAnimation };
 };
 
 export default useSignUpPageDefaultValues;
