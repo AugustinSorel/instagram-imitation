@@ -1,12 +1,11 @@
 import express from "express";
 import path from "path";
+import router from "./routes";
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.get("/health-check", (req, res) => {
-  res.sendStatus(200);
-});
+app.use("/api", router);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
