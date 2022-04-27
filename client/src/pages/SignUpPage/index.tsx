@@ -10,7 +10,7 @@ import { authenticationFormReducer } from "../../shared/components/UIElements/au
 import useSignUpPageDefaultValues from "./useSignUpPageDefaultValues";
 
 const SignUpPage = () => {
-  const { mutate, data, isLoading } = useMutation(createUser, {
+  const { mutate } = useMutation(createUser, {
     onSuccess: (data: any) => {
       console.log(data);
     },
