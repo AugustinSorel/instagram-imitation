@@ -22,8 +22,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
 
-        <Route element={<Header />}>
-          <Route element={<PrivateRoute />}>
+        <Route element={<PrivateRoute />}>
+          <Route element={<Header />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/new-post" element={<NewPostsPage />} />
             <Route path="/explore" element={<ExplorePage />} />
