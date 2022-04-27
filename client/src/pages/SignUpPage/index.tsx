@@ -1,4 +1,6 @@
 import { FormEvent, useReducer } from "react";
+import { useMutation } from "react-query";
+import { createUser } from "../../shared/api/userApi";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
 import {
   AuthenticationErrorAnimationActionType,
@@ -8,6 +10,15 @@ import { authenticationFormReducer } from "../../shared/components/UIElements/au
 import useSignUpPageDefaultValues from "./useSignUpPageDefaultValues";
 
 const SignUpPage = () => {
+  const { mutate, data, isLoading } = useMutation(createUser, {
+    onSuccess: (data: any) => {
+      console.log(data);
+    },
+    onError: (error: any) => {
+      console.log(error);
+    },
+  });
+
   const { defaultSignUErrorAnimation, defaultSignUpDetails } =
     useSignUpPageDefaultValues();
 
@@ -23,6 +34,8 @@ const SignUpPage = () => {
 
   const signUpHandler = (e: FormEvent) => {
     e.preventDefault();
+
+    // mutate();
 
     errorAnimationDispatch({
       type: AuthenticationErrorAnimationActionType.START_EMAIL_ANIMATION,
