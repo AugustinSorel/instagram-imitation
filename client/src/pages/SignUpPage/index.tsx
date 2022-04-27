@@ -35,7 +35,7 @@ const SignUpPage = () => {
   const signUpHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    // mutate();
+    mutate();
 
     errorAnimationDispatch({
       type: AuthenticationErrorAnimationActionType.START_EMAIL_ANIMATION,
