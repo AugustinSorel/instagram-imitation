@@ -8,6 +8,7 @@ app.get("/health-check", (req, res) => {
   res.sendStatus(200);
 });
 
+// test
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 
