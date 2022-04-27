@@ -12,7 +12,8 @@ const GlobalStyle = createGlobalStyle`
         --color: ${(props) => props.theme.colors.color};
         --accent-color: ${(props) => props.theme.colors.accent};
         --call-to-action-color: ${(props) => props.theme.colors.callToAcction};
-        
+        --border-color: ${(props) => props.theme.colors.border};
+
         --font-size-small: ${(props) => props.theme.fontSizes.small};
         --font-size-medium: ${(props) => props.theme.fontSizes.medium};
         --font-size-large: ${(props) => props.theme.fontSizes.large};

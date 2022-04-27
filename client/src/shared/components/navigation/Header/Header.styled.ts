@@ -3,10 +3,10 @@ import styled from "styled-components";
 
 export const HeaderContainer = styled.header`
   background-color: var(--accent-color);
-  border-bottom: 1px solid lightgray;
+  border-bottom: 1px solid var(--border-color);
 
   @media screen and (max-width: 768px) {
-    border-top: 1px solid lightgray;
+    border-top: 1px solid var(--border-color);
   }
 `;
 

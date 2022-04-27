@@ -6,5 +6,6 @@ export const InputContainer = styled(motion.input)`
   ${FormElementsShared}
 
   background-color: var(--background);
-  border: 1px solid lightgray;
+  border: 1px solid;
+  border-color: var(--border-color);
 `;

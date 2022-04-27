@@ -6,6 +6,8 @@ const theme: DefaultTheme = {
     accent: "#fff",
     callToAcction: "#0095F6",
     color: "#262626",
+    border: "#d3d3d3",
+    error: "#ff0000",
   },
 
   fontSizes: {

@@ -7,6 +7,8 @@ declare module "styled-components" {
       accent: string;
       color: string;
       callToAcction: string;
+      border: string;
+      error: string;
     };
 
     fontSizes: {
