@@ -4,7 +4,7 @@ import { AuthenticationFormState } from "../../shared/components/UIElements/auth
 
 const useSignUpPageDefaultValues = () => {
   const defaultSignUpDetails: AuthenticationFormState = {
-    userName: "",
+    username: "",
     email: "",
     age: "",
     password: "",

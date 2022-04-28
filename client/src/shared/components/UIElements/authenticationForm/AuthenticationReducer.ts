@@ -11,7 +11,7 @@ export interface AuthenticationFormAction {
 }
 
 export interface AuthenticationFormState {
-  userName?: string;
+  username?: string;
   email: string;
   age?: string;
   password: string;
@@ -27,7 +27,7 @@ export const authenticationFormReducer = (
     case AuthenticationFormActionType.CHANGE_USERNAME:
       return {
         ...state,
-        userName: payload,
+        username: payload,
       };
 
     case AuthenticationFormActionType.CHANGE_EMAIL:

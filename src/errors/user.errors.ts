@@ -3,10 +3,10 @@ class UserError {
   public message: string;
   public field: string;
 
-  constructor(code: number, message: string, path: string) {
+  constructor(code: number, message: string, field: string) {
     this.code = code;
     this.message = message;
-    this.field = path;
+    this.field = field;
   }
 
   public static duplicationError(field: string): UserError {

@@ -3,10 +3,10 @@ import { number, object, string, TypeOf } from "zod";
 export const userSignUpSchema = object({
   body: object({
     username: string({
-      required_error: "name is required",
+      required_error: "username is required",
     })
-      .min(3, "name must be at least 3 characters")
-      .max(20, "name must be at most 20 characters"),
+      .min(3, "username must be at least 3 characters")
+      .max(20, "username must be at most 20 characters"),
 
     email: string({
       required_error: "email is required",
@@ -21,12 +21,12 @@ export const userSignUpSchema = object({
       .min(3, "password must be at least 3 characters")
       .max(1024, "password must be at most 1024 characters"),
 
-    age: number({
+    age: string({
       required_error: "age is required",
-      invalid_type_error: "age must be a number",
     })
       .min(0, "age must be at least 0")
-      .max(150, "age must be at most 150"),
+      .max(150, "age must be at most 150")
+      .regex(/^[0-9]+$/, "age must be a number"),
   }),
 });
 

@@ -3,14 +3,14 @@ class ZodError {
   public message: string;
   public field: string;
 
-  constructor(code: number, message: string, path: string) {
+  constructor(code: number, message: string, field: string) {
     this.code = code;
     this.message = message;
-    this.field = path;
+    this.field = field;
   }
 
-  public static invalidInputError(message: string, path: string): ZodError {
-    return new ZodError(400, message, path);
+  public static invalidInputError(message: string, field: string): ZodError {
+    return new ZodError(400, message, field);
   }
 }
 

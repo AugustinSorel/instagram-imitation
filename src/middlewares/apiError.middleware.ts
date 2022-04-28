@@ -11,11 +11,15 @@ const apiError = (
   console.log("ERROR in apiError", err);
 
   if (err instanceof ZodError) {
-    return res.status(err.code).json({ message: err.message, path: err.field });
+    return res
+      .status(err.code)
+      .json({ message: err.message, field: err.field });
   }
 
   if (err instanceof UserError) {
-    return res.status(err.code).json({ message: err.message, path: err.field });
+    return res
+      .status(err.code)
+      .json({ message: err.message, field: err.field });
   }
 
   return res.status(500).send("Internal server error");

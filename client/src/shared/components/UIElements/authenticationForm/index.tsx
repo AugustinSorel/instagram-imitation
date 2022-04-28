@@ -47,7 +47,7 @@ const AuthenticationForm: FC<Props> = ({
               variants={errorVariants}
               animate={animationState.usernameAnimation}
               placeholder="username"
-              value={inputState.userName as string}
+              value={inputState.username}
               onChange={(e) =>
                 inputDispatch({
                   type: AuthenticationFormActionType.CHANGE_USERNAME,
@@ -73,7 +73,7 @@ const AuthenticationForm: FC<Props> = ({
               variants={errorVariants}
               animate={animationState.ageAnimation!}
               placeholder="age"
-              value={inputState.age as string}
+              value={inputState.age}
               onChange={(e) =>
                 inputDispatch({
                   type: AuthenticationFormActionType.CHANGE_AGE,

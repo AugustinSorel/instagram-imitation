@@ -10,12 +10,33 @@ import { authenticationFormReducer } from "../../shared/components/UIElements/au
 import useSignUpPageDefaultValues from "./useSignUpPageDefaultValues";
 
 const SignUpPage = () => {
-  const { mutate } = useMutation(createUser, {
+  const { mutate: signUpMutate } = useMutation(createUser, {
     onSuccess: (data: any) => {
       console.log(data);
     },
     onError: (error: any) => {
-      console.log(error);
+      const { message, field } = error.response.data;
+
+      const type = () => {
+        if (field === "username") {
+          return AuthenticationErrorAnimationActionType.START_USERNAME_ANIMATION;
+        }
+
+        if (field === "email") {
+          return AuthenticationErrorAnimationActionType.START_EMAIL_ANIMATION;
+        }
+
+        if (field === "age") {
+          return AuthenticationErrorAnimationActionType.START_AGE_ANIMATION;
+        }
+
+        return AuthenticationErrorAnimationActionType.START_PASSWORD_ANIMATION;
+      };
+
+      errorAnimationDispatch({
+        type: type(),
+        payload: message,
+      });
     },
   });
 
@@ -35,14 +56,7 @@ const SignUpPage = () => {
   const signUpHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    mutate();
-
-    errorAnimationDispatch({
-      type: AuthenticationErrorAnimationActionType.START_EMAIL_ANIMATION,
-      payload: "LOL",
-    });
-
-    console.log("Sign up state: ", inputState);
+    signUpMutate(inputState);
   };
 
   return (
