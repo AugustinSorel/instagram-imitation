@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AnyZodObject } from "zod";
+import ZodError from "../errors/zod.errors";
 
 const validateRessource =
   (schema: AnyZodObject) =>
@@ -15,7 +16,8 @@ const validateRessource =
     } catch (error: any) {
       const message = error.errors[0].message;
       const path = error.errors[0].path[1];
-      return res.status(400).json({ message, path });
+
+      return next(ZodError.invalidInputError(message, path));
     }
   };
 

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import UserError from "../errors/user.errors";
 import User from "../models/User";
 
 export const userSignUp = async (
@@ -19,7 +20,7 @@ export const userSignUp = async (
     res.status(200).json(userCreated);
   } catch (error: any) {
     if (error.code === 11000) {
-      return res.status(400).json({ message: "User already exists" });
+      return next(UserError.duplicationError(Object.keys(error.keyPattern)[0]));
     }
     console.log("ERROR in createUser", error);
     res.sendStatus(500);
