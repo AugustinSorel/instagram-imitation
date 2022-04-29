@@ -33,6 +33,7 @@ const GlobalStyle = createGlobalStyle`
 
     body {
         background: var(--background);
+        color: var(--color);
         font-family: 'Poppins', sans-serif;
         font-size: var(--font-size-medium);
         font-weight: var(--font-weight-regular);

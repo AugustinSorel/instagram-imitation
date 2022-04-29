@@ -7,4 +7,5 @@ export const FormElementsShared = css`
   border-radius: 5px;
   outline: none;
   border: none;
+  color: inherit;
 `;
