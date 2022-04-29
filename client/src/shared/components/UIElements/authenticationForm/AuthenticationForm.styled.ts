@@ -1,8 +1,9 @@
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Card } from "../../../styles/UIElements.styled";
 
-export const AuthenticationFormContainer = styled.div`
+export const AuthenticationFormContainer = styled(motion.div)`
   margin: auto;
   display: flex;
   flex-direction: column;

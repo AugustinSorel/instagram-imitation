@@ -37,7 +37,11 @@ const AuthenticationForm: FC<Props> = ({
   submitHandler,
 }) => {
   return (
-    <AuthenticationFormContainer>
+    <AuthenticationFormContainer
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <AuthenticationFormBody>
         <AuthenticationFormTitle>instagram</AuthenticationFormTitle>
 

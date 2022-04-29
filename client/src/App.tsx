@@ -1,4 +1,5 @@
-import { Route, Routes } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import ExplorePage from "./pages/ExplorePage";
 import HomePage from "./pages/HomePage";
@@ -14,26 +15,30 @@ import GlobalStyle from "./shared/styles/GlobalStyle";
 import theme from "./shared/styles/theme";
 
 function App() {
+  const location = useLocation();
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
 
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/sign-up" element={<SignUpPage />} />
+      <AnimatePresence exitBeforeEnter initial={false}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
 
-        <Route element={<PrivateRoute />}>
-          <Route element={<Header />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/new-post" element={<NewPostsPage />} />
-            <Route path="/explore" element={<ExplorePage />} />
-            <Route path="/posts-liked" element={<PostsLiked />} />
-            <Route path="/profile" element={<Profile />} />
+          <Route element={<PrivateRoute />}>
+            <Route element={<Header />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/new-post" element={<NewPostsPage />} />
+              <Route path="/explore" element={<ExplorePage />} />
+              <Route path="/posts-liked" element={<PostsLiked />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
           </Route>
-        </Route>
 
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </AnimatePresence>
     </ThemeProvider>
   );
 }
