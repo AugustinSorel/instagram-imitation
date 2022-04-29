@@ -1,45 +1,11 @@
 import { FormEvent, useReducer } from "react";
-import { useMutation } from "react-query";
-import { createUser } from "../../shared/api/userApi";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
-import {
-  AuthenticationErrorAnimationActionType,
-  authenticationFormErrorAnimationReducer,
-} from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
+import { authenticationFormErrorAnimationReducer } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
+import useSignUp from "./useSignUp";
 import useSignUpPageDefaultValues from "./useSignUpPageDefaultValues";
 
 const SignUpPage = () => {
-  const { mutate: signUpMutate } = useMutation(createUser, {
-    onSuccess: (data: any) => {
-      console.log(data);
-    },
-    onError: (error: any) => {
-      const { message, field } = error.response.data;
-
-      const type = () => {
-        if (field === "username") {
-          return AuthenticationErrorAnimationActionType.START_USERNAME_ANIMATION;
-        }
-
-        if (field === "email") {
-          return AuthenticationErrorAnimationActionType.START_EMAIL_ANIMATION;
-        }
-
-        if (field === "age") {
-          return AuthenticationErrorAnimationActionType.START_AGE_ANIMATION;
-        }
-
-        return AuthenticationErrorAnimationActionType.START_PASSWORD_ANIMATION;
-      };
-
-      errorAnimationDispatch({
-        type: type(),
-        payload: message,
-      });
-    },
-  });
-
   const { defaultSignUErrorAnimation, defaultSignUpDetails } =
     useSignUpPageDefaultValues();
 
@@ -52,6 +18,8 @@ const SignUpPage = () => {
     authenticationFormErrorAnimationReducer,
     defaultSignUErrorAnimation
   );
+
+  const signUpMutate = useSignUp(errorAnimationDispatch);
 
   const signUpHandler = (e: FormEvent) => {
     e.preventDefault();
