@@ -6,6 +6,7 @@ interface IUser {
   email: string;
   age: number;
   password: string;
+  refreshTokenCount: number;
   validatePassword: (password: string) => Promise<boolean>;
 }
 
@@ -38,6 +39,13 @@ const userSchema = new Schema<IUser>({
     required: true,
     min: 0,
     max: 150,
+  },
+
+  refreshTokenCount: {
+    type: Number,
+    required: true,
+    default: 0,
+    min: 0,
   },
 });
 

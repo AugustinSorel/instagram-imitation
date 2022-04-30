@@ -6,6 +6,7 @@ const API_URI =
 
 const userApi = axios.create({
   baseURL: `${API_URI}/users`,
+  withCredentials: true,
 });
 
 export const createUser = async (user: AuthenticationFormState) => {
