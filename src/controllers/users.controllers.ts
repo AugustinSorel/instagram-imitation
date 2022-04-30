@@ -1,9 +1,8 @@
+import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import UserError from "../errors/user.errors";
-import User from "../models/User";
-import { UserSignUpSchema } from "../schemas/user.schema";
-import { createUser } from "../services/user.services";
-import bcrypt from "bcrypt";
+import { UserLoginSchema, UserSignUpSchema } from "../schemas/user.schema";
+import { createUser, findByEmail } from "../services/user.services";
 import AuthenticationFieldsType from "../types/AuthenticationFields.type";
 
 export const userSignUp = async (
@@ -27,20 +26,18 @@ export const userSignUp = async (
 };
 
 export const userLogin = async (
-  req: Request,
+  req: Request<{}, {}, UserLoginSchema>,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email });
+    const user = await findByEmail(req.body.email);
 
     if (!user) {
       return next(UserError.invalidEmailError());
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(req.body.password);
 
     if (!isPasswordValid) {
       return next(UserError.invalidPasswordError());

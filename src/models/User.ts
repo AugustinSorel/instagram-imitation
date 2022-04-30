@@ -1,7 +1,15 @@
 import bcrypt from "bcrypt";
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 
-const userSchema = new mongoose.Schema({
+interface IUser {
+  username: string;
+  email: string;
+  age: number;
+  password: string;
+  validatePassword: (password: string) => Promise<boolean>;
+}
+
+const userSchema = new Schema<IUser>({
   username: {
     type: String,
     required: true,
@@ -47,4 +55,8 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-export default mongoose.model("User", userSchema);
+userSchema.methods.validatePassword = function (candidatePassword: string) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+export default model<IUser>("User", userSchema);

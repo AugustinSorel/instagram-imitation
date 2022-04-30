@@ -30,4 +30,22 @@ export const userSignUpSchema = object({
   }),
 });
 
+export const userLoginSchema = object({
+  body: object({
+    email: string({
+      required_error: "email is required",
+    })
+      .min(3, "email must be at least 3 characters")
+      .max(255, "email must be at most 255 characters")
+      .email("email must be a valid email"),
+
+    password: string({
+      required_error: "password is required",
+    })
+      .min(3, "password must be at least 3 characters")
+      .max(1024, "password must be at most 1024 characters"),
+  }),
+});
+
 export type UserSignUpSchema = TypeOf<typeof userSignUpSchema>["body"];
+export type UserLoginSchema = TypeOf<typeof userLoginSchema>["body"];

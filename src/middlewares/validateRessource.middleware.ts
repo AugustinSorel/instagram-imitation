@@ -15,9 +15,9 @@ const validateRessource =
       next();
     } catch (error: any) {
       const message = error.errors[0].message;
-      const path = error.errors[0].path[1];
+      const field = error.errors[0].path[1];
 
-      return next(ZodError.invalidInputError(message, path));
+      return next(ZodError.invalidInputError(message, field));
     }
   };
 

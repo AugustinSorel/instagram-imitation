@@ -4,3 +4,7 @@ import { UserSignUpSchema } from "../schemas/user.schema";
 export const createUser = (user: UserSignUpSchema) => {
   return User.create(user);
 };
+
+export const findByEmail = (email: string) => {
+  return User.findOne({ email });
+};
