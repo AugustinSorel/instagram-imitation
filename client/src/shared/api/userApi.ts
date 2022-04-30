@@ -9,7 +9,7 @@ const userApi = axios.create({
 });
 
 export const createUser = async (user: AuthenticationFormState) => {
-  const res = await userApi.post("/", user);
+  const res = await userApi.post("/sign-up", user);
 
   return res.data;
 };

@@ -1,10 +1,13 @@
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { createUser } from "../../shared/api/userApi";
 import getAuthenticationErrorEnum from "../../shared/utils/getAuthenticationErrorEnum";
 
 const useSignUp = (errorAnimationDispatch: any) => {
+  const navigate = useNavigate();
+
   const successHandler = (data: any) => {
-    console.log(data);
+    navigate("/");
   };
 
   const errorHandler = (error: any) => {
