@@ -1,3 +1,5 @@
+import { NextFunction } from "express";
+import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
@@ -30,6 +32,20 @@ const userSchema = new mongoose.Schema({
     min: 0,
     max: 150,
   },
+});
+
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    console.log("password not been modified");
+    return next();
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(this.password, salt);
+
+  this.password = hashedPassword;
+
+  next();
 });
 
 export default mongoose.model("User", userSchema);
