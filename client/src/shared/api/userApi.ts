@@ -13,3 +13,9 @@ export const createUser = async (user: AuthenticationFormState) => {
 
   return res.data;
 };
+
+export const loginUser = async (user: AuthenticationFormState) => {
+  const res = await userApi.post("/login", user);
+
+  return res.data;
+};

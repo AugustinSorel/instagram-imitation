@@ -1,10 +1,8 @@
 import { FormEvent, useReducer } from "react";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
-import {
-  AuthenticationErrorAnimationActionType,
-  authenticationFormErrorAnimationReducer,
-} from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
+import { authenticationFormErrorAnimationReducer } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
+import useLoginMutate from "./useLoginMutate";
 import useLoginPageDefaultValues from "./useLoginPageDefaultValues";
 
 const LoginPage = () => {
@@ -21,15 +19,12 @@ const LoginPage = () => {
     defaultLoginErrorAnimation
   );
 
+  const loginMutate = useLoginMutate(animationDispatch);
+
   const loginHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    animationDispatch({
-      type: AuthenticationErrorAnimationActionType.START_PASSWORD_ANIMATION,
-      payload: "LOL",
-    });
-
-    console.log("state:", inputState);
+    loginMutate(inputState);
   };
 
   return (

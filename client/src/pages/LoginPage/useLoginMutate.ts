@@ -1,11 +1,11 @@
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { createUser } from "../../shared/api/userApi";
+import { loginUser } from "../../shared/api/userApi";
 import { AuthenticationFormAction } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import getAuthenticationErrorEnum from "../../shared/utils/getAuthenticationErrorEnum";
 
-const useSignUp = (
-  errorAnimationDispatch: React.Dispatch<AuthenticationFormAction>
+const useLoginMutate = (
+  animationDispatch: React.Dispatch<AuthenticationFormAction>
 ) => {
   const navigate = useNavigate();
 
@@ -16,19 +16,19 @@ const useSignUp = (
   const errorHandler = (error: any) => {
     const { message, field } = error.response.data;
 
-    errorAnimationDispatch({
+    animationDispatch({
       type: getAuthenticationErrorEnum(field),
       payload: message,
     });
   };
 
-  const { mutate: signUpMutate } = useMutation(createUser, {
+  const { mutate: loginMutate } = useMutation(loginUser, {
     onSuccess: successHandler,
 
     onError: errorHandler,
   });
 
-  return signUpMutate;
+  return loginMutate;
 };
 
-export default useSignUp;
+export default useLoginMutate;
