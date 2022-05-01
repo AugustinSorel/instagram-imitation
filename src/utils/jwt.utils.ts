@@ -17,3 +17,11 @@ export const createTokens = (user: any) => {
 
   return { refreshToken, accessToken };
 };
+
+export const getRefreshTokenExpiresDate = () => {
+  return new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
+};
+
+export const getAccessTokenExpiresDate = () => {
+  return new Date(Date.now() + 1000 * 60 * 60 * 24 * 15);
+};

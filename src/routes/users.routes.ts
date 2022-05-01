@@ -1,7 +1,7 @@
 import express from "express";
 import {
   getUser,
-  invalidateTokens,
+  logout,
   userLogin,
   userSignUp,
 } from "../controllers/users.controllers";
@@ -13,8 +13,8 @@ const usersRouter = express.Router();
 
 usersRouter.post("/sign-up", validateRessource(userSignUpSchema), userSignUp);
 usersRouter.post("/login", validateRessource(userLoginSchema), userLogin);
+usersRouter.post("/logout", requireUser, logout);
 
 usersRouter.get("/", requireUser, getUser);
-usersRouter.get("/invalidateTokens", requireUser, invalidateTokens);
 
 export default usersRouter;

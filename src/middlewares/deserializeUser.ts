@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
-import User from "../models/User";
-import { createTokens } from "../utils/jwt.utils";
+import { findOne } from "../services/user.services";
+import {
+  createTokens,
+  getAccessTokenExpiresDate,
+  getRefreshTokenExpiresDate,
+} from "../utils/jwt.utils";
 
 const deserializeUser = async (
   req: Request,
@@ -18,38 +22,34 @@ const deserializeUser = async (
   try {
     const data = verify(
       accessToken,
-      "60c011f29ac46ed8195c2ef4afc44ee8c34fdba9d576846e2a631e6ea4376817"
+      process.env.ACCESS_TOKEN_SECRET as string
     ) as any;
 
     res.locals.userId = data.userId;
     return next();
   } catch {}
 
-  console.log(accessToken, refreshToken);
-
   if (!refreshToken) {
-    console.log("refreshToken is missing");
     return next();
   }
 
-  let data;
+  let refreshTokenPayload;
 
   try {
-    data = verify(
+    refreshTokenPayload = verify(
       refreshToken,
-      "aebe937b0448eca2213dcdffd4130f22f58fb9d77ac1caa8a4def512e9e3bd9d"
+      process.env.REFRESH_TOKEN_SECRET as string
     ) as any;
   } catch {
-    console.log("Refresh token is invalid");
     return next();
   }
 
-  const user = await User.findOne({ _id: data.userId });
+  const user = await findOne({ _id: refreshTokenPayload.userId });
 
-  // token has been invalidated
-  if (!user || user.refreshTokenCount !== data.refreshTokenCount) {
-    console.log("Count of refresh token is invalid");
-
+  if (
+    !user ||
+    user.refreshTokenCount !== refreshTokenPayload.refreshTokenCount
+  ) {
     return next();
   }
 
@@ -57,12 +57,12 @@ const deserializeUser = async (
 
   res.cookie("refreshToken", tokens.refreshToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+    expires: getRefreshTokenExpiresDate(),
   });
 
   res.cookie("accessToken", tokens.accessToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 15),
+    expires: getAccessTokenExpiresDate(),
   });
 
   res.locals.userId = user._id;

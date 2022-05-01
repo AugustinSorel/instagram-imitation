@@ -1,10 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import UserError from "../errors/user.errors";
-import User from "../models/User";
 import { UserLoginSchema, UserSignUpSchema } from "../schemas/user.schema";
-import { createUser, findByEmail } from "../services/user.services";
+import {
+  createUser,
+  findByEmail,
+  findById,
+  incrementTheRefreshTokenCount,
+} from "../services/user.services";
 import AuthenticationFieldsType from "../types/AuthenticationFields.type";
-import { createTokens } from "../utils/jwt.utils";
+import {
+  createTokens,
+  getAccessTokenExpiresDate,
+  getRefreshTokenExpiresDate,
+} from "../utils/jwt.utils";
 
 export const userSignUp = async (
   req: Request<{}, {}, UserSignUpSchema>,
@@ -13,6 +21,18 @@ export const userSignUp = async (
 ) => {
   try {
     const userCreated = await createUser(req.body);
+
+    const { accessToken, refreshToken } = createTokens(userCreated);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      expires: getRefreshTokenExpiresDate(),
+    });
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      expires: getAccessTokenExpiresDate(),
+    });
 
     res.status(200).json(userCreated);
   } catch (error: any) {
@@ -48,12 +68,12 @@ export const userLogin = async (
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      expires: getRefreshTokenExpiresDate(),
     });
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 15),
+      expires: getAccessTokenExpiresDate(),
     });
 
     res.status(200).json(user);
@@ -69,11 +89,7 @@ export const getUser = async (
   next: NextFunction
 ) => {
   try {
-    if (!res.locals.userId) {
-      return res.status(401).send("NO USER ID");
-    }
-
-    const user = await User.findById(res.locals.userId);
+    const user = await findById(res.locals.userId);
 
     res.status(200).json(user);
   } catch (error) {
@@ -82,7 +98,7 @@ export const getUser = async (
   }
 };
 
-export const invalidateTokens = async (
+export const logout = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -91,9 +107,7 @@ export const invalidateTokens = async (
     return res.status(401).send("NO USER ID");
   }
 
-  await User.findByIdAndUpdate(res.locals.userId, {
-    $inc: { refreshTokenCount: 1 },
-  });
+  await incrementTheRefreshTokenCount(res.locals.userId);
 
-  return res.sendStatus(204);
+  return res.sendStatus(200);
 };
