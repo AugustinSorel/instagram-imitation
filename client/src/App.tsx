@@ -22,17 +22,12 @@ function App() {
 
   const { setIsAuthenticated } = useUser();
 
-  const { isLoading } = useQuery("user", getUser, {
+  useQuery("user", getUser, {
     retry: false,
-    refetchOnWindowFocus: false,
 
     onSuccess: () => setIsAuthenticated(true),
     onError: () => setIsAuthenticated(false),
   });
-
-  if (isLoading) {
-    return null;
-  }
 
   return (
     <ThemeProvider theme={theme}>

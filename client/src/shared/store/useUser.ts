@@ -1,12 +1,12 @@
 import zustand from "zustand";
 
 interface UserState {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
 }
 
 const useUser = zustand<UserState>((set) => ({
-  isAuthenticated: false,
+  isAuthenticated: null,
   setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
 }));
 
