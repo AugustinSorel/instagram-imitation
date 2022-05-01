@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import UserError from "../errors/user.errors";
+import User from "../models/User";
 import { UserLoginSchema, UserSignUpSchema } from "../schemas/user.schema";
 import { createUser, findByEmail } from "../services/user.services";
 import AuthenticationFieldsType from "../types/AuthenticationFields.type";
-import { sign } from "jsonwebtoken";
-import User from "../models/User";
+import { createTokens } from "../utils/jwt.utils";
 
 export const userSignUp = async (
   req: Request<{}, {}, UserSignUpSchema>,
@@ -44,19 +44,7 @@ export const userLogin = async (
       return next(UserError.invalidPasswordError());
     }
 
-    const refreshToken = sign(
-      { userId: user._id, refreshTokenCount: user.refreshTokenCount },
-      "aebe937b0448eca2213dcdffd4130f22f58fb9d77ac1caa8a4def512e9e3bd9d",
-      { expiresIn: "7d" }
-    );
-
-    const accessToken = sign(
-      { userId: user._id },
-      "60c011f29ac46ed8195c2ef4afc44ee8c34fdba9d576846e2a631e6ea4376817",
-      {
-        expiresIn: "15min",
-      }
-    );
+    const { accessToken, refreshToken } = createTokens(user);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -81,15 +69,31 @@ export const getUser = async (
   next: NextFunction
 ) => {
   try {
-    if (!(req as any).userId) {
+    if (!res.locals.userId) {
       return res.status(401).send("NO USER ID");
     }
 
-    const user = await User.findById((req as any).userId);
+    const user = await User.findById(res.locals.userId);
 
     res.status(200).json(user);
   } catch (error) {
     console.log("ERROR in getUser", error);
     res.sendStatus(500);
   }
+};
+
+export const invalidateTokens = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!res.locals.userId) {
+    return res.status(401).send("NO USER ID");
+  }
+
+  await User.findByIdAndUpdate(res.locals.userId, {
+    $inc: { refreshTokenCount: 1 },
+  });
+
+  return res.sendStatus(204);
 };
