@@ -17,7 +17,7 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <App />
-        <ReactQueryDevtools />
+        {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>
