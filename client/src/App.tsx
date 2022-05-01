@@ -24,6 +24,8 @@ function App() {
 
   const { isLoading } = useQuery("user", getUser, {
     retry: false,
+    refetchOnWindowFocus: false,
+
     onSuccess: () => setIsAuthenticated(true),
     onError: () => setIsAuthenticated(false),
   });
