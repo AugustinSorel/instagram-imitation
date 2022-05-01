@@ -22,7 +22,7 @@ function App() {
 
   const { setIsAuthenticated } = useUser();
 
-  useQuery("user", getUser, {
+  const { isLoading } = useQuery("user", getUser, {
     retry: false,
     refetchOnWindowFocus: false,
 
@@ -30,11 +30,15 @@ function App() {
     onError: () => setIsAuthenticated(false),
   });
 
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
 
-      <AnimatePresence exitBeforeEnter>
+      <AnimatePresence exitBeforeEnter initial={false}>
         <Routes location={location} key={location.pathname}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
