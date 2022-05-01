@@ -21,7 +21,7 @@ export const loginUser = async (user: AuthenticationFormState) => {
   return res.data;
 };
 
-export const getUser = async () => {
+export const getUser = async (): Promise<AuthenticationFormState> => {
   const res = await userApi.get("/");
 
   return res.data;
