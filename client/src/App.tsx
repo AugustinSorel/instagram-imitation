@@ -24,6 +24,7 @@ function App() {
 
   useQuery("user", getUser, {
     retry: false,
+    refetchOnWindowFocus: false,
 
     onSuccess: () => setIsAuthenticated(true),
     onError: () => setIsAuthenticated(false),
@@ -33,7 +34,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
 
-      <AnimatePresence exitBeforeEnter initial={false}>
+      <AnimatePresence exitBeforeEnter>
         <Routes location={location} key={location.pathname}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
