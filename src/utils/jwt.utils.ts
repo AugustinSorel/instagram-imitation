@@ -23,5 +23,5 @@ export const getRefreshTokenExpiresDate = () => {
 };
 
 export const getAccessTokenExpiresDate = () => {
-  return new Date(Date.now() + 1000 * 60 * 60 * 24 * 15);
+  return new Date(Date.now() + 1000 * 5);
 };

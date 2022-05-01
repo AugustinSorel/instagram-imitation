@@ -1,7 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
+import useUser from "../../../store/useUser";
 
 const PrivateRoute = () => {
-  if (false) {
+  const { isAuthenticated } = useUser();
+
+  if (isAuthenticated) {
     return <Outlet />;
   }
 

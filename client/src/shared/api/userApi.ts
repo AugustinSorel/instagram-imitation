@@ -20,3 +20,9 @@ export const loginUser = async (user: AuthenticationFormState) => {
 
   return res.data;
 };
+
+export const getUser = async () => {
+  const res = await userApi.get("/");
+
+  return res.data;
+};
