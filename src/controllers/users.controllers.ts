@@ -103,11 +103,16 @@ export const logout = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (!res.locals.userId) {
-    return res.status(401).send("NO USER ID");
+  try {
+    if (!res.locals.userId) {
+      return res.status(401).send("NO USER ID");
+    }
+
+    await incrementTheRefreshTokenCount(res.locals.userId);
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.log("ERROR in logout", error);
+    res.sendStatus(500);
   }
-
-  await incrementTheRefreshTokenCount(res.locals.userId);
-
-  return res.sendStatus(200);
 };
