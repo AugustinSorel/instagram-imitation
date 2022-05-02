@@ -10,10 +10,7 @@ export const HeaderContainer = styled.header`
   }
 `;
 
-export const HeaderNav = styled.nav`
-  max-width: 1000px;
-  margin: 0 auto;
-`;
+export const HeaderNav = styled.nav``;
 
 export const HeaderTitle = styled(Link)`
   font-size: var(--font-size-meduim);

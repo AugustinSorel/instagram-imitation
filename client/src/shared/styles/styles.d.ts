@@ -27,6 +27,7 @@ declare module "styled-components" {
     sizes: {
       borderRadius: string;
       borderHeight: string;
+      maxWidth: string;
     };
   }
 }

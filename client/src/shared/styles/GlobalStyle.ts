@@ -25,6 +25,7 @@ const GlobalStyle = createGlobalStyle`
 
         --border-radius: ${(props) => props.theme.sizes.borderRadius};
         --border-height: ${(props) => props.theme.sizes.borderHeight};
+        --max-width: ${(props) => props.theme.sizes.maxWidth};
     }
 
     html, body, #root {

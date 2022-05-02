@@ -104,10 +104,6 @@ export const logout = async (
   next: NextFunction
 ) => {
   try {
-    if (!res.locals.userId) {
-      return res.status(401).send("NO USER ID");
-    }
-
     await incrementTheRefreshTokenCount(res.locals.userId);
 
     res.sendStatus(200);

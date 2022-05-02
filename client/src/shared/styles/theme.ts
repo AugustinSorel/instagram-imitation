@@ -26,6 +26,7 @@ const theme: DefaultTheme = {
   sizes: {
     borderRadius: "24px",
     borderHeight: "3px",
+    maxWidth: "1000px",
   },
 };
 
