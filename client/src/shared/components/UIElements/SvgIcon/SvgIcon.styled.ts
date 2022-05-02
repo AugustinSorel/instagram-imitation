@@ -5,4 +5,5 @@ export const Svg = styled(motion.svg)`
   width: 24px;
   height: 24px;
   fill: var(--color);
+  cursor: pointer;
 `;
