@@ -1,7 +1,11 @@
-import React from "react";
+import MaxWidthWrapper from "../../shared/wrappers/MaxWidthWrapper";
 
 const Profile = () => {
-  return <div>Profile</div>;
+  return (
+    <MaxWidthWrapper>
+      <div>Profile</div>
+    </MaxWidthWrapper>
+  );
 };
 
 export default Profile;

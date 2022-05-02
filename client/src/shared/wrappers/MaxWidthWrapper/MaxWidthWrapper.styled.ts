@@ -1,6 +1,10 @@
 import styled from "styled-components";
 
-export const MaxWidthWrapperContainer = styled.div`
+interface Props {
+  center: boolean;
+}
+
+export const MaxWidthWrapperContainer = styled.div<Props>`
   max-width: var(--max-width);
-  margin: 0 auto;
+  margin: ${({ center }) => (center ? "0 auto" : "0")};
 `;

@@ -9,7 +9,7 @@ const Header = () => {
   return (
     <>
       <HeaderContainer>
-        <MaxWidthWrapper>
+        <MaxWidthWrapper center>
           <HeaderNav>
             <HeaderList>
               <HeaderTitle />
