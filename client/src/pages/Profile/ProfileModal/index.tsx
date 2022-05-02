@@ -1,5 +1,6 @@
 import { useQueryClient } from "react-query";
 import Button from "../../../shared/components/formElements/Button";
+import Input from "../../../shared/components/formElements/input";
 import SvgIcon from "../../../shared/components/UIElements/SvgIcon";
 import ModalWrapper from "../../../shared/components/wrappers/ModalWrapper";
 import useLogout from "../../../shared/hooks/useLogout";
@@ -31,9 +32,6 @@ const ProfileModal = () => {
           alt="userAvatar"
         />
 
-        <h1>{user.username}</h1>
-        <h1>{user.email}</h1>
-        <h1>{user.age}</h1>
         <Button text="logout" onClick={logoutHandler} />
         <Button text="save" onClick={close} />
       </ProfileModalContainer>

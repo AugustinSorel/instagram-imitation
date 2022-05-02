@@ -29,7 +29,7 @@ const SignUpPage = () => {
 
   return (
     <AuthenticationForm
-      isSignUp
+      fullForm
       submitHandler={signUpHandler}
       inputState={inputState}
       inputDispatch={inputDispatch}

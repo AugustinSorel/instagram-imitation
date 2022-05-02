@@ -14,7 +14,7 @@ const LoginPage = () => {
     defaultLoginDetails
   );
 
-  const [animationState, animationDispatch] = useReducer(
+  const [errorAnimationState, animationDispatch] = useReducer(
     authenticationFormErrorAnimationReducer,
     defaultLoginErrorAnimation
   );
@@ -29,11 +29,11 @@ const LoginPage = () => {
 
   return (
     <AuthenticationForm
-      isSignUp={false}
+      fullForm={false}
       submitHandler={loginHandler}
       inputState={inputState}
       inputDispatch={inputDispatch}
-      errorAnimationState={animationState}
+      errorAnimationState={errorAnimationState}
     />
   );
 };
