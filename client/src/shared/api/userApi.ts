@@ -27,3 +27,9 @@ export const getUser = async (): Promise<User> => {
 
   return res.data;
 };
+
+export const logoutUser = async () => {
+  const res = await userApi.post("/logout");
+
+  return res.data;
+};

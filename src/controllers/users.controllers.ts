@@ -106,6 +106,9 @@ export const logout = async (
   try {
     await incrementTheRefreshTokenCount(res.locals.userId);
 
+    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken");
+
     res.sendStatus(200);
   } catch (error) {
     console.log("ERROR in logout", error);

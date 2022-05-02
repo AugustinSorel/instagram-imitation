@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Navigate, Outlet } from "react-router-dom";
+import { getUser } from "../../../api/userApi";
 import useUser from "../../../store/useUser";
 
 const PrivateRoute = () => {
-  const { isAuthenticated } = useUser();
-  const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated, setIsAuthenticated } = useUser();
 
-  useEffect(() => {
-    if (isAuthenticated !== null) {
-      setIsLoading(false);
-    }
-  }, [isAuthenticated]);
+  const { isLoading } = useQuery("user", getUser, {
+    retry: false,
+
+    onSuccess: () => setIsAuthenticated(true),
+    onError: () => setIsAuthenticated(false),
+  });
 
   if (isLoading) {
     return null;
