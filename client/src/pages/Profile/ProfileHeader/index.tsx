@@ -1,5 +1,9 @@
+import { AnimatePresence } from "framer-motion";
 import { useQueryClient } from "react-query";
+import { scaleDown, scaleUp } from "../../../shared/framerMotion/whileVariants";
 import User from "../../../shared/types/user";
+import ProfileModal from "../ProfileModal";
+import useProfileModal from "../ProfileModal/useProfileModal";
 import {
   ProfileAvatar,
   ProfileHeaderContainer,
@@ -12,14 +16,25 @@ const ProfileHeader = (props: Props) => {
   const queryClient = useQueryClient();
   const user = queryClient.getQueryData("user") as User;
 
+  const { open, isOpen } = useProfileModal();
+
   return (
-    <ProfileHeaderContainer>
-      <ProfileUsername>{user.username}</ProfileUsername>
-      <ProfileAvatar
-        src="https://sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png"
-        alt="userAvatar"
-      />
-    </ProfileHeaderContainer>
+    <>
+      <ProfileHeaderContainer>
+        <ProfileUsername>{user.username}</ProfileUsername>
+        <ProfileAvatar
+          onClick={open}
+          whileHover={{ ...scaleUp }}
+          whileTap={{ ...scaleDown }}
+          src="https://sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png"
+          alt="userAvatar"
+        />
+      </ProfileHeaderContainer>
+
+      <AnimatePresence exitBeforeEnter>
+        {isOpen && <ProfileModal />}
+      </AnimatePresence>
+    </>
   );
 };
 

@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import styled from "styled-components";
 
 export const ProfileHeaderContainer = styled.header`
@@ -20,9 +21,9 @@ export const ProfileUsername = styled.h1`
   flex: 1;
 `;
 
-export const ProfileAvatar = styled.img`
+export const ProfileAvatar = styled(motion.img)`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  object-fit: cover;
+  cursor: pointer;
 `;

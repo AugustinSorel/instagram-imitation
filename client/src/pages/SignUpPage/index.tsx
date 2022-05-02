@@ -2,7 +2,6 @@ import { FormEvent, useReducer } from "react";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
 import { authenticationFormErrorAnimationReducer } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
-import User from "../../shared/types/user";
 import useSignUp from "./useSignUp";
 import useSignUpPageDefaultValues from "./useSignUpPageDefaultValues";
 
