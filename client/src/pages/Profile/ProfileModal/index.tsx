@@ -1,5 +1,4 @@
-import { useReducer } from "react";
-import { useQueryClient } from "react-query";
+import { FormEvent, useReducer } from "react";
 import Button from "../../../shared/components/formElements/Button";
 import { authenticationFormErrorAnimationReducer } from "../../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
@@ -7,37 +6,38 @@ import SvgIcon from "../../../shared/components/UIElements/SvgIcon";
 import UserForm from "../../../shared/components/UIElements/UserForm";
 import ModalWrapper from "../../../shared/components/wrappers/ModalWrapper";
 import useLogout from "../../../shared/hooks/useLogout";
-import User from "../../../shared/types/user";
 import icons from "../../../shared/utils/icons";
-import useSignUpPageDefaultValues from "../../SignUpPage/useSignUpPageDefaultValues";
 import {
   ProfileModalAvatar,
   ProfileModalContainer,
 } from "./ProfileModal.styled";
+import useProfileDefaultValues from "./useProfileDefaultValues";
 import useProfileModal from "./useProfileModal";
 
 const ProfileModal = () => {
   const { close } = useProfileModal();
   const logoutMutation = useLogout();
 
-  const queryClient = useQueryClient();
-  const user = queryClient.getQueryData("user") as User;
-
   const logoutHandler = () => {
     logoutMutation();
   };
 
-  const { defaultSignUErrorAnimation, defaultSignUpDetails } =
-    useSignUpPageDefaultValues();
+  const updateHandler = (e: FormEvent) => {
+    e.preventDefault();
+    console.log(inputState);
+  };
+
+  const { defaultProfileDetails, defaultProfileErrorAnimation } =
+    useProfileDefaultValues();
 
   const [inputState, inputDispatch] = useReducer(
     authenticationFormReducer,
-    defaultSignUpDetails
+    defaultProfileDetails
   );
 
   const [errorAnimationState, errorAnimationDispatch] = useReducer(
     authenticationFormErrorAnimationReducer,
-    defaultSignUErrorAnimation
+    defaultProfileErrorAnimation
   );
 
   return (
@@ -54,7 +54,7 @@ const ProfileModal = () => {
           errorAnimationState={errorAnimationState}
           inputState={inputState}
           inputDispatch={inputDispatch}
-          submitHandler={() => {}}
+          submitHandler={updateHandler}
         />
 
         <Button text="logout" onClick={logoutHandler} />
