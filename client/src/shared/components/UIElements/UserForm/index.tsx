@@ -6,11 +6,7 @@ import {
   AuthenticationFormActionType,
   AuthenticationFormState,
 } from "../authenticationForm/AuthenticationReducer";
-import {
-  UserFormContainer,
-  UserFormStyle,
-  UserFormTitle,
-} from "./UserForm.styled";
+import { UserFormStyle } from "./UserForm.styled";
 
 type Props = {
   fullForm: boolean;
@@ -31,65 +27,61 @@ const UserForm = ({
   errorAnimationState,
 }: Props) => {
   return (
-    <UserFormContainer>
-      <UserFormTitle>instagram</UserFormTitle>
-
-      <UserFormStyle onSubmit={submitHandler}>
-        {fullForm && (
-          <Input
-            variants={errorVariants}
-            animate={errorAnimationState.usernameAnimation}
-            placeholder="username"
-            value={inputState.username}
-            onChange={(e) =>
-              inputDispatch({
-                type: AuthenticationFormActionType.CHANGE_USERNAME,
-                payload: e.target.value,
-              })
-            }
-          />
-        )}
+    <UserFormStyle onSubmit={submitHandler}>
+      {fullForm && (
         <Input
           variants={errorVariants}
-          animate={errorAnimationState.emailAnimation}
-          placeholder="email"
-          value={inputState.email}
+          animate={errorAnimationState.usernameAnimation}
+          placeholder="username"
+          value={inputState.username}
           onChange={(e) =>
             inputDispatch({
-              type: AuthenticationFormActionType.CHANGE_EMAIL,
+              type: AuthenticationFormActionType.CHANGE_USERNAME,
               payload: e.target.value,
             })
           }
         />
-        {fullForm && (
-          <Input
-            variants={errorVariants}
-            animate={errorAnimationState.ageAnimation!}
-            placeholder="age"
-            value={inputState.age}
-            onChange={(e) =>
-              inputDispatch({
-                type: AuthenticationFormActionType.CHANGE_AGE,
-                payload: e.target.value,
-              })
-            }
-          />
-        )}
+      )}
+      <Input
+        variants={errorVariants}
+        animate={errorAnimationState.emailAnimation}
+        placeholder="email"
+        value={inputState.email}
+        onChange={(e) =>
+          inputDispatch({
+            type: AuthenticationFormActionType.CHANGE_EMAIL,
+            payload: e.target.value,
+          })
+        }
+      />
+      {fullForm && (
         <Input
           variants={errorVariants}
-          animate={errorAnimationState.passwordAnimation!}
-          placeholder="password"
-          value={inputState.password}
+          animate={errorAnimationState.ageAnimation!}
+          placeholder="age"
+          value={inputState.age}
           onChange={(e) =>
             inputDispatch({
-              type: AuthenticationFormActionType.CHANGE_PASSWORD,
+              type: AuthenticationFormActionType.CHANGE_AGE,
               payload: e.target.value,
             })
           }
         />
-        <Button text={errorAnimationState.errorMessage || "submit"} />
-      </UserFormStyle>
-    </UserFormContainer>
+      )}
+      <Input
+        variants={errorVariants}
+        animate={errorAnimationState.passwordAnimation!}
+        placeholder="password"
+        value={inputState.password}
+        onChange={(e) =>
+          inputDispatch({
+            type: AuthenticationFormActionType.CHANGE_PASSWORD,
+            payload: e.target.value,
+          })
+        }
+      />
+      <Button text={errorAnimationState.errorMessage || "submit"} />
+    </UserFormStyle>
   );
 };
 

@@ -1,11 +1,15 @@
+import { useReducer } from "react";
 import { useQueryClient } from "react-query";
 import Button from "../../../shared/components/formElements/Button";
-import Input from "../../../shared/components/formElements/input";
+import { authenticationFormErrorAnimationReducer } from "../../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
+import { authenticationFormReducer } from "../../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
 import SvgIcon from "../../../shared/components/UIElements/SvgIcon";
+import UserForm from "../../../shared/components/UIElements/UserForm";
 import ModalWrapper from "../../../shared/components/wrappers/ModalWrapper";
 import useLogout from "../../../shared/hooks/useLogout";
 import User from "../../../shared/types/user";
 import icons from "../../../shared/utils/icons";
+import useSignUpPageDefaultValues from "../../SignUpPage/useSignUpPageDefaultValues";
 import {
   ProfileModalAvatar,
   ProfileModalContainer,
@@ -23,6 +27,19 @@ const ProfileModal = () => {
     logoutMutation();
   };
 
+  const { defaultSignUErrorAnimation, defaultSignUpDetails } =
+    useSignUpPageDefaultValues();
+
+  const [inputState, inputDispatch] = useReducer(
+    authenticationFormReducer,
+    defaultSignUpDetails
+  );
+
+  const [errorAnimationState, errorAnimationDispatch] = useReducer(
+    authenticationFormErrorAnimationReducer,
+    defaultSignUErrorAnimation
+  );
+
   return (
     <ModalWrapper>
       <ProfileModalContainer>
@@ -32,8 +49,16 @@ const ProfileModal = () => {
           alt="userAvatar"
         />
 
+        <UserForm
+          fullForm
+          errorAnimationState={errorAnimationState}
+          inputState={inputState}
+          inputDispatch={inputDispatch}
+          submitHandler={() => {}}
+        />
+
         <Button text="logout" onClick={logoutHandler} />
-        <Button text="save" onClick={close} />
+        <Button text="delete" onClick={() => {}} />
       </ProfileModalContainer>
     </ModalWrapper>
   );

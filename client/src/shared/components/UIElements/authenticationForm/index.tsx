@@ -1,7 +1,11 @@
 import { FC } from "react";
 import UserForm from "../UserForm";
 import { AuthenticationErrorAnimationState } from "./authenticationAnimationReducer";
-import { AuthenticationFormContainer } from "./AuthenticationForm.styled";
+import {
+  AuthenticationFormCard,
+  AuthenticationFormContainer,
+  AuthenticationFormTitle,
+} from "./AuthenticationForm.styled";
 import AuthenticationFormNavigation from "./AuthenticationFormNavigation";
 import { AuthenticationFormState } from "./AuthenticationReducer";
 
@@ -31,13 +35,16 @@ const AuthenticationForm: FC<Props> = ({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <UserForm
-        fullForm={fullForm}
-        submitHandler={submitHandler}
-        inputDispatch={inputDispatch}
-        inputState={inputState}
-        errorAnimationState={errorAnimationState}
-      />
+      <AuthenticationFormCard>
+        <AuthenticationFormTitle>instagram</AuthenticationFormTitle>
+        <UserForm
+          fullForm={fullForm}
+          submitHandler={submitHandler}
+          inputDispatch={inputDispatch}
+          inputState={inputState}
+          errorAnimationState={errorAnimationState}
+        />
+      </AuthenticationFormCard>
 
       <AuthenticationFormNavigation fullForm={fullForm} />
     </AuthenticationFormContainer>
