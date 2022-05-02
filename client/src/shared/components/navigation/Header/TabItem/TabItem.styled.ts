@@ -4,16 +4,6 @@ import styled from "styled-components";
 
 export const HeaderListItem = styled.li`
   position: relative;
-
-  &:first-child {
-    flex: 1;
-  }
-
-  @media screen and (max-width: 768px) {
-    &:first-child {
-      flex: 0;
-    }
-  }
 `;
 
 export const HeaderListLink = styled(NavLink)`

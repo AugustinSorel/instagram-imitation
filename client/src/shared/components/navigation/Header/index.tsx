@@ -1,34 +1,18 @@
 import { Outlet } from "react-router-dom";
-import useIsMobile from "../../../hooks/useIsMobile";
 import paths from "../../../utils/paths";
 import MaxWidthWrapper from "../../../wrappers/MaxWidthWrapper";
-import {
-  HeaderContainer,
-  HeaderList,
-  HeaderNav,
-  HeaderTitle,
-} from "./Header.styled";
+import { HeaderContainer, HeaderList, HeaderNav } from "./Header.styled";
+import HeaderTitle from "./HeaderTitle";
 import TabItem from "./TabItem";
-import { HeaderListItem } from "./TabItem/TabItem.styled";
 
 const Header = () => {
-  const isMobile = useIsMobile();
-
-  const GetHeaderTitle = () => {
-    return !isMobile ? (
-      <HeaderListItem>
-        <HeaderTitle to={"/"}>instagram clone</HeaderTitle>
-      </HeaderListItem>
-    ) : null;
-  };
-
   return (
     <>
       <HeaderContainer>
         <MaxWidthWrapper>
           <HeaderNav>
             <HeaderList>
-              <GetHeaderTitle />
+              <HeaderTitle />
 
               {Object.entries(paths).map(([key, path]) => (
                 <TabItem key={key} path={path} />
