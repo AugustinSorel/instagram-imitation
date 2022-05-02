@@ -1,17 +1,10 @@
-import { useQuery } from "react-query";
 import { Navigate, Outlet } from "react-router-dom";
-import { getUser } from "../../../api/userApi";
+import useFetchUser from "../../../hooks/useFetchUser";
 import useUser from "../../../store/useUser";
 
 const PrivateRoute = () => {
-  const { isAuthenticated, setIsAuthenticated } = useUser();
-
-  const { isLoading } = useQuery("user", getUser, {
-    retry: false,
-
-    onSuccess: () => setIsAuthenticated(true),
-    onError: () => setIsAuthenticated(false),
-  });
+  const { isAuthenticated } = useUser();
+  const { isLoading } = useFetchUser();
 
   if (isLoading) {
     return null;

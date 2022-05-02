@@ -1,32 +1,17 @@
-import { useMutation, useQueryClient } from "react-query";
-import { logoutUser } from "../../../shared/api/userApi";
+import { useQueryClient } from "react-query";
 import Button from "../../../shared/components/formElements/Button";
 import ModalWrapper from "../../../shared/components/wrappers/ModalWrapper";
-import useUser from "../../../shared/store/useUser";
+import useLogout from "../../../shared/hooks/useLogout";
 import User from "../../../shared/types/user";
 import { ProfileModalContainer } from "./ProfileModal.styled";
 import useProfileModal from "./useProfileModal";
 
-type Props = {};
-
-const ProfileModal = (props: Props) => {
+const ProfileModal = () => {
   const { close } = useProfileModal();
-  const { setIsAuthenticated } = useUser();
+  const logoutMutation = useLogout();
 
   const queryClient = useQueryClient();
   const user = queryClient.getQueryData("user") as User;
-
-  const { mutate: logoutMutation } = useMutation(logoutUser, {
-    onSuccess: () => {
-      close();
-    },
-    onError: (error: any) => {
-      console.log("Error in logout mutation", error);
-    },
-    onSettled: () => {
-      setIsAuthenticated(false);
-    },
-  });
 
   const logoutHandler = () => {
     logoutMutation();
