@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import paths from "../../../utils/paths";
-import MaxWidthWrapper from "../../../wrappers/MaxWidthWrapper";
+import MaxWidthWrapper from "../../wrappers/MaxWidthWrapper";
 import { HeaderContainer, HeaderList, HeaderNav } from "./Header.styled";
 import HeaderTitle from "./HeaderTitle";
 import TabItem from "./TabItem";
@@ -9,8 +9,8 @@ const Header = () => {
   return (
     <>
       <HeaderContainer>
-        <MaxWidthWrapper center>
-          <HeaderNav>
+        <HeaderNav>
+          <MaxWidthWrapper>
             <HeaderList>
               <HeaderTitle />
 
@@ -18,8 +18,8 @@ const Header = () => {
                 <TabItem key={key} path={path} />
               ))}
             </HeaderList>
-          </HeaderNav>
-        </MaxWidthWrapper>
+          </MaxWidthWrapper>
+        </HeaderNav>
       </HeaderContainer>
 
       <Outlet />

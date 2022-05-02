@@ -42,6 +42,7 @@ const GlobalStyle = createGlobalStyle`
     }
 
     #root{
+        overflow: hidden;
         display: flex;
         flex-direction: column;
 
