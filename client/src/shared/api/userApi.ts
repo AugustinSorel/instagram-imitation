@@ -1,5 +1,6 @@
 import axios from "axios";
 import { AuthenticationFormState } from "../components/UIElements/authenticationForm/AuthenticationReducer";
+import User from "../types/user";
 
 const API_URI =
   process.env.REACT_APP_BACKEND_URI || "http://localhost:5000/api";
@@ -21,7 +22,7 @@ export const loginUser = async (user: AuthenticationFormState) => {
   return res.data;
 };
 
-export const getUser = async (): Promise<AuthenticationFormState> => {
+export const getUser = async (): Promise<User> => {
   const res = await userApi.get("/");
 
   return res.data;
