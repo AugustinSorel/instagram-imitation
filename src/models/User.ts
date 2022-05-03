@@ -7,6 +7,7 @@ interface IUser {
   age: number;
   password: string;
   refreshTokenCount: number;
+  avatar: string;
   validatePassword: (password: string) => Promise<boolean>;
 }
 
@@ -46,6 +47,12 @@ const userSchema = new Schema<IUser>({
     required: true,
     default: 0,
     min: 0,
+  },
+
+  avatar: {
+    type: String,
+    default:
+      "https://res.cloudinary.com/dvjmzgrqq/image/upload/v1651599950/instagram-imitation/avatars/default-avatar_xo7ier.png",
   },
 });
 
