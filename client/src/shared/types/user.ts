@@ -4,6 +4,7 @@ type User = {
   email: string;
   age: number;
   password: string;
+  avatar: string;
 };
 
 export default User;

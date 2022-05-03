@@ -26,7 +26,7 @@ const ProfileHeader = (props: Props) => {
           onClick={open}
           whileHover={{ ...scaleUp }}
           whileTap={{ ...scaleDown }}
-          src="https://sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png"
+          src={user.avatar}
           alt="userAvatar"
         />
       </ProfileHeaderContainer>
