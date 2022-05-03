@@ -18,6 +18,8 @@ const apiError = (
   }
 
   if (err instanceof UserError) {
+    console.log({ message: err.message, field: err.field });
+
     return res
       .status(err.code)
       .json({ message: err.message, field: err.field });

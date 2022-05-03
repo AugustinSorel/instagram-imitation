@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import UserError from "../errors/user.errors";
+import AuthError from "../errors/auth.error";
 import { UserLoginSchema, UserSignUpSchema } from "../schemas/user.schema";
 import {
   createUser,
@@ -112,6 +113,38 @@ export const logout = async (
     res.sendStatus(200);
   } catch (error) {
     console.log("ERROR in logout", error);
+    res.sendStatus(500);
+  }
+};
+
+export const updateUser = async (
+  req: Request<{}, {}, UserSignUpSchema>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await findById(res.locals.userId);
+
+    if (!user) {
+      return next(AuthError.invalidIdError());
+    }
+
+    user.username = req.body.username;
+    user.age = parseInt(req.body.age);
+    user.email = req.body.email;
+    user.password = req.body.password;
+
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error: any) {
+    if (error.code === 11000) {
+      const type = Object.keys(error.keyPattern)[0] as AuthenticationFieldsType;
+
+      return next(UserError.duplicationError(type));
+    }
+
+    console.log("ERROR in updateUser", error);
     res.sendStatus(500);
   }
 };

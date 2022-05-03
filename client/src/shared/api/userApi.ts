@@ -33,3 +33,9 @@ export const logoutUser = async () => {
 
   return res.data;
 };
+
+export const updateUser = async (user: AuthenticationFormState) => {
+  const res = await userApi.patch("/", user);
+
+  return res.data;
+};

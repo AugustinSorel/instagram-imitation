@@ -2,6 +2,7 @@ import express from "express";
 import {
   getUser,
   logout,
+  updateUser,
   userLogin,
   userSignUp,
 } from "../controllers/users.controllers";
@@ -16,5 +17,12 @@ usersRouter.post("/login", validateRessource(userLoginSchema), userLogin);
 usersRouter.post("/logout", requireUser, logout);
 
 usersRouter.get("/", requireUser, getUser);
+
+usersRouter.patch(
+  "/",
+  requireUser,
+  validateRessource(userSignUpSchema),
+  updateUser
+);
 
 export default usersRouter;
