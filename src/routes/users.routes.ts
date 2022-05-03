@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  deleteUser,
   getUser,
   logout,
   updateUser,
@@ -24,5 +25,7 @@ usersRouter.patch(
   validateRessource(userSignUpSchema),
   updateUser
 );
+
+usersRouter.delete("/", requireUser, deleteUser);
 
 export default usersRouter;

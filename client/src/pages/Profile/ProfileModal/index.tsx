@@ -12,6 +12,7 @@ import {
   ProfileModalAvatar,
   ProfileModalContainer,
 } from "./ProfileModal.styled";
+import useDeleteUserMutate from "./useDeleteUserMutate";
 import useProfileDefaultValues from "./useProfileDefaultValues";
 import useProfileModal from "./useProfileModal";
 import useUpdateProfile from "./useUpdateProfile";
@@ -34,6 +35,7 @@ const ProfileModal = () => {
   );
 
   const updateMutate = useUpdateProfile(errorAnimationDispatch);
+  const deleteUserMutate = useDeleteUserMutate();
 
   const logoutHandler = () => {
     logoutMutation();
@@ -42,6 +44,11 @@ const ProfileModal = () => {
   const updateHandler = (e: FormEvent) => {
     e.preventDefault();
     updateMutate(inputState);
+  };
+
+  const deleteHandler = () => {
+    deleteUserMutate();
+    logoutHandler();
   };
 
   return (
@@ -71,7 +78,7 @@ const ProfileModal = () => {
           text="delete"
           type="text"
           color={theme.colors.error}
-          onClick={() => {}}
+          onClick={deleteHandler}
         />
       </ProfileModalContainer>
     </ModalWrapper>

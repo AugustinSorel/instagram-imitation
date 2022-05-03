@@ -22,3 +22,7 @@ export const incrementTheRefreshTokenCount = (userId: string) => {
 export const findOne = (query: any) => {
   return User.findOne(query);
 };
+
+export const deleteUserById = (userId: string) => {
+  return User.findByIdAndDelete(userId);
+};

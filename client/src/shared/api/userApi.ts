@@ -39,3 +39,9 @@ export const updateUser = async (user: AuthenticationFormState) => {
 
   return res.data;
 };
+
+export const deleteUser = async () => {
+  const res = await userApi.delete("/");
+
+  return res.data;
+};

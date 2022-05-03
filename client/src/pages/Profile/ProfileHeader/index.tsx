@@ -1,5 +1,4 @@
 import { AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
 import { useQueryClient } from "react-query";
 import { scaleDown, scaleUp } from "../../../shared/framerMotion/whileVariants";
 import User from "../../../shared/types/user";
@@ -18,10 +17,6 @@ const ProfileHeader = (props: Props) => {
   const user = queryClient.getQueryData("user") as User;
 
   const { open, isOpen } = useProfileModal();
-
-  useEffect(() => {
-    console.log("user", user);
-  }, [user]);
 
   return (
     <>

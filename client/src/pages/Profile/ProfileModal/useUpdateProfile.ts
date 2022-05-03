@@ -22,8 +22,6 @@ const useUpdateProfile = (
   const errorHandler = (error: any) => {
     const { field, message } = error.response.data;
 
-    console.log(field, message);
-
     errorAnimationDispatch({
       type: getAuthenticationErrorEnum(field),
       payload: message,

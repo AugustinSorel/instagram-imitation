@@ -4,6 +4,7 @@ import AuthError from "../errors/auth.error";
 import { UserLoginSchema, UserSignUpSchema } from "../schemas/user.schema";
 import {
   createUser,
+  deleteUserById,
   findByEmail,
   findById,
   incrementTheRefreshTokenCount,
@@ -145,6 +146,21 @@ export const updateUser = async (
     }
 
     console.log("ERROR in updateUser", error);
+    res.sendStatus(500);
+  }
+};
+
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await deleteUserById(res.locals.userId);
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.log("ERROR in deleteUser", error);
     res.sendStatus(500);
   }
 };
