@@ -1,6 +1,4 @@
 import { FormEvent, useReducer } from "react";
-import { useMutation } from "react-query";
-import { updateUser } from "../../../shared/api/userApi";
 import Button from "../../../shared/components/formElements/Button";
 import { authenticationFormErrorAnimationReducer } from "../../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
@@ -9,7 +7,6 @@ import UserForm from "../../../shared/components/UIElements/UserForm";
 import ModalWrapper from "../../../shared/components/wrappers/ModalWrapper";
 import useLogout from "../../../shared/hooks/useLogout";
 import theme from "../../../shared/styles/theme";
-import getAuthenticationErrorEnum from "../../../shared/utils/getAuthenticationErrorEnum";
 import icons from "../../../shared/utils/icons";
 import {
   ProfileModalAvatar,
@@ -17,35 +14,11 @@ import {
 } from "./ProfileModal.styled";
 import useProfileDefaultValues from "./useProfileDefaultValues";
 import useProfileModal from "./useProfileModal";
+import useUpdateProfile from "./useUpdateProfile";
 
 const ProfileModal = () => {
   const { close } = useProfileModal();
   const logoutMutation = useLogout();
-
-  const logoutHandler = () => {
-    logoutMutation();
-  };
-
-  const { mutate: udpateMutate } = useMutation(updateUser, {
-    onSuccess: () => {
-      close();
-    },
-    onError: (error: any) => {
-      const { field, message } = error.response.data;
-
-      console.log(field, message);
-
-      errorAnimationDispatch({
-        type: getAuthenticationErrorEnum(field),
-        payload: message,
-      });
-    },
-  });
-
-  const updateHandler = (e: FormEvent) => {
-    e.preventDefault();
-    udpateMutate(inputState);
-  };
 
   const { defaultProfileDetails, defaultProfileErrorAnimation } =
     useProfileDefaultValues();
@@ -59,6 +32,17 @@ const ProfileModal = () => {
     authenticationFormErrorAnimationReducer,
     defaultProfileErrorAnimation
   );
+
+  const updateMutate = useUpdateProfile(errorAnimationDispatch);
+
+  const logoutHandler = () => {
+    logoutMutation();
+  };
+
+  const updateHandler = (e: FormEvent) => {
+    e.preventDefault();
+    updateMutate(inputState);
+  };
 
   return (
     <ModalWrapper>
