@@ -8,6 +8,7 @@ import SvgIcon from "../../../shared/components/UIElements/SvgIcon";
 import UserForm from "../../../shared/components/UIElements/UserForm";
 import ModalWrapper from "../../../shared/components/wrappers/ModalWrapper";
 import useLogout from "../../../shared/hooks/useLogout";
+import theme from "../../../shared/styles/theme";
 import getAuthenticationErrorEnum from "../../../shared/utils/getAuthenticationErrorEnum";
 import icons from "../../../shared/utils/icons";
 import {
@@ -26,8 +27,8 @@ const ProfileModal = () => {
   };
 
   const { mutate: udpateMutate } = useMutation(updateUser, {
-    onSuccess: (data: any) => {
-      console.log(data);
+    onSuccess: () => {
+      close();
     },
     onError: (error: any) => {
       const { field, message } = error.response.data;
@@ -76,8 +77,18 @@ const ProfileModal = () => {
           submitHandler={updateHandler}
         />
 
-        <Button text="logout" onClick={logoutHandler} />
-        <Button text="delete" onClick={() => {}} />
+        <Button
+          text="logout"
+          type="text"
+          onClick={logoutHandler}
+          color="gray"
+        />
+        <Button
+          text="delete"
+          type="text"
+          color={theme.colors.error}
+          onClick={() => {}}
+        />
       </ProfileModalContainer>
     </ModalWrapper>
   );

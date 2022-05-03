@@ -7,6 +7,7 @@ export const ProfileModalContainer = styled.div`
 
   display: flex;
   flex-direction: column;
+  gap: 1rem;
 
   & > svg:first-child {
     flex: 1;
