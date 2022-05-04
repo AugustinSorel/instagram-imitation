@@ -2,11 +2,11 @@ import axios from "axios";
 import { AuthenticationFormState } from "../components/UIElements/authenticationForm/AuthenticationReducer";
 import User from "../types/user";
 
-const API_URI =
-  process.env.REACT_APP_BACKEND_URI || "http://localhost:5000/api";
-
 const userApi = axios.create({
-  baseURL: `${API_URI}/users`,
+  baseURL:
+    process.env.NODE_ENV === "production"
+      ? `/api/users`
+      : `http://localhost:5000/api/users`,
   withCredentials: true,
 });
 
