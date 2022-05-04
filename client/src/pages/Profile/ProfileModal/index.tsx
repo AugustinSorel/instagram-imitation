@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, useReducer, useState } from "react";
 import { useQueryClient } from "react-query";
+import { updateUserAvatar } from "../../../shared/api/avatarApi";
 import Button from "../../../shared/components/formElements/Button";
 import { authenticationFormErrorAnimationReducer } from "../../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
@@ -20,36 +21,6 @@ import useDeleteUserMutate from "./useDeleteUserMutate";
 import useProfileDefaultValues from "./useProfileDefaultValues";
 import useProfileModal from "./useProfileModal";
 import useUpdateProfile from "./useUpdateProfile";
-
-const NAME_OF_UPLOAD_PRESET = "avatars";
-const YOUR_CLOUDINARY_ID = "dvjmzgrqq";
-
-async function uploadImage(file: any, userId: string) {
-  if (!file) {
-    return;
-  }
-
-  const data = new FormData();
-  data.append("file", file);
-  data.append("upload_preset", NAME_OF_UPLOAD_PRESET);
-  data.append("public_id", userId);
-
-  let img;
-  try {
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${YOUR_CLOUDINARY_ID}/image/upload`,
-      {
-        method: "POST",
-        body: data,
-      }
-    );
-    img = await res.json();
-  } catch (error) {
-    console.log(error);
-  }
-
-  return img.secure_url;
-}
 
 const ProfileModal = () => {
   const { close } = useProfileModal();
@@ -82,9 +53,7 @@ const ProfileModal = () => {
 
   const updateHandler = async (e: FormEvent) => {
     e.preventDefault();
-    const avatarUrl = await uploadImage(avatarFile, user._id as string);
-
-    // console.log(avatarUrl || userAvatar);
+    const avatarUrl = await updateUserAvatar(avatarFile, user._id as string);
 
     const newUser: User = {
       email: inputState.email,
@@ -108,14 +77,12 @@ const ProfileModal = () => {
     }
 
     const file = e.target.files[0];
-    setAvatarFile(file);
 
     if (!file) {
       return;
     }
-
+    setAvatarFile(file);
     const objectUrl = URL.createObjectURL(file);
-
     setUserAvatar(objectUrl);
   };
 
