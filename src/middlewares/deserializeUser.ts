@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
-import { findOne } from "../services/user.services";
+import { findOne } from "../services/user.service";
 import {
   createTokens,
   getAccessTokenExpiresDate,

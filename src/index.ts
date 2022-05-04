@@ -8,11 +8,12 @@ import router from "./routes";
 import connectToMongoDB from "./utils/connectToMongoDB.util";
 import deployToProduction from "./utils/deployToProduction.util";
 
+dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
-dotenv.config();
 
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({ origin: true, credentials: true }));
 

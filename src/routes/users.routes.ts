@@ -14,6 +14,7 @@ import {
   userPatchSchema,
   userSignUpSchema,
 } from "../schemas/user.schema";
+import multer from "../utils/multer.util";
 
 const usersRouter = express.Router();
 
@@ -25,6 +26,7 @@ usersRouter.get("/", requireUser, getUser);
 
 usersRouter.patch(
   "/",
+  multer.single("avatar"),
   requireUser,
   validateRessource(userPatchSchema),
   updateUser

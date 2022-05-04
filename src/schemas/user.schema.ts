@@ -1,4 +1,4 @@
-import { object, string, TypeOf } from "zod";
+import { object, string, TypeOf, any } from "zod";
 
 const username = string({
   required_error: "username is required",
@@ -26,11 +26,7 @@ const password = string({
   .min(3, "password must be at least 3 characters")
   .max(1024, "password must be at most 1024 characters");
 
-const avatar = string({
-  required_error: "avatar is required",
-})
-  .min(3, "url of avatar must be at least 3 characters")
-  .max(1024, "url of avatar must be at most 1024 characters");
+const avatar = any({ required_error: "avatar is required" });
 
 export const userSignUpSchema = object({
   body: object({

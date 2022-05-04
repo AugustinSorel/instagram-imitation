@@ -1,6 +1,5 @@
 import { ChangeEvent, FormEvent, useReducer, useState } from "react";
 import { useQueryClient } from "react-query";
-import { updateUserAvatar } from "../../../shared/api/avatarApi";
 import Button from "../../../shared/components/formElements/Button";
 import { authenticationFormErrorAnimationReducer } from "../../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
@@ -53,17 +52,15 @@ const ProfileModal = () => {
 
   const updateHandler = async (e: FormEvent) => {
     e.preventDefault();
-    const avatarUrl = await updateUserAvatar(avatarFile, user._id as string);
 
-    const newUser: User = {
-      email: inputState.email,
-      username: inputState.username as string,
-      password: inputState.password,
-      age: inputState.age as string,
-      avatar: avatarUrl || userAvatar,
-    };
+    const formData = new FormData();
+    formData.append("username", inputState.username as string);
+    formData.append("email", inputState.email);
+    formData.append("password", inputState.password);
+    formData.append("age", inputState.age as string);
+    formData.append("avatar", avatarFile || userAvatar);
 
-    updateMutate(newUser);
+    updateMutate(formData);
   };
 
   const deleteHandler = () => {

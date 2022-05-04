@@ -12,13 +12,15 @@ import {
   findByEmail,
   findById,
   incrementTheRefreshTokenCount,
-} from "../services/user.services";
+} from "../services/user.service";
 import AuthenticationFieldsType from "../types/AuthenticationFields.type";
 import {
   createTokens,
   getAccessTokenExpiresDate,
   getRefreshTokenExpiresDate,
 } from "../utils/jwt.utils";
+import cloudinary from "../utils/cloudinary.util";
+import { deleteAvatar, uploadAvatar } from "../services/cloudinary.service";
 
 export const userSignUp = async (
   req: Request<{}, {}, UserSignUpSchema>,
@@ -134,11 +136,16 @@ export const updateUser = async (
       return next(AuthError.invalidIdError());
     }
 
+    if (req.file) {
+      const result = await uploadAvatar(req.file.path, res.locals.userId);
+      user.avatar = result.secure_url;
+      console.log("result", result.public_id);
+    }
+
     user.username = req.body.username;
     user.age = parseInt(req.body.age);
     user.email = req.body.email;
     user.password = req.body.password;
-    user.avatar = req.body.avatar;
 
     await user.save();
 
@@ -146,7 +153,6 @@ export const updateUser = async (
   } catch (error: any) {
     if (error.code === 11000) {
       const type = Object.keys(error.keyPattern)[0] as AuthenticationFieldsType;
-
       return next(UserError.duplicationError(type));
     }
 
@@ -162,7 +168,7 @@ export const deleteUser = async (
 ) => {
   try {
     await deleteUserById(res.locals.userId);
-
+    await deleteAvatar(res.locals.userId);
     res.sendStatus(200);
   } catch (error) {
     console.log("ERROR in deleteUser", error);
