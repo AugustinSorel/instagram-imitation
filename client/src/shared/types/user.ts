@@ -1,8 +1,8 @@
 type User = {
-  id: string;
+  _id?: string;
   username: string;
   email: string;
-  age: number;
+  age: string;
   password: string;
   avatar: string;
 };

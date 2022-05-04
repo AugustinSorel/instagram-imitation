@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import UserError from "../errors/user.errors";
 import AuthError from "../errors/auth.error";
-import { UserLoginSchema, UserSignUpSchema } from "../schemas/user.schema";
+import {
+  UserLoginSchema,
+  UserPatchSchema,
+  UserSignUpSchema,
+} from "../schemas/user.schema";
 import {
   createUser,
   deleteUserById,
@@ -119,7 +123,7 @@ export const logout = async (
 };
 
 export const updateUser = async (
-  req: Request<{}, {}, UserSignUpSchema>,
+  req: Request<{}, {}, UserPatchSchema>,
   res: Response,
   next: NextFunction
 ) => {
@@ -134,6 +138,7 @@ export const updateUser = async (
     user.age = parseInt(req.body.age);
     user.email = req.body.email;
     user.password = req.body.password;
+    user.avatar = req.body.avatar;
 
     await user.save();
 

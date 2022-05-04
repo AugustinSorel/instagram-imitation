@@ -9,7 +9,11 @@ import {
 } from "../controllers/users.controllers";
 import requireUser from "../middlewares/requireUser";
 import validateRessource from "../middlewares/validateRessource.middleware";
-import { userLoginSchema, userSignUpSchema } from "../schemas/user.schema";
+import {
+  userLoginSchema,
+  userPatchSchema,
+  userSignUpSchema,
+} from "../schemas/user.schema";
 
 const usersRouter = express.Router();
 
@@ -22,7 +26,7 @@ usersRouter.get("/", requireUser, getUser);
 usersRouter.patch(
   "/",
   requireUser,
-  validateRessource(userSignUpSchema),
+  validateRessource(userPatchSchema),
   updateUser
 );
 
