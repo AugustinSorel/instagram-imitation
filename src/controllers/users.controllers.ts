@@ -139,7 +139,6 @@ export const updateUser = async (
     if (req.file) {
       const result = await uploadAvatar(req.file.path, res.locals.userId);
       user.avatar = result.secure_url;
-      console.log("result", result.public_id);
     }
 
     user.username = req.body.username;
