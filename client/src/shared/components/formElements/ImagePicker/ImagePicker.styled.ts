@@ -2,6 +2,8 @@ import styled from "styled-components";
 
 export const ImagePickerContainer = styled.div`
   position: relative;
+  height: 100%;
+  width: 100%;
 `;
 
 export const ImagePickerImage = styled.img`

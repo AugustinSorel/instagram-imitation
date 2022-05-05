@@ -12,7 +12,7 @@ type Props = {
 const ImagePicker = ({ src, onChange }: Props) => {
   return (
     <ImagePickerContainer>
-      <ImagePickerImage src={src} alt="userAvatar" />
+      {src && <ImagePickerImage src={src} alt="userAvatar" />}
       <ImagePickerInput type="file" onChange={onChange} />
     </ImagePickerContainer>
   );
