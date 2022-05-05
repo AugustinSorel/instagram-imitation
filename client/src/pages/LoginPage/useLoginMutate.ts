@@ -27,13 +27,13 @@ const useLoginMutate = (
     });
   };
 
-  const { mutate: loginMutate } = useMutation(loginUser, {
+  const { mutate: loginMutate, isLoading } = useMutation(loginUser, {
     onSuccess: successHandler,
 
     onError: errorHandler,
   });
 
-  return loginMutate;
+  return { loginMutate, isLoading };
 };
 
 export default useLoginMutate;

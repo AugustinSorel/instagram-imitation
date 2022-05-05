@@ -13,7 +13,7 @@ import useAddNewPostMutate from "./useAddNewPostMutate";
 
 const NewPostsPage = () => {
   const fileInput = useRef<HTMLInputElement>(null);
-  const addNewPostMutate = useAddNewPostMutate();
+  const { addNewPostMutate, isLoading } = useAddNewPostMutate();
 
   const selectClickHandler = () => {
     if (fileInput.current) {
@@ -44,7 +44,12 @@ const NewPostsPage = () => {
             type="file"
             onChange={fileChangeHandler}
           />
-          <Button text="select" onClick={selectClickHandler} type="button" />
+          <Button
+            text="select"
+            onClick={selectClickHandler}
+            type="button"
+            isLoading={isLoading}
+          />
         </NewPostForm>
       </MaxWidthWrapper>
     </NewPostContainer>

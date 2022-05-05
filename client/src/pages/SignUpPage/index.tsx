@@ -19,7 +19,7 @@ const SignUpPage = () => {
     defaultSignUErrorAnimation
   );
 
-  const signUpMutate = useSignUp(errorAnimationDispatch);
+  const { signUpMutate, isLoading } = useSignUp(errorAnimationDispatch);
 
   const signUpHandler = (e: FormEvent) => {
     e.preventDefault();
@@ -29,6 +29,7 @@ const SignUpPage = () => {
 
   return (
     <AuthenticationForm
+      isloading={isLoading}
       fullForm
       submitHandler={signUpHandler}
       inputState={inputState}

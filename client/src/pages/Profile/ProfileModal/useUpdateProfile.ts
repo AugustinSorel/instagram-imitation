@@ -32,13 +32,13 @@ const useUpdateProfile = (
     queryClient.invalidateQueries("user");
   };
 
-  const { mutate: udpateMutate } = useMutation(updateUser, {
+  const { mutate: updateMutate, isLoading } = useMutation(updateUser, {
     onSuccess: successHandler,
     onError: errorHandler,
     onSettled: settledHandler,
   });
 
-  return udpateMutate;
+  return { updateMutate, isLoading };
 };
 
 export default useUpdateProfile;

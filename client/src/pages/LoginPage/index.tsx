@@ -19,7 +19,7 @@ const LoginPage = () => {
     defaultLoginErrorAnimation
   );
 
-  const loginMutate = useLoginMutate(animationDispatch);
+  const { loginMutate, isLoading } = useLoginMutate(animationDispatch);
 
   const loginHandler = (e: FormEvent) => {
     e.preventDefault();
@@ -29,6 +29,7 @@ const LoginPage = () => {
 
   return (
     <AuthenticationForm
+      isloading={isLoading}
       fullForm={false}
       submitHandler={loginHandler}
       inputState={inputState}

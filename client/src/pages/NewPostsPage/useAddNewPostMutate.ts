@@ -1,17 +1,20 @@
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { addNewPost } from "../../shared/api/postsApi";
 
 const useAddNewPostMutate = () => {
-  const { mutate: addNewPostMutate } = useMutation(addNewPost, {
+  const navigate = useNavigate();
+
+  const { mutate: addNewPostMutate, isLoading } = useMutation(addNewPost, {
     onSuccess: (data: any) => {
-      console.log(data);
+      navigate("/profile");
     },
     onError: (error: any) => {
       console.log(error);
     },
   });
 
-  return addNewPostMutate;
+  return { addNewPostMutate, isLoading };
 };
 
 export default useAddNewPostMutate;

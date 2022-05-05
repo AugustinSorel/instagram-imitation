@@ -13,6 +13,7 @@ export const ButtonContainer = styled(motion.button)`
 
   background-color: var(--call-to-action-color);
   color: var(--background);
+  position: relative;
 `;
 
 interface TextButtonProps {
@@ -25,4 +26,14 @@ export const TextButtonContainer = styled(motion.button)<TextButtonProps>`
 
   color: ${({ color }) => color || "var(--call-to-action-color)"};
   background-color: transparent;
+`;
+
+export const ButtonLoaderContainer = styled.span`
+  height: 15px;
+  width: 15px;
+
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translate(0, -50%);
 `;

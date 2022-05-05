@@ -42,7 +42,7 @@ const ProfileModal = () => {
     defaultProfileErrorAnimation
   );
 
-  const updateMutate = useUpdateProfile(errorAnimationDispatch);
+  const { updateMutate, isLoading } = useUpdateProfile(errorAnimationDispatch);
   const deleteUserMutate = useDeleteUserMutate();
 
   const logoutHandler = () => {
@@ -92,6 +92,7 @@ const ProfileModal = () => {
         </ProfileModalImagePickerContainer>
 
         <UserForm
+          isLoading={isLoading}
           fullForm
           errorAnimationState={errorAnimationState}
           inputState={inputState}

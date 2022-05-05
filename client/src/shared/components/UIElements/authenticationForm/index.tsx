@@ -11,6 +11,7 @@ import { AuthenticationFormState } from "./AuthenticationReducer";
 
 interface Props {
   fullForm: boolean;
+  isloading?: boolean;
   inputState: AuthenticationFormState;
   inputDispatch: React.Dispatch<any>;
 
@@ -21,6 +22,7 @@ interface Props {
 
 const AuthenticationForm: FC<Props> = ({
   fullForm,
+  isloading,
 
   inputState,
   inputDispatch,
@@ -38,6 +40,7 @@ const AuthenticationForm: FC<Props> = ({
       <AuthenticationFormCard>
         <AuthenticationFormTitle>instagram</AuthenticationFormTitle>
         <UserForm
+          isLoading={isloading}
           fullForm={fullForm}
           submitHandler={submitHandler}
           inputDispatch={inputDispatch}

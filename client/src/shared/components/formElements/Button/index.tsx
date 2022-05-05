@@ -1,16 +1,22 @@
 import { FC } from "react";
 import { scaleDown, scaleUp } from "../../../framerMotion/whileVariants";
-import { ButtonContainer, TextButtonContainer } from "./Button.styled";
+import Loader from "../../UIElements/Loader";
+import {
+  ButtonContainer,
+  ButtonLoaderContainer,
+  TextButtonContainer,
+} from "./Button.styled";
 
 interface Props {
   text: string;
   onClick?: () => void;
   style?: "action" | "text";
   color?: string;
+  isLoading?: boolean;
   type?: "button" | "submit" | "reset";
 }
 
-const Button: FC<Props> = ({ text, style, ...rest }) => {
+const Button: FC<Props> = ({ text, style, isLoading, ...rest }) => {
   if (style === "text") {
     return (
       <TextButtonContainer
@@ -32,6 +38,7 @@ const Button: FC<Props> = ({ text, style, ...rest }) => {
       {...rest}
     >
       {text}
+      <ButtonLoaderContainer>{isLoading && <Loader />}</ButtonLoaderContainer>
     </ButtonContainer>
   );
 };

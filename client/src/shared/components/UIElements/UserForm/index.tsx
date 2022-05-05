@@ -10,6 +10,7 @@ import { UserFormStyle } from "./UserForm.styled";
 
 type Props = {
   fullForm: boolean;
+  isLoading?: boolean;
 
   inputState: AuthenticationFormState;
   inputDispatch: React.Dispatch<any>;
@@ -25,6 +26,7 @@ const UserForm = ({
   inputState,
   inputDispatch,
   errorAnimationState,
+  isLoading,
 }: Props) => {
   return (
     <UserFormStyle onSubmit={submitHandler}>
@@ -81,7 +83,10 @@ const UserForm = ({
           })
         }
       />
-      <Button text={errorAnimationState.errorMessage || "submit"} />
+      <Button
+        text={errorAnimationState.errorMessage || "submit"}
+        isLoading={isLoading}
+      />
     </UserFormStyle>
   );
 };

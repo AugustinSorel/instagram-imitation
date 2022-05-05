@@ -26,13 +26,13 @@ const useSignUp = (
     });
   };
 
-  const { mutate: signUpMutate } = useMutation(createUser, {
+  const { mutate: signUpMutate, isLoading } = useMutation(createUser, {
     onSuccess: successHandler,
 
     onError: errorHandler,
   });
 
-  return signUpMutate;
+  return { signUpMutate, isLoading };
 };
 
 export default useSignUp;
