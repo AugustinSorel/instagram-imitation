@@ -101,13 +101,13 @@ const ProfileModal = () => {
 
         <Button
           text="logout"
-          type="text"
+          style="text"
           onClick={logoutHandler}
           color="gray"
         />
         <Button
           text="delete"
-          type="text"
+          style="text"
           color={theme.colors.error}
           onClick={deleteHandler}
         />

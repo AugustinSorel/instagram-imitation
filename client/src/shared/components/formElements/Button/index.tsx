@@ -5,12 +5,13 @@ import { ButtonContainer, TextButtonContainer } from "./Button.styled";
 interface Props {
   text: string;
   onClick?: () => void;
-  type?: "action" | "text";
+  style?: "action" | "text";
   color?: string;
+  type?: "button" | "submit" | "reset";
 }
 
-const Button: FC<Props> = ({ text, type, ...rest }) => {
-  if (type === "text") {
+const Button: FC<Props> = ({ text, style, ...rest }) => {
+  if (style === "text") {
     return (
       <TextButtonContainer
         whileHover={{ ...scaleUp }}

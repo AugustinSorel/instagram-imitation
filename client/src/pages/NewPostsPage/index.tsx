@@ -1,62 +1,51 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef } from "react";
 import Button from "../../shared/components/formElements/Button";
-import ImagePicker from "../../shared/components/formElements/ImagePicker";
 import SvgIcon from "../../shared/components/UIElements/SvgIcon";
 import MaxWidthWrapper from "../../shared/components/wrappers/MaxWidthWrapper";
-import { scaleDown, scaleUp } from "../../shared/framerMotion/whileVariants";
 import icons from "../../shared/utils/icons";
 import {
-  NewPostDescriptionInput,
-  NewPostImagePickerContainer,
-  NewPostImageTextContainer,
-  NewPostImageTitle,
-  NewPostPaddingContainer,
-  NewPostPageContainer,
+  NewPostBrowseInput,
+  NewPostContainer,
+  NewPostForm,
+  NewPostTitle,
 } from "./NewPostPage.styled";
 
 const NewPostsPage = () => {
-  const [userAvatar, setUserAvatar] = useState("");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+  const selectClickHandler = () => {
+    if (fileInput.current) {
+      fileInput.current.click();
+    }
+  };
+
+  const fileChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
+      console.log("No file selected");
       return;
     }
 
     const file = e.target.files[0];
 
-    if (!file) {
-      return;
-    }
-    setAvatarFile(file);
-    const objectUrl = URL.createObjectURL(file);
-    setUserAvatar(objectUrl);
+    console.log("submitted", file);
   };
 
   return (
-    <NewPostPageContainer>
+    <NewPostContainer>
       <MaxWidthWrapper>
-        <NewPostPaddingContainer>
-          <NewPostImagePickerContainer
-            whileHover={{ ...scaleUp }}
-            whileTap={{ ...scaleDown }}
-          >
-            <NewPostImageTextContainer>
-              <SvgIcon path={icons.camera} />
-              <NewPostImageTitle>select an image</NewPostImageTitle>
-            </NewPostImageTextContainer>
-            <ImagePicker src={userAvatar} onChange={handleFileChange} />
-          </NewPostImagePickerContainer>
-          <NewPostDescriptionInput
-            placeholder="description..."
-            rows={4}
-            whileHover={{ ...scaleUp }}
-            whileTap={{ ...scaleDown }}
+        <NewPostForm>
+          <SvgIcon path={icons.camera} />
+          <NewPostTitle>add a new post</NewPostTitle>
+
+          <NewPostBrowseInput
+            ref={fileInput}
+            type="file"
+            onChange={fileChangeHandler}
           />
-          {userAvatar && <Button text="submit" />}
-        </NewPostPaddingContainer>
+          <Button text="select" onClick={selectClickHandler} type="button" />
+        </NewPostForm>
       </MaxWidthWrapper>
-    </NewPostPageContainer>
+    </NewPostContainer>
   );
 };
 
