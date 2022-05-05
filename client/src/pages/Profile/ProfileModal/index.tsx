@@ -84,7 +84,9 @@ const ProfileModal = () => {
       <ProfileModalContainer>
         <SvgIcon path={icons.cross} onClick={close} />
 
-        <ImagePicker src={userAvatar} onChange={handleFileChange} />
+        <div style={{ width: "200px", height: "200px", alignSelf: "center" }}>
+          <ImagePicker src={userAvatar} onChange={handleFileChange} />
+        </div>
 
         <UserForm
           fullForm
