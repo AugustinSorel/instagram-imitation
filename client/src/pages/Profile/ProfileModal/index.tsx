@@ -11,7 +11,10 @@ import useLogout from "../../../shared/hooks/useLogout";
 import theme from "../../../shared/styles/theme";
 import User from "../../../shared/types/user";
 import icons from "../../../shared/utils/icons";
-import { ProfileModalContainer } from "./ProfileModal.styled";
+import {
+  ProfileModalContainer,
+  ProfileModalImagePickerContainer,
+} from "./ProfileModal.styled";
 import useDeleteUserMutate from "./useDeleteUserMutate";
 import useProfileDefaultValues from "./useProfileDefaultValues";
 import useProfileModal from "./useProfileModal";
@@ -84,9 +87,9 @@ const ProfileModal = () => {
       <ProfileModalContainer>
         <SvgIcon path={icons.cross} onClick={close} />
 
-        <div style={{ width: "200px", height: "200px", alignSelf: "center" }}>
+        <ProfileModalImagePickerContainer>
           <ImagePicker src={userAvatar} onChange={handleFileChange} />
-        </div>
+        </ProfileModalImagePickerContainer>
 
         <UserForm
           fullForm

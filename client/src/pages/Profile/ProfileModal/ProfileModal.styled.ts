@@ -14,3 +14,9 @@ export const ProfileModalContainer = styled.div`
     align-self: flex-end;
   }
 `;
+
+export const ProfileModalImagePickerContainer = styled.div`
+  width: 200px;
+  height: 200px;
+  align-self: center;
+`;
