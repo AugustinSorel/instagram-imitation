@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import AuthError from "../errors/auth.error";
+import PostError from "../errors/post.error";
 import UserError from "../errors/user.errors";
 import ZodError from "../errors/zod.errors";
 
@@ -26,6 +27,10 @@ const apiError = (
   }
 
   if (err instanceof AuthError) {
+    return res.status(err.code).json({ message: err.message });
+  }
+
+  if (err instanceof PostError) {
     return res.status(err.code).json({ message: err.message });
   }
 

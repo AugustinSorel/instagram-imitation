@@ -1,4 +1,5 @@
 import express from "express";
+import postsRouter from "./posts.routes";
 import usersRouter from "./users.routes";
 
 const router = express.Router();
@@ -8,5 +9,6 @@ router.get("/health-check", (req, res) => {
 });
 
 router.use("/users", usersRouter);
+router.use("/posts", postsRouter);
 
 export default router;

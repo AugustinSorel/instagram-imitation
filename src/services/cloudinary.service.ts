@@ -12,3 +12,9 @@ export const deleteAvatar = (userId: string) => {
     `instagram-imitation/avatars/${userId}`
   );
 };
+
+export const uploadPost = (filePath: string) => {
+  return cloudinary.v2.uploader.upload(filePath, {
+    upload_preset: "userPosts",
+  });
+};

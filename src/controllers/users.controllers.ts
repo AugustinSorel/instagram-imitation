@@ -19,7 +19,6 @@ import {
   getAccessTokenExpiresDate,
   getRefreshTokenExpiresDate,
 } from "../utils/jwt.utils";
-import cloudinary from "../utils/cloudinary.util";
 import { deleteAvatar, uploadAvatar } from "../services/cloudinary.service";
 
 export const userSignUp = async (

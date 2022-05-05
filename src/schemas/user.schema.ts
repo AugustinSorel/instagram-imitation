@@ -26,7 +26,7 @@ const password = string({
   .min(3, "password must be at least 3 characters")
   .max(1024, "password must be at most 1024 characters");
 
-const avatar = any({ required_error: "avatar is required" });
+const avatar = any();
 
 export const userSignUpSchema = object({
   body: object({
