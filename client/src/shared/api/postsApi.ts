@@ -1,10 +1,8 @@
 import axios from "axios";
-
-const API_URI =
-  process.env.REACT_APP_BACKEND_URI || "http://localhost:5000/api";
+import getApiUri from "../utils/getApiUri";
 
 const postsApi = axios.create({
-  baseURL: `${API_URI}/posts`,
+  baseURL: `${getApiUri()}/posts`,
   withCredentials: true,
 });
 

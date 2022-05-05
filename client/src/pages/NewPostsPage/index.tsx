@@ -1,6 +1,4 @@
 import { ChangeEvent, useRef } from "react";
-import { useMutation } from "react-query";
-import { addNewPost } from "../../shared/api/postsApi";
 import Button from "../../shared/components/formElements/Button";
 import SvgIcon from "../../shared/components/UIElements/SvgIcon";
 import MaxWidthWrapper from "../../shared/components/wrappers/MaxWidthWrapper";
@@ -11,18 +9,11 @@ import {
   NewPostForm,
   NewPostTitle,
 } from "./NewPostPage.styled";
+import useAddNewPostMutate from "./useAddNewPostMutate";
 
 const NewPostsPage = () => {
   const fileInput = useRef<HTMLInputElement>(null);
-
-  const { mutate: addNewPostMutate } = useMutation(addNewPost, {
-    onSuccess: (data: any) => {
-      console.log(data);
-    },
-    onError: (error: any) => {
-      console.log(error);
-    },
-  });
+  const addNewPostMutate = useAddNewPostMutate();
 
   const selectClickHandler = () => {
     if (fileInput.current) {
@@ -32,14 +23,11 @@ const NewPostsPage = () => {
 
   const fileChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
-      console.log("No file selected");
       return;
     }
 
-    const file = e.target.files[0];
-
     const formData = new FormData();
-    formData.append("post", file);
+    formData.append("post", e.target.files[0]);
 
     addNewPostMutate(formData);
   };
