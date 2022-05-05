@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useReducer, useState } from "react";
 import { useQueryClient } from "react-query";
 import Button from "../../../shared/components/formElements/Button";
+import ImagePicker from "../../../shared/components/formElements/ImagePicker";
 import { authenticationFormErrorAnimationReducer } from "../../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
 import SvgIcon from "../../../shared/components/UIElements/SvgIcon";
@@ -10,12 +11,7 @@ import useLogout from "../../../shared/hooks/useLogout";
 import theme from "../../../shared/styles/theme";
 import User from "../../../shared/types/user";
 import icons from "../../../shared/utils/icons";
-import {
-  FilePickerInput,
-  ImagePickerContainer,
-  ProfileModalAvatar,
-  ProfileModalContainer,
-} from "./ProfileModal.styled";
+import { ProfileModalContainer } from "./ProfileModal.styled";
 import useDeleteUserMutate from "./useDeleteUserMutate";
 import useProfileDefaultValues from "./useProfileDefaultValues";
 import useProfileModal from "./useProfileModal";
@@ -88,10 +84,7 @@ const ProfileModal = () => {
       <ProfileModalContainer>
         <SvgIcon path={icons.cross} onClick={close} />
 
-        <ImagePickerContainer>
-          <ProfileModalAvatar src={userAvatar} alt="userAvatar" />
-          <FilePickerInput type="file" onChange={handleFileChange} />
-        </ImagePickerContainer>
+        <ImagePicker src={userAvatar} onChange={handleFileChange} />
 
         <UserForm
           fullForm

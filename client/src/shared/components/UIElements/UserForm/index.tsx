@@ -69,6 +69,7 @@ const UserForm = ({
         />
       )}
       <Input
+        type="password"
         variants={errorVariants}
         animate={errorAnimationState.passwordAnimation!}
         placeholder="password"
