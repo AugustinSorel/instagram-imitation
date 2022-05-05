@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
-import { Schema, model } from "mongoose";
+import { Schema, model, PopulatedDoc } from "mongoose";
+import { IPost } from "./Post.model";
 
 interface IUser {
   username: string;
@@ -8,6 +9,8 @@ interface IUser {
   password: string;
   refreshTokenCount: number;
   avatar: string;
+  posts: [PopulatedDoc<IPost>];
+  postsLiked: [PopulatedDoc<IPost>];
   validatePassword: (password: string) => Promise<boolean>;
 }
 
@@ -54,6 +57,20 @@ const userSchema = new Schema<IUser>({
     default:
       "https://res.cloudinary.com/dvjmzgrqq/image/upload/v1651599950/instagram-imitation/avatars/default-avatar_xo7ier.png",
   },
+
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+
+  postsLiked: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {

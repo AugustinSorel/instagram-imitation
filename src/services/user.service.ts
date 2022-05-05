@@ -1,5 +1,6 @@
-import User from "../models/User";
+import User from "../models/User.model";
 import { UserSignUpSchema } from "../schemas/user.schema";
+import { addNewPost } from "./post.service";
 
 export const createUser = (user: UserSignUpSchema) => {
   return User.create(user);
@@ -25,4 +26,10 @@ export const findOne = (query: any) => {
 
 export const deleteUserById = (userId: string) => {
   return User.findByIdAndDelete(userId);
+};
+
+export const userAddNewPost = async (id: string, url: string) => {
+  return User.findByIdAndUpdate(id, {
+    $push: { posts: await addNewPost(url) },
+  });
 };
