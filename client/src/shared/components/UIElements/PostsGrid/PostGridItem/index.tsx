@@ -1,7 +1,8 @@
 import { AnimatePresence } from "framer-motion";
-import { MouseEvent, useState } from "react";
-import { useQueryClient } from "react-query";
+import { MouseEvent, useEffect, useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { likePost } from "../../../../api/postsApi";
 import { listItemVariants } from "../../../../framerMotion/listAnimationVariants";
 import cardVariants from "../../../../framerMotion/postCardVariants";
 import Post from "../../../../types/post";
@@ -15,6 +16,7 @@ import {
   PostGridItemDataText,
   PostGridItemImage,
 } from "./PostGridItem.styled";
+import useLikePostMutate from "./useLikePostMutate";
 
 type Props = {
   post: Post;
@@ -26,6 +28,21 @@ const PostGridItem = ({ post }: Props) => {
   const queryClient = useQueryClient();
   const user = queryClient.getQueryData("user") as User;
 
+  const [likes, setLikes] = useState(post.likes);
+  const [hasLiked, setHasLiked] = useState(
+    post.likedBy.includes(user._id as string)
+  );
+
+  const toggleHasLiked = () => {
+    setHasLiked(!hasLiked);
+  };
+
+  const updateLikes = () => {
+    setLikes(hasLiked ? likes - 1 : likes + 1);
+  };
+
+  const likePostMutate = useLikePostMutate({ toggleHasLiked, updateLikes });
+
   const mouseEnterHandler = (e: MouseEvent) => {
     setCanShowBackDrop(true);
   };
@@ -35,18 +52,13 @@ const PostGridItem = ({ post }: Props) => {
   };
 
   const clickNavigateHandler = () => {
-    console.log("clicked");
     navigate(`/post/${post._id}`);
   };
 
   const leaveLikeHandler = (e: MouseEvent) => {
     e.stopPropagation();
 
-    console.log("like icon clicked");
-  };
-
-  const userLikedPost = () => {
-    return user.postsLiked.includes(post._id);
+    likePostMutate(post._id);
   };
 
   return (
@@ -65,13 +77,12 @@ const PostGridItem = ({ post }: Props) => {
             animate="animate"
             exit="exit"
           >
-            <PostGridItemDataContainer>
+            <PostGridItemDataContainer onClick={leaveLikeHandler}>
               <SvgIcon
-                path={userLikedPost() ? icons.heart : icons.camera}
-                onClick={leaveLikeHandler}
+                path={hasLiked ? icons.heartFilled : icons.heart}
                 inverseColor
               />
-              <PostGridItemDataText>{post.likes}</PostGridItemDataText>
+              <PostGridItemDataText>{likes}</PostGridItemDataText>
             </PostGridItemDataContainer>
 
             <PostGridItemDataContainer>

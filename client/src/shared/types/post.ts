@@ -5,7 +5,7 @@ type Post = {
   createdBy: User;
   url: string;
   likes: number;
-  likedBy: [User];
+  likedBy: [string];
 };
 
 export default Post;
