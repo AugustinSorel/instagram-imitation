@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const ProfileModalContainer = styled.div`
   padding: 1rem;
-  background-color: white;
+  background-color: var(--background);
   border-radius: var(--border-radius);
 
   display: flex;

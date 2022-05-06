@@ -33,5 +33,5 @@ export const PostGridItemDataContainer = styled.div`
 export const PostGridItemDataText = styled.span`
   font-size: var(--font-size-medium);
   font-weight: var(--font-weight-bold);
-  color: var(--accent-color);
+  color: var(--background);
 `;

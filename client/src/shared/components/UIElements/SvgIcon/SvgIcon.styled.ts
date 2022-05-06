@@ -6,10 +6,10 @@ interface ISvgIconProps {
 }
 
 export const Svg = styled(motion.svg)<ISvgIconProps>`
-  fill: ${({ $inverseColor }) => ($inverseColor ? "#fff" : "var(--color)")};
+  fill: ${({ $inverseColor }) =>
+    $inverseColor ? "var(--background)" : "var(--color)"};
 
   width: 24px;
   height: 24px;
-  /* fill: var(--color); */
   cursor: pointer;
 `;
