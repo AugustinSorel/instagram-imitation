@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 interface ISvgIconProps {
   $inverseColor?: boolean;
+  $nonClickable?: boolean;
 }
 
 export const Svg = styled(motion.svg)<ISvgIconProps>`
@@ -11,5 +12,6 @@ export const Svg = styled(motion.svg)<ISvgIconProps>`
 
   width: 24px;
   height: 24px;
-  cursor: pointer;
+
+  cursor: ${({ $nonClickable }) => ($nonClickable ? "default" : "pointer")};
 `;

@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import PostError from "../errors/post.error";
-import PostModel from "../models/Post.model";
 import UserModel from "../models/User.model";
 import { AddNewPostSchema, LikePostSchema } from "../schemas/posts.schema";
 import { uploadPost } from "../services/cloudinary.service";

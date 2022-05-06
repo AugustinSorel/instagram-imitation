@@ -16,6 +16,7 @@ const SvgIcon: FC<Props> = ({ path, inverseColor, nonClickable, ...rest }) => {
       whileTap={{ ...(!nonClickable && { ...scaleDown }) }}
       viewBox="0 0 24 24"
       $inverseColor={inverseColor}
+      $nonClickable={nonClickable}
       {...rest}
     >
       <path d={path} />
