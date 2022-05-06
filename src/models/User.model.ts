@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { Schema, model, PopulatedDoc } from "mongoose";
 import { IPost } from "./Post.model";
 
-interface IUser {
+export interface IUser {
   username: string;
   email: string;
   age: number;

@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
 import AuthError from "../errors/auth.error";
 import PostError from "../errors/post.error";
 import PostModel from "../models/Post.model";
 import UserModel from "../models/User.model";
 import { AddNewPostSchema } from "../schemas/posts.schema";
 import { uploadPost } from "../services/cloudinary.service";
-import { findById, userAddNewPost } from "../services/user.service";
+import { findAllPosts, postNewPost } from "../services/post.service";
+import { findById, pushNewPost } from "../services/user.service";
 
 export const addNewPost = async (
   req: Request<{}, {}, AddNewPostSchema>,
@@ -20,9 +22,11 @@ export const addNewPost = async (
     const newPost = await uploadPost(req.file.path);
     const newPostUrl = newPost.secure_url;
 
-    await userAddNewPost(res.locals.userId, newPostUrl);
+    const postCreated = await postNewPost(res.locals.userId, newPostUrl);
 
-    res.sendStatus(200);
+    await pushNewPost(res.locals.userId, postCreated._id);
+
+    res.json(postCreated);
   } catch (error) {
     console.log("ERROR in addNewPost", error);
     res.sendStatus(500);
@@ -35,17 +39,9 @@ export const getUserPosts = async (
   next: NextFunction
 ) => {
   try {
-    const user = await findById(res.locals.userId);
+    const userPosts = await findAllPosts(res.locals.userId);
 
-    if (!user) {
-      return next(AuthError.invalidIdError());
-    }
-
-    const userPosts = user.posts;
-
-    const posts = await PostModel.find({ _id: { $in: userPosts } });
-
-    res.json(posts);
+    res.json(userPosts);
   } catch (error) {
     console.log("ERROR in getUserPosts", error);
     res.sendStatus(500);

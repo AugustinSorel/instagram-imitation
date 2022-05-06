@@ -1,6 +1,6 @@
+import mongoose from "mongoose";
 import User from "../models/User.model";
 import { UserSignUpSchema } from "../schemas/user.schema";
-import { addNewPost } from "./post.service";
 
 export const createUser = (user: UserSignUpSchema) => {
   return User.create(user);
@@ -28,8 +28,11 @@ export const deleteUserById = (userId: string) => {
   return User.findByIdAndDelete(userId);
 };
 
-export const userAddNewPost = async (id: string, url: string) => {
-  return User.findByIdAndUpdate(id, {
-    $push: { posts: await addNewPost(url) },
+export const pushNewPost = (
+  userId: string,
+  newPostId: mongoose.Types.ObjectId
+) => {
+  return User.findByIdAndUpdate(userId, {
+    $push: { posts: newPostId },
   });
 };
