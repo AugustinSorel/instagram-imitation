@@ -5,5 +5,5 @@ export const postNewPost = (createdBy: string, url: string) => {
 };
 
 export const findAllPosts = (userId: string) => {
-  return PostModel.find({ createdBy: userId });
+  return PostModel.find({ createdBy: userId }).sort({ createdAt: -1 });
 };

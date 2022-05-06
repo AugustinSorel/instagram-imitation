@@ -6,6 +6,7 @@ export interface IPost {
   url: string;
   likes: number;
   likedBy: [PopulatedDoc<IUser>];
+  createdAt: Date;
 }
 
 const postSchema = new Schema<IPost>({
@@ -32,6 +33,12 @@ const postSchema = new Schema<IPost>({
       ref: "User",
     },
   ],
+
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
 });
 
 export default model<IPost>("Post", postSchema);

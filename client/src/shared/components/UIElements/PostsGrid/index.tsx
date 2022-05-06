@@ -13,6 +13,10 @@ const PostsGrid = ({ posts }: Props) => {
     return <h1>Loading...</h1>;
   }
 
+  if (posts.length === 0) {
+    return <h1>No posts</h1>;
+  }
+
   return (
     <AnimatePresence exitBeforeEnter initial>
       <PostsGridContainer
