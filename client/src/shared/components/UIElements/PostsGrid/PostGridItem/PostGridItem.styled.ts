@@ -6,6 +6,7 @@ export const PostGridItemContainer = styled(motion.div)`
   height: 100%;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 `;
 
 export const PostGridItemImage = styled.img`

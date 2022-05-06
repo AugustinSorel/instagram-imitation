@@ -36,7 +36,7 @@ const NewPostsPage = () => {
     <NewPostContainer>
       <MaxWidthWrapper>
         <NewPostForm>
-          <SvgIcon path={icons.camera} />
+          <SvgIcon nonClickable path={icons.camera} />
           <NewPostTitle>add a new post</NewPostTitle>
 
           <NewPostBrowseInput

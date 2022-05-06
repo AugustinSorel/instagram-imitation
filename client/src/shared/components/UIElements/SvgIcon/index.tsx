@@ -4,15 +4,16 @@ import { Svg } from "./SvgIcon.styled";
 
 interface Props {
   path: string;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
   inverseColor?: boolean;
+  nonClickable?: boolean;
 }
 
-const SvgIcon: FC<Props> = ({ path, inverseColor, ...rest }) => {
+const SvgIcon: FC<Props> = ({ path, inverseColor, nonClickable, ...rest }) => {
   return (
     <Svg
-      whileHover={{ ...scaleUp }}
-      whileTap={{ ...scaleDown }}
+      whileHover={{ ...(!nonClickable && { ...scaleUp }) }}
+      whileTap={{ ...(!nonClickable && { ...scaleDown }) }}
       viewBox="0 0 24 24"
       $inverseColor={inverseColor}
       {...rest}

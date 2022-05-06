@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import User from "../models/User.model";
 import { UserSignUpSchema } from "../schemas/user.schema";
 
@@ -28,11 +27,14 @@ export const deleteUserById = (userId: string) => {
   return User.findByIdAndDelete(userId);
 };
 
-export const pushNewPost = (
-  userId: string,
-  newPostId: mongoose.Types.ObjectId
-) => {
+export const pushNewPost = (userId: string, newPostId: string) => {
   return User.findByIdAndUpdate(userId, {
-    $push: { posts: newPostId },
+    $push: { postsLiked: newPostId },
+  });
+};
+
+export const pullPost = (userId: string, postId: string) => {
+  return User.findByIdAndUpdate(userId, {
+    $pull: { postsLiked: postId },
   });
 };

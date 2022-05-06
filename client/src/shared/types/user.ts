@@ -1,3 +1,5 @@
+import Post from "./post";
+
 type User = {
   _id?: string;
   username: string;
@@ -5,6 +7,8 @@ type User = {
   age: string;
   password: string;
   avatar: string;
+  posts: string[];
+  postsLiked: string[];
 };
 
 export default User;
