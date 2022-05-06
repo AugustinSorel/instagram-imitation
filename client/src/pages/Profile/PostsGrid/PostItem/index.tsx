@@ -1,7 +1,8 @@
-import { AnimatePresence, Variants } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { MouseEvent, useState } from "react";
 import SvgIcon from "../../../../shared/components/UIElements/SvgIcon";
-import BackdropWrapper from "../../../../shared/components/wrappers/BackdropWrapper";
+import { listItemVariants } from "../../../../shared/framerMotion/listAnimationVariants";
+import cardVariants from "../../../../shared/framerMotion/postCardVariants";
 import Post from "../../../../shared/types/post";
 import icons from "../../../../shared/utils/icons";
 import {
@@ -14,36 +15,6 @@ import {
 
 type Props = {
   post: Post;
-};
-
-const postVariants: Variants = {
-  initial: {
-    opacity: 0,
-  },
-  animate: {
-    opacity: 1,
-    transition: {
-      duration: 0.75,
-    },
-  },
-};
-
-const testVariants: Variants = {
-  initial: {
-    y: "100%",
-    opacity: 0,
-  },
-  animate: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      animation: "ease",
-    },
-  },
-  exit: {
-    y: "100%",
-    opacity: 0,
-  },
 };
 
 const PostItem = ({ post }: Props) => {
@@ -59,7 +30,7 @@ const PostItem = ({ post }: Props) => {
 
   return (
     <PostItemContainer
-      variants={postVariants}
+      variants={listItemVariants}
       onMouseEnter={(e) => mouseEnterHandler(e)}
       onMouseLeave={(e) => mouseLeaveHandler(e)}
     >
@@ -67,7 +38,7 @@ const PostItem = ({ post }: Props) => {
       <AnimatePresence exitBeforeEnter>
         {canShowBackDrop && (
           <PostItemBackdrop
-            variants={testVariants}
+            variants={cardVariants}
             initial="initial"
             animate="animate"
             exit="exit"
