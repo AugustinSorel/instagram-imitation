@@ -1,4 +1,4 @@
-import { AnimatePresence, Variants } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import loaderVariants from "../../../framerMotion/loaderVariants";
 import { LoaderStyle } from "./Loader.styled";
 
