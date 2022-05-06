@@ -1,13 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import mongoose from "mongoose";
-import AuthError from "../errors/auth.error";
 import PostError from "../errors/post.error";
-import PostModel from "../models/Post.model";
-import UserModel from "../models/User.model";
 import { AddNewPostSchema } from "../schemas/posts.schema";
 import { uploadPost } from "../services/cloudinary.service";
 import { findAllPosts, postNewPost } from "../services/post.service";
-import { findById, pushNewPost } from "../services/user.service";
+import { pushNewPost } from "../services/user.service";
 
 export const addNewPost = async (
   req: Request<{}, {}, AddNewPostSchema>,

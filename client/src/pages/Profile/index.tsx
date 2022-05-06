@@ -1,5 +1,6 @@
 import MaxWidthWrapper from "../../shared/components/wrappers/MaxWidthWrapper";
-import { Grid, GridItem, ProfileContainer } from "./Profile.styled";
+import GridPosts from "./PostsGrid";
+import { ProfileContainer } from "./Profile.styled";
 import ProfileHeader from "./ProfileHeader";
 
 const Profile = () => {
@@ -7,11 +8,7 @@ const Profile = () => {
     <ProfileContainer>
       <MaxWidthWrapper>
         <ProfileHeader />
-        <Grid>
-          {[...Array(10)].map((_, i) => (
-            <GridItem key={i} />
-          ))}
-        </Grid>
+        <GridPosts />
       </MaxWidthWrapper>
     </ProfileContainer>
   );
