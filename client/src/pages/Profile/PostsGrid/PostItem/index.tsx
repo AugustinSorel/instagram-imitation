@@ -7,6 +7,8 @@ import icons from "../../../../shared/utils/icons";
 import {
   PostItemBackdrop,
   PostItemContainer,
+  PostItemDataContainer,
+  PostItemDataText,
   PostItemImage,
 } from "./PostItem.styled";
 
@@ -70,8 +72,15 @@ const PostItem = ({ post }: Props) => {
             animate="animate"
             exit="exit"
           >
-            <SvgIcon path={icons.camera} inverseColor />
-            <SvgIcon path={icons.cross} inverseColor />
+            <PostItemDataContainer>
+              <SvgIcon path={icons.heart} inverseColor />
+              <PostItemDataText>{post.likes}</PostItemDataText>
+            </PostItemDataContainer>
+
+            <PostItemDataContainer>
+              <SvgIcon path={icons.comment} inverseColor />
+              <PostItemDataText>{0}</PostItemDataText>
+            </PostItemDataContainer>
           </PostItemBackdrop>
         )}
       </AnimatePresence>

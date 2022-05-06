@@ -11,4 +11,6 @@ export const BackdropWrapperContainer = styled(motion.div)`
   justify-content: center;
 
   backdrop-filter: blur(5px);
+
+  z-index: 10;
 `;

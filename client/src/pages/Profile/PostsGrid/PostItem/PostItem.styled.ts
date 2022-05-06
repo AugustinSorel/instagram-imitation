@@ -17,8 +17,21 @@ export const PostItemBackdrop = styled(motion.div)`
   position: absolute;
   inset: 0;
   background-color: #000000aa;
+  backdrop-filter: blur(5px);
 
   display: flex;
   align-items: center;
   justify-content: space-around;
+`;
+
+export const PostItemDataContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+export const PostItemDataText = styled.span`
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-bold);
+  color: var(--accent-color);
 `;
