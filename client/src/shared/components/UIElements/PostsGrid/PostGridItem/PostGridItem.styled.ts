@@ -1,19 +1,19 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 
-export const PostItemContainer = styled(motion.div)`
+export const PostGridItemContainer = styled(motion.div)`
   width: 100%;
   height: 100%;
   position: relative;
   overflow: hidden;
 `;
 
-export const PostItemImage = styled.img`
+export const PostGridItemImage = styled.img`
   width: 100%;
   height: 100%;
 `;
 
-export const PostItemBackdrop = styled(motion.div)`
+export const PostGridItemBackdrop = styled(motion.div)`
   position: absolute;
   inset: 0;
   background-color: #000000aa;
@@ -24,13 +24,13 @@ export const PostItemBackdrop = styled(motion.div)`
   justify-content: space-around;
 `;
 
-export const PostItemDataContainer = styled.div`
+export const PostGridItemDataContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
 `;
 
-export const PostItemDataText = styled.span`
+export const PostGridItemDataText = styled.span`
   font-size: var(--font-size-medium);
   font-weight: var(--font-weight-bold);
   color: var(--accent-color);

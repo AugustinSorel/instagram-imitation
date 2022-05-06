@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 
-export const Grid = styled(motion.div)`
+export const PostsGridContainer = styled(motion.div)`
   padding: 1rem;
   display: grid;
   gap: 1rem;
