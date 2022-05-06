@@ -11,6 +11,7 @@ export const ProfileHeaderContainer = styled.header`
   display: flex;
   align-items: center;
   gap: 1rem;
+  z-index: 1;
 `;
 
 export const ProfileUsername = styled.h1`

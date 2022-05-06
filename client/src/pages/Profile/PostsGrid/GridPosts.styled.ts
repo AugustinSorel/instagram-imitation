@@ -1,6 +1,7 @@
+import { motion } from "framer-motion";
 import styled from "styled-components";
 
-export const Grid = styled.div`
+export const Grid = styled(motion.div)`
   padding: 1rem;
   display: grid;
   gap: 1rem;
