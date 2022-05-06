@@ -27,14 +27,20 @@ export const deleteUserById = (userId: string) => {
   return User.findByIdAndDelete(userId);
 };
 
-export const pushNewPost = (userId: string, newPostId: string) => {
+export const userPushNewPost = (userId: string, newPostId: string) => {
   return User.findByIdAndUpdate(userId, {
-    $push: { postsLiked: newPostId },
+    $push: { posts: newPostId },
   });
 };
 
-export const pullPost = (userId: string, postId: string) => {
+export const userPullPostLiked = (userId: string, postId: string) => {
   return User.findByIdAndUpdate(userId, {
     $pull: { postsLiked: postId },
+  });
+};
+
+export const userPushPostLiked = (userId: string, postId: string) => {
+  return User.findByIdAndUpdate(userId, {
+    $push: { postsLiked: postId },
   });
 };

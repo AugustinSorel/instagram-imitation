@@ -1,8 +1,7 @@
 import { AnimatePresence } from "framer-motion";
-import { MouseEvent, useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
+import { MouseEvent, useState } from "react";
+import { useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { likePost } from "../../../../api/postsApi";
 import { listItemVariants } from "../../../../framerMotion/listAnimationVariants";
 import cardVariants from "../../../../framerMotion/postCardVariants";
 import Post from "../../../../types/post";

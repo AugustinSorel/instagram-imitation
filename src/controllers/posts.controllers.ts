@@ -13,7 +13,11 @@ import {
   pullPostLikedUser,
   pushPostLikedUser,
 } from "../services/post.service";
-import { pullPost, pushNewPost } from "../services/user.service";
+import {
+  userPullPostLiked,
+  userPushNewPost,
+  userPushPostLiked,
+} from "../services/user.service";
 
 export const addNewPost = async (
   req: Request<{}, {}, AddNewPostSchema>,
@@ -30,7 +34,7 @@ export const addNewPost = async (
 
     const postCreated = await postNewPost(res.locals.userId, newPostUrl);
 
-    await pushNewPost(res.locals.userId, postCreated._id.toString());
+    await userPushNewPost(res.locals.userId, postCreated._id.toString());
 
     res.json(postCreated);
   } catch (error) {
@@ -72,11 +76,11 @@ export const likePost = async (
     if (
       userLikedPost.postsLiked.includes(new mongoose.Types.ObjectId(postId))
     ) {
-      await pullPost(userId, postId);
+      await userPullPostLiked(userId, postId);
       await decrementLike(postId);
       await pullPostLikedUser(postId, userId);
     } else {
-      await pushNewPost(userId, postId);
+      await userPushPostLiked(userId, postId);
       await incrementLike(postId);
       await pushPostLikedUser(postId, userId);
     }
