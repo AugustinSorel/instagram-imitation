@@ -10,7 +10,7 @@ export const NoPostWarningContainer = styled.div`
   flex-direction: column;
   gap: 1rem;
 
-  & > svg {
+  & > div:first-child {
     align-self: center;
   }
 `;

@@ -9,7 +9,7 @@ export const NewPostForm = styled.form`
   flex-direction: column;
   gap: 1rem;
 
-  & > svg {
+  & > div:first-child {
     align-self: center;
   }
 `;
