@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addNewPost,
+  getUserLikedPosts,
   getUserPosts,
   likePost,
 } from "../controllers/posts.controllers";
@@ -12,6 +13,7 @@ import upload from "../utils/multer.util";
 const postsRouter = express.Router();
 
 postsRouter.get("/", requireUser, getUserPosts);
+postsRouter.get("/posts-liked", requireUser, getUserLikedPosts);
 
 postsRouter.post(
   "/add-new-post",

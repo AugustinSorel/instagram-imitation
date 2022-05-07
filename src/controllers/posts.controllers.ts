@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import PostError from "../errors/post.error";
+import PostModel from "../models/Post.model";
 import UserModel from "../models/User.model";
 import { AddNewPostSchema, LikePostSchema } from "../schemas/posts.schema";
 import { uploadPost } from "../services/cloudinary.service";
@@ -87,6 +88,21 @@ export const likePost = async (
     res.sendStatus(200);
   } catch (error) {
     console.log("ERROR in likePost", error);
+    res.sendStatus(500);
+  }
+};
+
+export const getUserLikedPosts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userLikedPosts = await PostModel.find({ likedBy: res.locals.userId });
+
+    res.json(userLikedPosts);
+  } catch (error) {
+    console.log("ERROR in getUserLikedPosts", error);
     res.sendStatus(500);
   }
 };
