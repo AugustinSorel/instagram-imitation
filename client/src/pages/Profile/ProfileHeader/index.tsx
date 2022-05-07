@@ -1,5 +1,6 @@
 import { AnimatePresence } from "framer-motion";
 import { useQueryClient } from "react-query";
+import Switch from "../../../shared/components/formElements/Switch";
 import { scaleDown, scaleUp } from "../../../shared/framerMotion/whileVariants";
 import useCurrentTheme from "../../../shared/store/useCurrentTheme";
 import User from "../../../shared/types/user";
@@ -9,15 +10,7 @@ import {
   ProfileAvatar,
   ProfileHeaderContainer,
   ProfileUsername,
-  SwitchContainer,
-  SwitchHandle,
 } from "./ProfileHeader.styled";
-
-const spring = {
-  type: "spring",
-  stiffness: 700,
-  damping: 30,
-};
 
 type Props = {};
 
@@ -32,9 +25,7 @@ const ProfileHeader = (props: Props) => {
     <>
       <ProfileHeaderContainer>
         <ProfileUsername>{user.username}</ProfileUsername>
-        <SwitchContainer isClicked={isDarkMode} onClick={toggleTheme}>
-          <SwitchHandle layout transition={spring} />
-        </SwitchContainer>
+        <Switch isOn={isDarkMode} onClick={toggleTheme} />
         <ProfileAvatar
           onClick={open}
           whileHover={{ ...scaleUp }}

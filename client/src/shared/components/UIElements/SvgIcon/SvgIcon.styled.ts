@@ -1,6 +1,10 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 
+export const SvgContainer = styled(motion.div)`
+  display: flex;
+`;
+
 interface ISvgIconProps {
   $inverseColor?: boolean;
   $nonClickable?: boolean;
