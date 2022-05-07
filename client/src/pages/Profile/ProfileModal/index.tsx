@@ -8,7 +8,7 @@ import SvgIcon from "../../../shared/components/UIElements/SvgIcon";
 import UserForm from "../../../shared/components/UIElements/UserForm";
 import ModalWrapper from "../../../shared/components/wrappers/ModalWrapper";
 import useLogout from "../../../shared/hooks/useLogout";
-import theme from "../../../shared/styles/theme";
+import darkTheme from "../../../shared/styles/darkTheme";
 import User from "../../../shared/types/user";
 import icons from "../../../shared/utils/icons";
 import {
@@ -109,7 +109,7 @@ const ProfileModal = () => {
         <Button
           text="delete"
           style="text"
-          color={theme.colors.error}
+          color={darkTheme.colors.error}
           onClick={deleteHandler}
         />
       </ProfileModalContainer>

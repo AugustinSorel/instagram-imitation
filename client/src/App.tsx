@@ -1,6 +1,6 @@
 import { AnimatePresence } from "framer-motion";
 import { Route, Routes, useLocation } from "react-router-dom";
-import { ThemeProvider } from "styled-components";
+import { DefaultTheme, ThemeProvider } from "styled-components";
 import ExplorePage from "./pages/ExplorePage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -11,14 +11,17 @@ import Profile from "./pages/Profile";
 import SignUpPage from "./pages/SignUpPage";
 import Header from "./shared/components/navigation/Header";
 import PrivateRoute from "./shared/components/navigation/PrivateRoute";
+import useCurrentTheme from "./shared/store/useCurrentTheme";
 import GlobalStyle from "./shared/styles/GlobalStyle";
-import theme from "./shared/styles/theme";
 
 function App() {
   const location = useLocation();
+  const { getCurrentTheme } = useCurrentTheme();
+
+  const currentTheme: DefaultTheme = getCurrentTheme();
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={currentTheme}>
       <GlobalStyle />
 
       <AnimatePresence exitBeforeEnter initial={false}>

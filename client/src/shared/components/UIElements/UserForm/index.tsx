@@ -1,4 +1,4 @@
-import errorVariants from "../../../framerMotion/errorVariants";
+import useErrorVariants from "../../../framerMotion/useErrorVariants";
 import Button from "../../formElements/Button";
 import Input from "../../formElements/input";
 import { AuthenticationErrorAnimationState } from "../authenticationForm/authenticationAnimationReducer";
@@ -28,6 +28,8 @@ const UserForm = ({
   errorAnimationState,
   isLoading,
 }: Props) => {
+  const errorVariants = useErrorVariants();
+
   return (
     <UserFormStyle onSubmit={submitHandler}>
       {fullForm && (

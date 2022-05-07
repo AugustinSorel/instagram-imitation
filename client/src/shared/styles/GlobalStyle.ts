@@ -39,6 +39,7 @@ const GlobalStyle = createGlobalStyle`
         font-size: var(--font-size-medium);
         font-weight: var(--font-weight-regular);
         -webkit-tap-highlight-color: transparent;
+        user-select: none;
     }
 
     #root{

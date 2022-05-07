@@ -17,12 +17,21 @@ export const PostGridItemImage = styled.img`
 export const PostGridItemBackdrop = styled(motion.div)`
   position: absolute;
   inset: 0;
-  background-color: #000000aa;
   backdrop-filter: blur(5px);
 
   display: flex;
   align-items: center;
   justify-content: space-around;
+
+  & ::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    z-index: -1;
+    background-color: var(--color);
+    opacity: 0.1;
+  }
 `;
 
 export const PostGridItemDataContainer = styled.div`
