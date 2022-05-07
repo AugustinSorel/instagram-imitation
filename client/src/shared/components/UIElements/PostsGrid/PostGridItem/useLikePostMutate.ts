@@ -22,6 +22,7 @@ const useLikePostMutate = ({ toggleHasLiked, updateLikes }: Props) => {
     onSettled: () => {
       queryClient.invalidateQueries("user");
       queryClient.invalidateQueries("userPosts");
+      queryClient.invalidateQueries("userPostsLiked");
     },
   });
 

@@ -24,3 +24,9 @@ export const likePost = async (postId: string) => {
 
   return res.data;
 };
+
+export const getAllPostsLiked = async () => {
+  const res = await postsApi.get("/posts-liked");
+
+  return res.data;
+};

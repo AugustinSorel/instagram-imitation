@@ -1,5 +1,5 @@
 import { AnimatePresence } from "framer-motion";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { listItemVariants } from "../../../../framerMotion/listAnimationVariants";
@@ -31,6 +31,11 @@ const PostGridItem = ({ post }: Props) => {
   const [hasLiked, setHasLiked] = useState(
     post.likedBy.includes(user._id as string)
   );
+
+  useEffect(() => {
+    setLikes(post.likes);
+    setHasLiked(post.likedBy.includes(user._id as string));
+  }, [post]);
 
   const toggleHasLiked = () => {
     setHasLiked(!hasLiked);
@@ -68,6 +73,7 @@ const PostGridItem = ({ post }: Props) => {
       onClick={clickNavigateHandler}
     >
       <PostGridItemImage src={post.url} />
+
       <AnimatePresence exitBeforeEnter>
         {canShowBackDrop && (
           <PostGridItemBackdrop

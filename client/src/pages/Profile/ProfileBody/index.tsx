@@ -19,7 +19,13 @@ const ProfileBody = (props: Props) => {
   }
 
   if (userPosts.length === 0) {
-    return <NoPostWarning title="Your posts are empty" />;
+    return (
+      <NoPostWarning
+        title="No posts yet"
+        callToActionText="new post"
+        navigateTo="/new-post"
+      />
+    );
   }
 
   return <PostsGrid posts={userPosts} />;

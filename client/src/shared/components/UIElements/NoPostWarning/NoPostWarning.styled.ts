@@ -10,11 +10,13 @@ export const NoPostWarningContainer = styled.div`
   flex-direction: column;
   gap: 1rem;
 
-  align-items: center;
+  & > svg {
+    align-self: center;
+  }
 `;
 
 export const NoPostWarningTitle = styled.h2`
-  font-size: var(--font-size-large);
+  font-size: var(--font-size-medium);
   font-weight: var(--font-weight-regular);
   text-transform: capitalize;
 

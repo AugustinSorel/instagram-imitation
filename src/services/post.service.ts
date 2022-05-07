@@ -27,3 +27,7 @@ export const pullPostLikedUser = (postId: string, userId: string) => {
     $pull: { likedBy: userId },
   });
 };
+
+export const findAllPostsLiked = (userId: string) => {
+  return PostModel.find({ likedBy: userId });
+};

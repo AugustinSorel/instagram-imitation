@@ -8,6 +8,7 @@ import { uploadPost } from "../services/cloudinary.service";
 import {
   decrementLike,
   findAllPosts,
+  findAllPostsLiked,
   incrementLike,
   postNewPost,
   pullPostLikedUser,
@@ -98,7 +99,7 @@ export const getUserLikedPosts = async (
   next: NextFunction
 ) => {
   try {
-    const userLikedPosts = await PostModel.find({ likedBy: res.locals.userId });
+    const userLikedPosts = await findAllPostsLiked(res.locals.userId);
 
     res.json(userLikedPosts);
   } catch (error) {

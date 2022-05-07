@@ -9,20 +9,22 @@ import {
 
 type Props = {
   title: string;
+  callToActionText: string;
+  navigateTo: string;
 };
 
-const NoPostWarning = ({ title }: Props) => {
+const NoPostWarning = ({ title, callToActionText, navigateTo }: Props) => {
   const navigate = useNavigate();
 
   const clickHandler = () => {
-    navigate("/new-post");
+    navigate(navigateTo);
   };
 
   return (
     <NoPostWarningContainer>
       <SvgIcon path={icons.warning} nonClickable />
       <NoPostWarningTitle>{title}</NoPostWarningTitle>
-      <Button text="New Post" onClick={clickHandler} />
+      <Button text={callToActionText} onClick={clickHandler} />
     </NoPostWarningContainer>
   );
 };
