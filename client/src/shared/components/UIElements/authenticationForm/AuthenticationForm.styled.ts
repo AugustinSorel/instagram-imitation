@@ -1,8 +1,7 @@
-import { motion } from "framer-motion";
 import styled from "styled-components";
 import { Card } from "../../../styles/UIElements.styled";
 
-export const AuthenticationFormContainer = styled(motion.div)`
+export const AuthenticationFormContainer = styled.div`
   margin: auto;
   display: flex;
   flex-direction: column;

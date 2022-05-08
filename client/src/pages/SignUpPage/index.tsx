@@ -2,6 +2,7 @@ import { FormEvent, useReducer } from "react";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
 import { authenticationFormErrorAnimationReducer } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
+import PageTransitionWrapper from "../../shared/components/wrappers/PageTransitionWrapper";
 import useSignUp from "./useSignUp";
 import useSignUpPageDefaultValues from "./useSignUpPageDefaultValues";
 
@@ -28,14 +29,16 @@ const SignUpPage = () => {
   };
 
   return (
-    <AuthenticationForm
-      isloading={isLoading}
-      fullForm
-      submitHandler={signUpHandler}
-      inputState={inputState}
-      inputDispatch={inputDispatch}
-      errorAnimationState={errorAnimationState}
-    />
+    <PageTransitionWrapper>
+      <AuthenticationForm
+        isloading={isLoading}
+        fullForm
+        submitHandler={signUpHandler}
+        inputState={inputState}
+        inputDispatch={inputDispatch}
+        errorAnimationState={errorAnimationState}
+      />
+    </PageTransitionWrapper>
   );
 };
 

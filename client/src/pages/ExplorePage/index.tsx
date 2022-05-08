@@ -1,5 +1,11 @@
+import PageTransitionWrapper from "../../shared/components/wrappers/PageTransitionWrapper";
+
 const ExplorePage = () => {
-  return <div>ExplorePage</div>;
+  return (
+    <PageTransitionWrapper>
+      <div>ExplorePage</div>
+    </PageTransitionWrapper>
+  );
 };
 
 export default ExplorePage;

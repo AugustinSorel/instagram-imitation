@@ -6,7 +6,7 @@ const darkTheme: DefaultTheme = {
     background: "#111111",
     accent: "#090909",
     callToAcction: "#0095F6",
-    color: "#808080",
+    color: "#b1b1b1",
     border: "#333333",
     error: "#e74c3c",
   },

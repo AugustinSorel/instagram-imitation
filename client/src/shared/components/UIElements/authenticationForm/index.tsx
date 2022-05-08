@@ -32,11 +32,7 @@ const AuthenticationForm: FC<Props> = ({
   submitHandler,
 }) => {
   return (
-    <AuthenticationFormContainer
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
+    <AuthenticationFormContainer>
       <AuthenticationFormCard>
         <AuthenticationFormTitle>instagram</AuthenticationFormTitle>
         <UserForm

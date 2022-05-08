@@ -1,5 +1,11 @@
+import PageTransitionWrapper from "../../shared/components/wrappers/PageTransitionWrapper";
+
 const HomePage = () => {
-  return <div>HomePage</div>;
+  return (
+    <PageTransitionWrapper>
+      <div>HomePage</div>
+    </PageTransitionWrapper>
+  );
 };
 
 export default HomePage;

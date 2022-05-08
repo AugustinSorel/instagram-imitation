@@ -2,6 +2,7 @@ import { FormEvent, useReducer } from "react";
 import AuthenticationForm from "../../shared/components/UIElements/authenticationForm";
 import { authenticationFormErrorAnimationReducer } from "../../shared/components/UIElements/authenticationForm/authenticationAnimationReducer";
 import { authenticationFormReducer } from "../../shared/components/UIElements/authenticationForm/AuthenticationReducer";
+import PageTransitionWrapper from "../../shared/components/wrappers/PageTransitionWrapper";
 import useLoginMutate from "./useLoginMutate";
 import useLoginPageDefaultValues from "./useLoginPageDefaultValues";
 
@@ -28,14 +29,16 @@ const LoginPage = () => {
   };
 
   return (
-    <AuthenticationForm
-      isloading={isLoading}
-      fullForm={false}
-      submitHandler={loginHandler}
-      inputState={inputState}
-      inputDispatch={inputDispatch}
-      errorAnimationState={errorAnimationState}
-    />
+    <PageTransitionWrapper>
+      <AuthenticationForm
+        isloading={isLoading}
+        fullForm={false}
+        submitHandler={loginHandler}
+        inputState={inputState}
+        inputDispatch={inputDispatch}
+        errorAnimationState={errorAnimationState}
+      />
+    </PageTransitionWrapper>
   );
 };
 
