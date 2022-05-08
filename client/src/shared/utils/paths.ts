@@ -9,6 +9,14 @@ export type Paths = {
 };
 
 const paths: Paths = {
+  home: {
+    path: "/",
+    active:
+      "M21 13v10h-6v-6h-6v6h-6v-10h-3l12-12 12 12h-3zm-1-5.907v-5.093h-3v2.093l3 3z",
+    inactive:
+      "M20 7.093v-5.093h-3v2.093l3 3zm4 5.907l-12-12-12 12h3v10h7v-5h4v5h7v-10h3zm-5 8h-3v-5h-8v5h-3v-10.26l7-6.912 7 6.99v10.182z",
+  },
+
   newPost: {
     path: "/new-post",
     active: "M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z",
