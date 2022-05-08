@@ -30,3 +30,9 @@ export const getAllPostsLiked = async () => {
 
   return res.data;
 };
+
+export const getExplorePosts = async () => {
+  const res = await postsApi.get("/explore");
+
+  return res.data;
+};

@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addNewPost,
+  getExplorePosts,
   getUserLikedPosts,
   getUserPosts,
   likePost,
@@ -14,6 +15,7 @@ const postsRouter = express.Router();
 
 postsRouter.get("/", requireUser, getUserPosts);
 postsRouter.get("/posts-liked", requireUser, getUserLikedPosts);
+postsRouter.get("/explore", requireUser, getExplorePosts);
 
 postsRouter.post(
   "/add-new-post",

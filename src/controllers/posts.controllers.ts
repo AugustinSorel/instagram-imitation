@@ -107,3 +107,18 @@ export const getUserLikedPosts = async (
     res.sendStatus(500);
   }
 };
+
+export const getExplorePosts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const randomPosts = await PostModel.aggregate([{ $sample: { size: 100 } }]);
+
+    res.json(randomPosts);
+  } catch (error) {
+    console.log("ERROR in getExplorePosts", error);
+    res.sendStatus(500);
+  }
+};
