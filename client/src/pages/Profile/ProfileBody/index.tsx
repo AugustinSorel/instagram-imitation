@@ -3,7 +3,10 @@ import { getAllPosts } from "../../../shared/api/postsApi";
 import Loader from "../../../shared/components/UIElements/Loader";
 import NoPostWarning from "../../../shared/components/UIElements/NoPostWarning";
 import PostsGrid from "../../../shared/components/UIElements/PostsGrid";
-import { ProfileBodyLoaderContainer } from "./ProfileBody.styled";
+import {
+  ProfileBodyContainer,
+  ProfileBodyLoaderContainer,
+} from "./ProfileBody.styled";
 
 type Props = {};
 
@@ -28,7 +31,11 @@ const ProfileBody = (props: Props) => {
     );
   }
 
-  return <PostsGrid posts={userPosts} />;
+  return (
+    <ProfileBodyContainer>
+      <PostsGrid posts={userPosts} />
+    </ProfileBodyContainer>
+  );
 };
 
 export default ProfileBody;
