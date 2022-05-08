@@ -16,29 +16,29 @@
 ## Images
 
 ### Home Page
-![alt text]()
+![alt text](https://raw.githubusercontent.com/AugustinSorel/instagram-imitation/master/images/homePage.jpeg)
 
 ### Add new Post page
-![alt text]()
+![alt text](https://raw.githubusercontent.com/AugustinSorel/instagram-imitation/master/images/addNewPost.jpeg)
 
 ### Explore Page
-![alt text]()
+![alt text](https://raw.githubusercontent.com/AugustinSorel/instagram-imitation/master/images/explorePage.jpeg)
 
 
 ### Posts liked page
-![alt text]()
+![alt text](https://raw.githubusercontent.com/AugustinSorel/instagram-imitation/master/images/postsLiked.jpeg)
 
 
 ### Profile Page
-![alt text]()
+![alt text](https://raw.githubusercontent.com/AugustinSorel/instagram-imitation/master/images/profilePage.jpeg)
 
 ### Login Page
-![alt text]()
+![alt text](https://raw.githubusercontent.com/AugustinSorel/instagram-imitation/master/images/loginPage.jpeg)
 
 
 ### Sign up Page
-![alt text]()
+![alt text](https://raw.githubusercontent.com/AugustinSorel/instagram-imitation/master/images/signUpPage.jpeg)
 
 ### Profile Modal
-![alt text]()
+![alt text](https://raw.githubusercontent.com/AugustinSorel/instagram-imitation/master/images/profileModal.jpeg)
 
