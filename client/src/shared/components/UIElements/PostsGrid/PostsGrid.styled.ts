@@ -6,9 +6,9 @@ export const PostsGridContainer = styled(motion.div)`
   display: grid;
   gap: 1rem;
 
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
 
   @media screen and (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 `;

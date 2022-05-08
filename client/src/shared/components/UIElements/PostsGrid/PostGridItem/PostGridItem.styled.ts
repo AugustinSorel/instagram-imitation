@@ -2,8 +2,7 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 
 export const PostGridItemContainer = styled(motion.div)`
-  width: 100%;
-  height: 100%;
+  aspect-ratio: 1;
   position: relative;
   overflow: hidden;
   cursor: pointer;
