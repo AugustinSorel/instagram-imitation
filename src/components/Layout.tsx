@@ -10,7 +10,7 @@ const SignInButton = () => {
   );
 };
 
-const NewPostButton = ({ className }: { className?: string }) => {
+const NewPostButton = ({ className = "" }: { className?: string }) => {
   return (
     <button
       title="Add Post"
