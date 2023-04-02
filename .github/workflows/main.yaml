@@ -4,9 +4,9 @@ jobs:
   lighthouseci:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: secret
+      DATABASE_URL: http://secret.com
       NEXTAUTH_SECRET: secret
-      NEXTAUTH_URL: secret
+      NEXTAUTH_URL: http://secret.com
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
