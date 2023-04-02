@@ -1,14 +1,10 @@
-//TODO: keyboad navigation
-// TODO: reusaable components
-// TODO: reusable styles
-
 import { type PropsWithChildren } from "react";
 import { Grand_Hotel } from "@next/font/google";
 import Link from "next/link";
 
 const SignInButton = () => {
   return (
-    <button className="rounded-md border border-white/10 bg-gradient-to-br from-pink-500 to-yellow-500 px-5 py-2 text-sm font-bold capitalize text-white opacity-75 backdrop-blur-sm duration-300 hover:opacity-100">
+    <button className="rounded-md border border-black/10 bg-brand-gradient bg-origin-border px-5 py-2 text-sm font-bold capitalize text-white opacity-75 backdrop-blur-sm duration-300 hover:opacity-100">
       signin
     </button>
   );
@@ -18,7 +14,7 @@ const NewPostButton = ({ className }: { className?: string }) => {
   return (
     <button
       title="Add Post"
-      className={`flex aspect-square h-10 items-center justify-center rounded-md border border-black/10 fill-slate-600 p-2 backdrop-blur-sm duration-300 hover:bg-white/40 ${className}`}
+      className={`flex aspect-square h-10 items-center justify-center rounded-md border border-black/10 bg-origin-border fill-slate-600 p-2 backdrop-blur-sm duration-300 hover:bg-white/40 ${className}`}
     >
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="m11 11h-7.25c-.414 0-.75.336-.75.75s.336.75.75.75h7.25v7.25c0 .414.336.75.75.75s.75-.336.75-.75v-7.25h7.25c.414 0 .75-.336.75-.75s-.336-.75-.75-.75h-7.25v-7.25c0-.414-.336-.75-.75-.75s-.75.336-.75.75z" />
@@ -30,7 +26,7 @@ const NewPostButton = ({ className }: { className?: string }) => {
 const MenuButton = () => {
   return (
     <button
-      title="Add Post"
+      title="Open Menu"
       className="flex aspect-square h-10 items-center justify-center rounded-md border border-black/10 fill-slate-600 p-2 backdrop-blur-sm duration-300 hover:bg-white/40"
     >
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -96,7 +92,7 @@ const Header = () => {
 const MobileHeader = () => {
   return (
     <div className="fixed bottom-0 left-0 right-0 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-red-500 bg-white/30 p-5 backdrop-blur-sm lg:hidden">
-      <NewPostButton className="col-start-2 border-white/10 bg-gradient-to-br from-pink-500 to-yellow-500 fill-white opacity-75 hover:opacity-100" />
+      <NewPostButton className="col-start-2 bg-brand-gradient fill-white opacity-75 hover:opacity-100" />
       <MenuButton />
     </div>
   );
