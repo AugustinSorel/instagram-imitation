@@ -3,6 +3,10 @@ on: [push]
 jobs:
   lighthouseci:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: secret
+      NEXTAUTH_SECRET: secret
+      NEXTAUTH_URL: secret
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
