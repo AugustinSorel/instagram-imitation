@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 
 const Home: NextPage = () => {
@@ -14,6 +14,7 @@ const Home: NextPage = () => {
       </Head>
 
       {JSON.stringify(session)}
+      {session && <button onClick={() => signOut()}>signout</button>}
 
       <h1>hello</h1>
       <h1>hello</h1>

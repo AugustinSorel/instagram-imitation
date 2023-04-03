@@ -1,10 +1,15 @@
 import { useState, type PropsWithChildren } from "react";
-import { Grand_Hotel } from "@next/font/google";
+import { Grand_Hotel } from "next/font/google";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 const SignInButton = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+
+  const githubSignin = () => {
+    signIn("github");
+  };
 
   return (
     <div className="relative">
@@ -21,7 +26,10 @@ const SignInButton = () => {
           aria-expanded={isMenuOpen}
           className="absolute right-0 mt-3 w-max overflow-hidden rounded-md border border-black/20 bg-white/60 p-1 font-normal text-slate-600 backdrop-blur-md"
         >
-          <button className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/5">
+          <button
+            className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/5"
+            onClick={githubSignin}
+          >
             <svg
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
