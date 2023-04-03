@@ -14,7 +14,7 @@ const Home: NextPage = () => {
       </Head>
 
       {JSON.stringify(session)}
-      {session && <button onClick={() => signOut()}>signout</button>}
+      {session && <button onClick={() => void signOut()}>signout</button>}
 
       <h1>hello</h1>
       <h1>hello</h1>

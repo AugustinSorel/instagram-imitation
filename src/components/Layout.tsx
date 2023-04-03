@@ -8,7 +8,7 @@ const SignInButton = () => {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   const githubSignin = () => {
-    signIn("github");
+    void signIn("github");
   };
 
   return (
