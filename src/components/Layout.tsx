@@ -11,6 +11,10 @@ const SignInButton = () => {
     void signIn("github");
   };
 
+  const googleSignin = () => {
+    void signIn("google");
+  };
+
   return (
     <div className="relative">
       <button
@@ -39,7 +43,10 @@ const SignInButton = () => {
             </svg>
             sign in with Github
           </button>
-          <button className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/5">
+          <button
+            className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/5"
+            onClick={googleSignin}
+          >
             <svg
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
