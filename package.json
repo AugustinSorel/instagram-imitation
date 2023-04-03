@@ -25,7 +25,6 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@next/font": "^13.2.4",
     "@types/eslint": "^8.21.3",
     "@types/node": "^18.15.5",
     "@types/prettier": "^2.7.2",
