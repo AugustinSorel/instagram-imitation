@@ -1,11 +1,95 @@
 import { useState, type PropsWithChildren } from "react";
 import { Grand_Hotel } from "next/font/google";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import Image, { type ImageProps } from "next/image";
+
+const Avatar = (props: Pick<ImageProps, "src">) => {
+  return (
+    <Image
+      {...props}
+      alt="user profile"
+      width={36}
+      height={36}
+      className="rounded-full"
+    />
+  );
+};
+
+const AvatarMenu = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+  const closeMenu = () => setIsMenuOpen(() => false);
+  const { data: session } = useSession();
+
+  const signoutHandler = () => {
+    void signOut();
+  };
+
+  return (
+    <div
+      className="relative z-50"
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+          closeMenu();
+        }
+      }}
+    >
+      <button
+        onClick={toggleMenu}
+        className="flex aspect-square w-10 items-center justify-center"
+        title="Open Menu"
+      >
+        <Avatar src={session?.user?.image ?? ""} />
+      </button>
+      {isMenuOpen && (
+        <div
+          aria-expanded={isMenuOpen}
+          className="absolute right-0 mt-3 flex w-max flex-col overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 backdrop-blur-md"
+        >
+          <Link
+            href="/profile"
+            className="rounded-md p-2 capitalize duration-300 hover:bg-black/5"
+          >
+            profile
+          </Link>
+          <button className="rounded-md p-2 text-left capitalize duration-300 hover:bg-black/5">
+            darkmode
+          </button>
+          <Link
+            href="/profile?tab=bookmarked"
+            className="rounded-md p-2 capitalize duration-300 hover:bg-black/5"
+          >
+            bookmarked
+          </Link>
+          <Link
+            href="/profile?tab=liked"
+            className="rounded-md p-2 capitalize duration-300 hover:bg-black/5"
+          >
+            liked
+          </Link>
+
+          <hr className="my-1 border-slate-400" />
+
+          <button
+            className="rounded-md p-2 text-left capitalize duration-300 hover:bg-black/5"
+            onClick={signoutHandler}
+          >
+            signout
+          </button>
+          <button className="rounded-md p-2 text-left capitalize text-red-500 duration-300 hover:bg-red-500/5">
+            delete my account
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const SignInButton = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+  const closeMenu = () => setIsMenuOpen(() => false);
 
   const githubSignin = () => {
     void signIn("github");
@@ -16,7 +100,14 @@ const SignInButton = () => {
   };
 
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+          closeMenu();
+        }
+      }}
+    >
       <button
         aria-pressed={isMenuOpen}
         className="rounded-md border border-black/10 bg-brand-gradient bg-origin-border px-5 py-2 text-sm font-bold capitalize text-white opacity-75 backdrop-blur-sm duration-300 hover:opacity-100 aria-[pressed=true]:opacity-100"
@@ -28,7 +119,7 @@ const SignInButton = () => {
       {isMenuOpen && (
         <div
           aria-expanded={isMenuOpen}
-          className="absolute right-0 mt-3 w-max overflow-hidden rounded-md border border-black/20 bg-white/60 p-1 font-normal text-slate-600 backdrop-blur-md"
+          className="absolute right-0 mt-3 w-max overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 font-normal backdrop-blur-md"
         >
           <button
             className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/5"
@@ -81,7 +172,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
   return (
     <button
       title="Add Post"
-      className={`flex aspect-square h-10 items-center justify-center rounded-md border border-black/10 bg-origin-border fill-slate-600 p-2 backdrop-blur-sm duration-300 hover:bg-white/40 ${className}`}
+      className={`relative flex aspect-square h-10 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white/20 bg-origin-border fill-slate-600 p-2 duration-300 hover:bg-white/40 ${className}`}
     >
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="m11 11h-7.25c-.414 0-.75.336-.75.75s.336.75.75.75h7.25v7.25c0 .414.336.75.75.75s.75-.336.75-.75v-7.25h7.25c.414 0 .75-.336.75-.75s-.336-.75-.75-.75h-7.25v-7.25c0-.414-.336-.75-.75-.75s-.75.336-.75.75z" />
@@ -94,7 +185,7 @@ const MenuButton = () => {
   return (
     <button
       title="Open Menu"
-      className="flex aspect-square h-10 items-center justify-center rounded-md border border-black/10 fill-slate-600 p-2 backdrop-blur-sm duration-300 hover:bg-white/40"
+      className="flex aspect-square h-10 items-center justify-center rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 duration-300 hover:bg-white/40"
     >
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="m22 16.75c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75zm0-5c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75zm0-5c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75z" />
@@ -105,7 +196,7 @@ const MenuButton = () => {
 
 const QuickSearchButton = () => {
   return (
-    <button className="flex w-80 items-center gap-2 rounded-md border border-black/10 p-2 text-sm capitalize text-slate-600 backdrop-blur-sm duration-300 hover:bg-white/40">
+    <button className="relative flex w-80 items-center gap-2 rounded-md border border-black/10 bg-white/20 p-2 text-sm capitalize text-slate-600 duration-300 hover:bg-white/40">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
@@ -140,16 +231,18 @@ const Title = () => {
 };
 
 const Header = () => {
+  const { data: session } = useSession();
+
   return (
-    <header className="sticky top-0 hidden bg-white/30 p-5 backdrop-blur-sm lg:block">
+    <header className="sticky top-0 z-10 hidden p-5 after:absolute after:inset-0 after:-z-10 after:bg-white/30 after:backdrop-blur-sm lg:block">
       <div className="mx-auto grid max-w-5xl grid-cols-[1fr_auto_1fr] items-center">
         <Title />
 
         <QuickSearchButton />
 
-        <div className="ml-auto flex gap-2">
+        <div className="ml-auto flex items-center gap-2">
           <NewPostButton />
-          <SignInButton />
+          {session ? <AvatarMenu /> : <SignInButton />}
         </div>
       </div>
     </header>
@@ -170,6 +263,7 @@ const Layout = ({ children }: PropsWithChildren) => {
     <>
       <Header />
       <MobileHeader />
+
       {children}
     </>
   );
