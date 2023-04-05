@@ -33,6 +33,7 @@ const googleSignin = () => {
 const AvatarMenu = () => {
   const { data: session } = useSession();
   const menu = useExitAnimation();
+  const router = useRouter();
 
   return (
     <div
@@ -54,12 +55,20 @@ const AvatarMenu = () => {
       {menu.isOpen && (
         <div
           aria-expanded={!menu.isClosing}
-          className="absolute right-0 mt-3 flex w-max animate-fade-in flex-col overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 backdrop-blur-md aria-[expanded=false]:animate-fade-out"
+          className="absolute right-0 mt-3 flex w-max animate-fade-in flex-col gap-1 overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 backdrop-blur-md aria-[expanded=false]:animate-fade-out"
           onAnimationEnd={menu.animationEndHandler}
         >
           <Link
+            aria-current={router.asPath === "/"}
+            href={"/"}
+            className="rounded-md p-2 capitalize duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+          >
+            home
+          </Link>
+          <Link
+            aria-current={router.asPath === `/users/${session?.user?.id ?? ""}`}
             href={`/users/${session?.user?.id ?? ""}`}
-            className="rounded-md p-2 capitalize duration-300 hover:bg-black/5"
+            className="rounded-md p-2 capitalize duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
           >
             profile
           </Link>
@@ -67,14 +76,21 @@ const AvatarMenu = () => {
             darkmode
           </button>
           <Link
+            aria-current={
+              router.asPath ===
+              `/users/${session?.user?.id ?? ""}?tab=bookmarked`
+            }
             href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
-            className="rounded-md p-2 capitalize duration-300 hover:bg-black/5"
+            className="rounded-md p-2 capitalize duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
           >
             bookmarked
           </Link>
           <Link
+            aria-current={
+              router.asPath === `/users/${session?.user?.id ?? ""}?tab=liked`
+            }
             href={`/users/${session?.user?.id ?? ""}?tab=liked`}
-            className="rounded-md p-2 capitalize duration-300 hover:bg-black/5"
+            className="rounded-md p-2 capitalize duration-300 hover:bg-black/5 aria-[current=true]:bg-black/10"
           >
             liked
           </Link>
@@ -82,12 +98,12 @@ const AvatarMenu = () => {
           <hr className="my-1 border-slate-400" />
 
           <button
-            className="rounded-md p-2 text-left capitalize duration-300 hover:bg-black/5"
+            className="rounded-md p-2 text-left capitalize duration-300 hover:bg-black/10"
             onClick={signoutHandler}
           >
             signout
           </button>
-          <button className="rounded-md p-2 text-left capitalize text-red-500 duration-300 hover:bg-red-500/5">
+          <button className="rounded-md p-2 text-left capitalize text-red-500 duration-300 hover:bg-red-500/10">
             delete my account
           </button>
         </div>
@@ -123,7 +139,7 @@ const SignInButton = () => {
           onAnimationEnd={menu.animationEndHandler}
         >
           <button
-            className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/5"
+            className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/10"
             onClick={githubSignin}
           >
             <svg
@@ -136,7 +152,7 @@ const SignInButton = () => {
             sign in with Github
           </button>
           <button
-            className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/5"
+            className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/10"
             onClick={googleSignin}
           >
             <svg

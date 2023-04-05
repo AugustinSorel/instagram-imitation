@@ -13,7 +13,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {JSON.stringify(session)}
+      <p>{JSON.stringify(session)}</p>
 
       <h1>hello</h1>
       <h1>hello</h1>
