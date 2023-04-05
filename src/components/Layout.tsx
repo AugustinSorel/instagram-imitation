@@ -3,6 +3,7 @@ import { Grand_Hotel } from "next/font/google";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image, { type ImageProps } from "next/image";
+import { createPortal } from "react-dom";
 
 const Avatar = (props: Pick<ImageProps, "src">) => {
   return (
@@ -45,10 +46,10 @@ const AvatarMenu = () => {
       {isMenuOpen && (
         <div
           aria-expanded={isMenuOpen}
-          className="absolute right-0 mt-3 flex w-max flex-col overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 backdrop-blur-md"
+          className="absolute right-0 mt-3 flex w-max animate-fade-in flex-col overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 backdrop-blur-md aria-[expanded=false]:animate-fade-out"
         >
           <Link
-            href="/profile"
+            href={`/users/${session?.user?.id ?? ""}`}
             className="rounded-md p-2 capitalize duration-300 hover:bg-black/5"
           >
             profile
@@ -57,13 +58,13 @@ const AvatarMenu = () => {
             darkmode
           </button>
           <Link
-            href="/profile?tab=bookmarked"
+            href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
             className="rounded-md p-2 capitalize duration-300 hover:bg-black/5"
           >
             bookmarked
           </Link>
           <Link
-            href="/profile?tab=liked"
+            href={`/users/${session?.user?.id ?? ""}?tab=liked`}
             className="rounded-md p-2 capitalize duration-300 hover:bg-black/5"
           >
             liked
@@ -119,7 +120,7 @@ const SignInButton = () => {
       {isMenuOpen && (
         <div
           aria-expanded={isMenuOpen}
-          className="absolute right-0 mt-3 w-max overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 font-normal backdrop-blur-md"
+          className="absolute right-0 mt-3 w-max animate-fade-in overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 font-normal backdrop-blur-md aria-[expanded=false]:animate-fade-out"
         >
           <button
             className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/5"
@@ -181,16 +182,166 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
   );
 };
 
+export const useModal = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [startClosingAnimation, setStartClosingAnimation] = useState(false);
+
+  const triggerClosingAnimation = () => {
+    setStartClosingAnimation(() => true);
+  };
+
+  const open = () => {
+    setIsOpen(() => true);
+  };
+
+  const close = () => {
+    setIsOpen(() => false);
+    setStartClosingAnimation(() => false);
+  };
+
+  return {
+    isOpen,
+    open,
+    close,
+    triggerClosingAnimation,
+    startClosingAnimation,
+  };
+};
+
 const MenuButton = () => {
+  const modal = useModal();
+  const { data: session } = useSession();
+
   return (
-    <button
-      title="Open Menu"
-      className="flex aspect-square h-10 items-center justify-center rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 duration-300 hover:bg-white/40"
-    >
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="m22 16.75c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75zm0-5c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75zm0-5c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75z" />
-      </svg>
-    </button>
+    <>
+      <button
+        title="Open Menu"
+        className="flex aspect-square h-10 items-center justify-center rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 duration-300 hover:bg-white/40"
+        onClick={modal.open}
+      >
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="m22 16.75c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75zm0-5c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75zm0-5c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75z" />
+        </svg>
+      </button>
+
+      {modal.isOpen &&
+        createPortal(
+          <div
+            aria-modal={true}
+            aria-expanded={!modal.startClosingAnimation}
+            className="fixed inset-0 z-30 flex animate-fade-in flex-col items-center justify-center bg-black/50 backdrop-blur-sm aria-[expanded=false]:animate-fade-out"
+            onClick={modal.triggerClosingAnimation}
+            onAnimationEnd={() => {
+              if (modal.startClosingAnimation) {
+                modal.close();
+              }
+            }}
+          >
+            <nav className="flex flex-col fill-current capitalize text-slate-100">
+              <Link
+                href="/"
+                className="flex items-center gap-2 rounded-md fill-slate-100 p-2 hover:bg-black/10"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  className="aspect-square w-4"
+                >
+                  <path d="M12 9.185l7 6.514v6.301h-3v-5h-8v5h-3v-6.301l7-6.514zm0-2.732l-9 8.375v9.172h7v-5h4v5h7v-9.172l-9-8.375zm12 5.695l-12-11.148-12 11.133 1.361 1.465 10.639-9.868 10.639 9.883 1.361-1.465z" />
+                </svg>
+                home
+              </Link>
+
+              <Link
+                href={`/users/${session?.user?.id ?? ""}`}
+                className="flex items-center gap-2 rounded-md fill-slate-100 p-2 hover:bg-black/10"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  className="aspect-square w-4"
+                >
+                  <path d="M12 2c3.032 0 5.5 2.467 5.5 5.5 0 1.458-.483 3.196-3.248 5.59 4.111 1.961 6.602 5.253 7.482 8.909h-19.486c.955-4.188 4.005-7.399 7.519-8.889-1.601-1.287-3.267-3.323-3.267-5.61 0-3.033 2.468-5.5 5.5-5.5zm0-2c-4.142 0-7.5 3.357-7.5 7.5 0 2.012.797 3.834 2.086 5.182-5.03 3.009-6.586 8.501-6.586 11.318h24c0-2.791-1.657-8.28-6.59-11.314 1.292-1.348 2.09-3.172 2.09-5.186 0-4.143-3.358-7.5-7.5-7.5z" />
+                </svg>
+                profile
+              </Link>
+
+              <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize hover:bg-black/10">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  className="aspect-square w-4"
+                >
+                  <path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z" />
+                </svg>
+                search
+              </button>
+
+              <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize hover:bg-black/10">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  className="aspect-square w-4"
+                >
+                  <path d="M10.719 2.082c-2.572 2.028-4.719 5.212-4.719 9.918 0 4.569 1.938 7.798 4.548 9.895-4.829-.705-8.548-4.874-8.548-9.895 0-5.08 3.808-9.288 8.719-9.918zm1.281-2.082c-6.617 0-12 5.383-12 12s5.383 12 12 12c1.894 0 3.87-.333 5.37-1.179-3.453-.613-9.37-3.367-9.37-10.821 0-7.555 6.422-10.317 9.37-10.821-1.74-.682-3.476-1.179-5.37-1.179zm0 10.999c1.437.438 2.562 1.564 2.999 3.001.44-1.437 1.565-2.562 3.001-3-1.436-.439-2.561-1.563-3.001-3-.437 1.436-1.562 2.561-2.999 2.999zm8.001.001c.958.293 1.707 1.042 2 2.001.291-.959 1.042-1.709 1.999-2.001-.957-.292-1.707-1.042-2-2-.293.958-1.042 1.708-1.999 2zm-1-9c-.437 1.437-1.563 2.562-2.998 3.001 1.438.44 2.561 1.564 3.001 3.002.437-1.438 1.563-2.563 2.996-3.002-1.433-.437-2.559-1.564-2.999-3.001z" />
+                </svg>
+                darkmode
+              </button>
+
+              <Link
+                href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
+                className="flex items-center gap-2 rounded-md fill-slate-100 p-2 hover:bg-black/10"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="aspect-square w-4"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M16 2v17.582l-4-3.512-4 3.512v-17.582h8zm2-2h-12v24l6-5.269 6 5.269v-24z" />
+                </svg>
+                bookmarked
+              </Link>
+
+              <Link
+                href={`/users/${session?.user?.id ?? ""}?tab=liked`}
+                className="flex items-center gap-2 rounded-md fill-slate-100 p-2 hover:bg-black/10"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  className="aspect-square w-4"
+                >
+                  <path d="M6.28 3c3.236.001 4.973 3.491 5.72 5.031.75-1.547 2.469-5.021 5.726-5.021 2.058 0 4.274 1.309 4.274 4.182 0 3.442-4.744 7.851-10 13-5.258-5.151-10-9.559-10-13 0-2.676 1.965-4.193 4.28-4.192zm.001-2c-3.183 0-6.281 2.187-6.281 6.192 0 4.661 5.57 9.427 12 15.808 6.43-6.381 12-11.147 12-15.808 0-4.011-3.097-6.182-6.274-6.182-2.204 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248z" />
+                </svg>
+                liked
+              </Link>
+
+              <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize hover:bg-black/10">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  className="aspect-square w-4"
+                >
+                  <path d="M16 2v7h-2v-5h-12v16h12v-5h2v7h-16v-20h16zm2 9v-4l6 5-6 5v-4h-10v-2h10z" />
+                </svg>
+                signout
+              </button>
+
+              <button className="flex items-center gap-2 rounded-md p-2  text-left capitalize text-red-400 hover:bg-red-400/30">
+                <svg
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="aspect-square w-4"
+                >
+                  <path d="m4.015 5.494h-.253c-.413 0-.747-.335-.747-.747s.334-.747.747-.747h5.253v-1c0-.535.474-1 1-1h4c.526 0 1 .465 1 1v1h5.254c.412 0 .746.335.746.747s-.334.747-.746.747h-.254v15.435c0 .591-.448 1.071-1 1.071-2.873 0-11.127 0-14 0-.552 0-1-.48-1-1.071zm14.5 0h-13v15.006h13zm-4.25 2.506c-.414 0-.75.336-.75.75v8.5c0 .414.336.75.75.75s.75-.336.75-.75v-8.5c0-.414-.336-.75-.75-.75zm-4.5 0c-.414 0-.75.336-.75.75v8.5c0 .414.336.75.75.75s.75-.336.75-.75v-8.5c0-.414-.336-.75-.75-.75zm3.75-4v-.5h-3v.5z" />
+                </svg>
+                delete my account
+              </button>
+            </nav>
+          </div>,
+          document.querySelector("#__next")!
+        )}
+    </>
   );
 };
 
