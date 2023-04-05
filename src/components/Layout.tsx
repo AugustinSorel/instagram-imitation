@@ -72,7 +72,7 @@ const AvatarMenu = () => {
           >
             profile
           </Link>
-          <button className="rounded-md p-2 text-left capitalize duration-300 hover:bg-black/5">
+          <button className="rounded-md p-2 text-left capitalize duration-300 hover:bg-black/10">
             darkmode
           </button>
           <Link
