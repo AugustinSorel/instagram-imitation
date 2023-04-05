@@ -1,9 +1,10 @@
-import { useState, type PropsWithChildren } from "react";
+import { useState, type PropsWithChildren, useEffect } from "react";
 import { Grand_Hotel } from "next/font/google";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image, { type ImageProps } from "next/image";
-import Modal, { useModal } from "./Modal";
+import Modal, { useExitAnimation } from "./Modal";
+import { useRouter } from "next/router";
 
 const Avatar = (props: Pick<ImageProps, "src">) => {
   return (
@@ -30,31 +31,34 @@ const googleSignin = () => {
 };
 
 const AvatarMenu = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
-  const closeMenu = () => setIsMenuOpen(() => false);
   const { data: session } = useSession();
+  const menu = useExitAnimation();
 
   return (
     <div
       className="relative z-50"
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) {
-          closeMenu();
+          menu.triggerClosingAnimation();
         }
       }}
     >
       <button
-        onClick={toggleMenu}
+        onClick={menu.open}
         className="flex aspect-square w-10 items-center justify-center"
         title="Open Menu"
       >
         <Avatar src={session?.user?.image ?? ""} />
       </button>
-      {isMenuOpen && (
+      {menu.isOpen && (
         <div
-          aria-expanded={isMenuOpen}
+          aria-expanded={!menu.isClosing}
           className="absolute right-0 mt-3 flex w-max animate-fade-in flex-col overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 backdrop-blur-md aria-[expanded=false]:animate-fade-out"
+          onAnimationEnd={() => {
+            if (menu.isClosing) {
+              menu.close();
+            }
+          }}
         >
           <Link
             href={`/users/${session?.user?.id ?? ""}`}
@@ -96,31 +100,34 @@ const AvatarMenu = () => {
 };
 
 const SignInButton = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
-  const closeMenu = () => setIsMenuOpen(() => false);
+  const menu = useExitAnimation();
 
   return (
     <div
       className="relative"
       onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-          closeMenu();
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+          menu.triggerClosingAnimation();
         }
       }}
     >
       <button
-        aria-pressed={isMenuOpen}
+        aria-pressed={menu.isOpen}
         className="rounded-md border border-black/10 bg-brand-gradient bg-origin-border px-5 py-2 text-sm font-bold capitalize text-white opacity-75 backdrop-blur-sm duration-300 hover:opacity-100 aria-[pressed=true]:opacity-100"
-        onClick={toggleMenu}
+        onClick={menu.open}
       >
         signin
       </button>
 
-      {isMenuOpen && (
+      {menu.isOpen && (
         <div
-          aria-expanded={isMenuOpen}
+          aria-expanded={!menu.isClosing}
           className="absolute right-0 mt-3 w-max animate-fade-in overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 font-normal backdrop-blur-md aria-[expanded=false]:animate-fade-out"
+          onAnimationEnd={() => {
+            if (menu.isClosing) {
+              menu.close();
+            }
+          }}
         >
           <button
             className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/5"
@@ -183,8 +190,9 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 };
 
 const MenuButton = () => {
-  const modal = useModal();
+  const modal = useExitAnimation();
   const { data: session } = useSession();
+  const router = useRouter();
 
   return (
     <>
@@ -205,12 +213,13 @@ const MenuButton = () => {
           isClosing={modal.isClosing}
         >
           <nav
-            className="flex flex-col fill-current capitalize text-slate-100"
+            className="flex flex-col gap-1 fill-current capitalize text-slate-100"
             onClick={(e) => e.stopPropagation()}
           >
             <Link
+              aria-current={router.asPath === "/"}
               href="/"
-              className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10"
+              className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -220,20 +229,6 @@ const MenuButton = () => {
                 <path d="M12 9.185l7 6.514v6.301h-3v-5h-8v5h-3v-6.301l7-6.514zm0-2.732l-9 8.375v9.172h7v-5h4v5h7v-9.172l-9-8.375zm12 5.695l-12-11.148-12 11.133 1.361 1.465 10.639-9.868 10.639 9.883 1.361-1.465z" />
               </svg>
               home
-            </Link>
-
-            <Link
-              href={`/users/${session?.user?.id ?? ""}`}
-              className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                className="aspect-square w-4"
-              >
-                <path d="M12 2c3.032 0 5.5 2.467 5.5 5.5 0 1.458-.483 3.196-3.248 5.59 4.111 1.961 6.602 5.253 7.482 8.909h-19.486c.955-4.188 4.005-7.399 7.519-8.889-1.601-1.287-3.267-3.323-3.267-5.61 0-3.033 2.468-5.5 5.5-5.5zm0-2c-4.142 0-7.5 3.357-7.5 7.5 0 2.012.797 3.834 2.086 5.182-5.03 3.009-6.586 8.501-6.586 11.318h24c0-2.791-1.657-8.28-6.59-11.314 1.292-1.348 2.09-3.172 2.09-5.186 0-4.143-3.358-7.5-7.5-7.5z" />
-              </svg>
-              profile
             </Link>
 
             <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize duration-300 hover:bg-black/10">
@@ -258,33 +253,60 @@ const MenuButton = () => {
               darkmode
             </button>
 
-            <Link
-              href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
-              className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="aspect-square w-4"
-                viewBox="0 0 24 24"
-              >
-                <path d="M16 2v17.582l-4-3.512-4 3.512v-17.582h8zm2-2h-12v24l6-5.269 6 5.269v-24z" />
-              </svg>
-              bookmarked
-            </Link>
+            {session && (
+              <>
+                <Link
+                  aria-current={router.asPath === `/users/${session?.user?.id}`}
+                  href={`/users/${session?.user?.id ?? ""}`}
+                  className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="aspect-square w-4"
+                  >
+                    <path d="M12 2c3.032 0 5.5 2.467 5.5 5.5 0 1.458-.483 3.196-3.248 5.59 4.111 1.961 6.602 5.253 7.482 8.909h-19.486c.955-4.188 4.005-7.399 7.519-8.889-1.601-1.287-3.267-3.323-3.267-5.61 0-3.033 2.468-5.5 5.5-5.5zm0-2c-4.142 0-7.5 3.357-7.5 7.5 0 2.012.797 3.834 2.086 5.182-5.03 3.009-6.586 8.501-6.586 11.318h24c0-2.791-1.657-8.28-6.59-11.314 1.292-1.348 2.09-3.172 2.09-5.186 0-4.143-3.358-7.5-7.5-7.5z" />
+                  </svg>
+                  profile
+                </Link>
 
-            <Link
-              href={`/users/${session?.user?.id ?? ""}?tab=liked`}
-              className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                className="aspect-square w-4"
-              >
-                <path d="M6.28 3c3.236.001 4.973 3.491 5.72 5.031.75-1.547 2.469-5.021 5.726-5.021 2.058 0 4.274 1.309 4.274 4.182 0 3.442-4.744 7.851-10 13-5.258-5.151-10-9.559-10-13 0-2.676 1.965-4.193 4.28-4.192zm.001-2c-3.183 0-6.281 2.187-6.281 6.192 0 4.661 5.57 9.427 12 15.808 6.43-6.381 12-11.147 12-15.808 0-4.011-3.097-6.182-6.274-6.182-2.204 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248z" />
-              </svg>
-              liked
-            </Link>
+                <Link
+                  aria-current={
+                    router.asPath ===
+                    `/users/${session?.user?.id ?? ""}?tab=bookmarked`
+                  }
+                  href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
+                  className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="aspect-square w-4"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M16 2v17.582l-4-3.512-4 3.512v-17.582h8zm2-2h-12v24l6-5.269 6 5.269v-24z" />
+                  </svg>
+                  bookmarked
+                </Link>
+
+                <Link
+                  aria-current={
+                    router.basePath ===
+                    `/users/${session?.user?.id ?? ""}?tab=liked`
+                  }
+                  href={`/users/${session?.user?.id ?? ""}?tab=liked`}
+                  className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="aspect-square w-4"
+                  >
+                    <path d="M6.28 3c3.236.001 4.973 3.491 5.72 5.031.75-1.547 2.469-5.021 5.726-5.021 2.058 0 4.274 1.309 4.274 4.182 0 3.442-4.744 7.851-10 13-5.258-5.151-10-9.559-10-13 0-2.676 1.965-4.193 4.28-4.192zm.001-2c-3.183 0-6.281 2.187-6.281 6.192 0 4.661 5.57 9.427 12 15.808 6.43-6.381 12-11.147 12-15.808 0-4.011-3.097-6.182-6.274-6.182-2.204 0-4.446 1.042-5.726 3.238-1.285-2.206-3.522-3.248-5.719-3.248z" />
+                  </svg>
+                  liked
+                </Link>
+              </>
+            )}
 
             <hr className="my-2 border-neutral-500" />
 
@@ -431,6 +453,114 @@ const MobileHeader = () => {
   );
 };
 
+const Background = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 1600 1080"
+      className="fixed inset-0 -z-50 h-full w-full"
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <filter
+          id="noise"
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          filterUnits="objectBoundingBox"
+          primitiveUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.6"
+            numOctaves="4"
+            seed="15"
+            stitchTiles="stitch"
+            x="0%"
+            y="0%"
+            width="100%"
+            height="100%"
+            result="turbulence"
+          ></feTurbulence>
+          <feSpecularLighting
+            surfaceScale="15"
+            specularConstant="1"
+            specularExponent="1"
+            x="0%"
+            y="0%"
+            width="100%"
+            height="100%"
+            in="turbulence"
+            result="specularLighting"
+          >
+            <feDistantLight azimuth="3" elevation="100"></feDistantLight>
+          </feSpecularLighting>
+        </filter>
+        <filter
+          id="blur"
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0.1" result="BackgroundImageFix" />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          />
+          <feGaussianBlur
+            stdDeviation="200"
+            result="effect1_foregroundBlur_49_400"
+          />
+        </filter>
+      </defs>
+
+      <g filter="url(#blur)">
+        <ellipse cx="1000" cy="300" rx="300" ry="300" fill="#40BAFF" />
+        <ellipse cx="700" cy="400" rx="300" ry="300" fill="#FFA4FB" />
+        <ellipse cx="500" cy="600" rx="200" ry="200" fill="#AD7FF9" />
+      </g>
+
+      <rect
+        width="100%"
+        height="100%"
+        fill="transparent"
+        filter="url(#noise)"
+        opacity="0.5"
+        className="bg-blend-overlay"
+      ></rect>
+
+      <pattern
+        id="pattern-circles"
+        x="0"
+        y="0"
+        width="10"
+        height="10"
+        patternUnits="userSpaceOnUse"
+        patternContentUnits="userSpaceOnUse"
+      >
+        <circle id="pattern-circle" cx="5" cy="5" r="1" fill="#cccccc"></circle>
+      </pattern>
+
+      <rect
+        id="rect"
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        fill="url(#pattern-circles)"
+        opacity="0.5"
+      ></rect>
+    </svg>
+  );
+};
+
 const Layout = ({ children }: PropsWithChildren) => {
   return (
     <>
@@ -438,6 +568,8 @@ const Layout = ({ children }: PropsWithChildren) => {
       <MobileHeader />
 
       {children}
+
+      <Background />
     </>
   );
 };
