@@ -28,12 +28,19 @@ export const useExitAnimation = () => {
     setIsClosing(() => false);
   };
 
+  const animationEndHandler = () => {
+    if (isClosing) {
+      close();
+    }
+  };
+
   return {
     isOpen,
     open,
     close,
     triggerClosingAnimation,
     isClosing,
+    animationEndHandler,
   };
 };
 

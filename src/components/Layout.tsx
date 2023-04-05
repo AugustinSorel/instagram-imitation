@@ -50,15 +50,12 @@ const AvatarMenu = () => {
       >
         <Avatar src={session?.user?.image ?? ""} />
       </button>
+
       {menu.isOpen && (
         <div
           aria-expanded={!menu.isClosing}
           className="absolute right-0 mt-3 flex w-max animate-fade-in flex-col overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 backdrop-blur-md aria-[expanded=false]:animate-fade-out"
-          onAnimationEnd={() => {
-            if (menu.isClosing) {
-              menu.close();
-            }
-          }}
+          onAnimationEnd={menu.animationEndHandler}
         >
           <Link
             href={`/users/${session?.user?.id ?? ""}`}
@@ -123,11 +120,7 @@ const SignInButton = () => {
         <div
           aria-expanded={!menu.isClosing}
           className="absolute right-0 mt-3 w-max animate-fade-in overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 font-normal backdrop-blur-md aria-[expanded=false]:animate-fade-out"
-          onAnimationEnd={() => {
-            if (menu.isClosing) {
-              menu.close();
-            }
-          }}
+          onAnimationEnd={menu.animationEndHandler}
         >
           <button
             className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/5"
