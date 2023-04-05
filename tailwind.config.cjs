@@ -3,6 +3,20 @@ const config = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      keyframes: {
+        "fade-in": { from: { opacity: "0" }, to: { opacity: "1" } },
+        "fade-out": { from: { opacity: "1" }, to: { opacity: "0" } },
+        "drop-in": { from: { translate: "0 -100%" }, to: { translate: "0" } },
+        "drop-out": { from: { translate: "0" }, to: { translate: "0 100%" } },
+      },
+
+      animation: {
+        "fade-in": "fade-in 300ms ease-out",
+        "fade-out": "fade-out 300ms ease-out forwards",
+        "drop-in": "drop-in 300ms ease-out",
+        "drop-out": "drop-out 300ms ease-out forwards",
+      },
+
       backgroundImage: {
         "brand-gradient":
           "linear-gradient(to right bottom, rgb(236, 72, 153), rgb(239, 68, 68), rgb(234, 179, 8))",
