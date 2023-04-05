@@ -18,7 +18,6 @@ export const useModal = () => {
     setIsClosing(() => false);
   };
 
-
   return {
     isOpen,
     open,

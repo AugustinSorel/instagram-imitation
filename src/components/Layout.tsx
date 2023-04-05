@@ -31,7 +31,7 @@ const AvatarMenu = () => {
     <div
       className="relative z-50"
       onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+        if (!e.currentTarget.contains(e.relatedTarget)) {
           closeMenu();
         }
       }}
