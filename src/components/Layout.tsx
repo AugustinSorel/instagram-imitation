@@ -6,6 +6,10 @@ import Image, { type ImageProps } from "next/image";
 import Modal, { useExitAnimation } from "./Modal";
 import { useRouter } from "next/router";
 
+const NewPostModal = () => {
+  return <h1>nice</h1>;
+};
+
 const Avatar = (props: Pick<ImageProps, "src">) => {
   return (
     <Image
@@ -186,15 +190,30 @@ const SignInButton = () => {
 };
 
 const NewPostButton = ({ className = "" }: { className?: string }) => {
+  const modal = useExitAnimation();
+
   return (
-    <button
-      title="Add Post"
-      className={`relative flex aspect-square h-10 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white/20 bg-origin-border fill-slate-600 p-2 duration-300 hover:bg-white/40 ${className}`}
-    >
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="m11 11h-7.25c-.414 0-.75.336-.75.75s.336.75.75.75h7.25v7.25c0 .414.336.75.75.75s.75-.336.75-.75v-7.25h7.25c.414 0 .75-.336.75-.75s-.336-.75-.75-.75h-7.25v-7.25c0-.414-.336-.75-.75-.75s-.75.336-.75.75z" />
-      </svg>
-    </button>
+    <>
+      <button
+        title="Add Post"
+        className={`relative flex aspect-square h-10 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white/20 bg-origin-border fill-slate-600 p-2 duration-300 hover:bg-white/40 ${className}`}
+        onClick={modal.open}
+      >
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="m11 11h-7.25c-.414 0-.75.336-.75.75s.336.75.75.75h7.25v7.25c0 .414.336.75.75.75s.75-.336.75-.75v-7.25h7.25c.414 0 .75-.336.75-.75s-.336-.75-.75-.75h-7.25v-7.25c0-.414-.336-.75-.75-.75s-.75.336-.75.75z" />
+        </svg>
+      </button>
+
+      {modal.isOpen && (
+        <Modal
+          triggerClosingAnimation={modal.triggerClosingAnimation}
+          close={modal.close}
+          isClosing={modal.isClosing}
+        >
+          <h1 onClick={(e) => e.stopPropagation()}>hello</h1>
+        </Modal>
+      )}
+    </>
   );
 };
 
