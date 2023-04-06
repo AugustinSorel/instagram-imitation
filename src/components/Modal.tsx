@@ -44,14 +44,10 @@ export const useExitAnimation = () => {
   };
 };
 
-type Props = PropsWithChildren &
-  Pick<
-    ReturnType<typeof useExitAnimation>,
-    "isClosing" | "close" | "triggerClosingAnimation"
-  >;
+type Props = { modal: ReturnType<typeof useExitAnimation> } & PropsWithChildren;
 
 const Modal = (props: Props) => {
-  const { children, isClosing, close, triggerClosingAnimation } = props;
+  const { children, modal } = props;
   const container = document.querySelector("#__next");
 
   if (!container) {
@@ -61,14 +57,10 @@ const Modal = (props: Props) => {
   return createPortal(
     <div
       aria-modal={true}
-      aria-expanded={!isClosing}
-      className="fixed inset-0 z-30 flex animate-fade-in flex-col items-center justify-center bg-black/50 backdrop-blur-sm aria-[expanded=false]:animate-fade-out"
-      onClick={triggerClosingAnimation}
-      onAnimationEnd={() => {
-        if (isClosing) {
-          close();
-        }
-      }}
+      aria-expanded={!modal.isClosing}
+      className="fixed inset-0 z-30 flex animate-fade-in flex-col items-center justify-center border border-black/10 bg-black/50 backdrop-blur-sm aria-[expanded=false]:animate-fade-out"
+      onClick={modal.triggerClosingAnimation}
+      onAnimationEnd={modal.animationEndHandler}
     >
       {children}
     </div>,
