@@ -1,10 +1,17 @@
-import { type PropsWithChildren } from "react";
+import {
+  useState,
+  type PropsWithChildren,
+  ChangeEvent,
+  useRef,
+  FormEvent,
+} from "react";
 import { Grand_Hotel } from "next/font/google";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image, { type ImageProps } from "next/image";
 import Modal, { useExitAnimation } from "./Modal";
 import { useRouter } from "next/router";
+import { randomBytes } from "crypto";
 
 const Avatar = (props: Pick<ImageProps, "src">) => {
   return (
@@ -185,6 +192,196 @@ const SignInButton = () => {
   );
 };
 
+const NewPostForm = () => {
+  const [formValues, setFormValues] = useState<{
+    location: string;
+    description: string;
+    images: {
+      id: string;
+      src: string;
+    }[];
+  }>({
+    location: "",
+    description: "",
+    images: [],
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    location: "",
+    description: "",
+    images: "",
+  });
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const onFileDrop = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+
+    if (!files) {
+      return;
+    }
+
+    setFormValues((prev) => ({
+      ...prev,
+      images: [
+        ...prev.images,
+        ...Array.from(files).map((file) => ({
+          id: randomBytes(20).toString("hex"),
+          src: URL.createObjectURL(file),
+        })),
+      ],
+    }));
+  };
+
+  const removeImage = (id: (typeof formValues.images)[number]["id"]) => {
+    setFormValues((prev) => ({
+      ...prev,
+      images: prev.images.filter((image) => image.id !== id),
+    }));
+  };
+
+  const changeHandler = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormValues((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const submitHandler = (e: FormEvent) => {
+    e.preventDefault();
+    console.log(formValues);
+  };
+
+  return (
+    <form onSubmit={submitHandler} className="flex h-full flex-col space-y-5 ">
+      <h2 className="text-center text-xl capitalize">new post</h2>
+
+      <label className="flex flex-col gap-1 font-semibold capitalize">
+        location:{" "}
+        <input
+          type="text"
+          placeholder="enter location"
+          className="rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none duration-300 placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
+          value={formValues.location}
+          onChange={changeHandler}
+          name="location"
+        />
+        {formErrors.location && (
+          <p className="text-center text-sm font-normal text-red-500">
+            {formErrors.location}
+          </p>
+        )}
+      </label>
+
+      <label className="flex flex-col gap-1 font-semibold capitalize">
+        description:{" "}
+        <textarea
+          rows={3}
+          placeholder="enter description"
+          className="duration300 rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
+          value={formValues.description}
+          onChange={changeHandler}
+          name="description"
+        />
+        {formErrors.description && (
+          <p className="text-center text-sm font-normal text-red-500">
+            {formErrors.description}
+          </p>
+        )}
+      </label>
+
+      <div
+        className="group relative hidden cursor-pointer grid-cols-[auto_1fr] gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 duration-300 hover:border-black/30 lg:grid"
+        role="button"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          className="row-span-2 mx-3 aspect-square w-16 fill-black/10 duration-300 group-hover:fill-black/30"
+        >
+          <path d="M9 12c0-.552.448-1 1.001-1s.999.448.999 1-.446 1-.999 1-1.001-.448-1.001-1zm6.2 0l-1.7 2.6-1.3-1.6-3.2 4h10l-3.8-5zm5.8-7v-2h-21v15h2v-13h19zm3 2v14h-20v-14h20zm-2 2h-16v10h16v-10z" />
+        </svg>
+        <p className="self-center text-center text-xl font-bold text-slate-800">
+          Drag Images here or click to select files
+        </p>
+        <p className="text-center text-sm text-slate-500">
+          Attach up to 5 files as you like
+        </p>
+        <input
+          ref={inputRef}
+          type="file"
+          multiple
+          value=""
+          onChange={onFileDrop}
+          accept="image/png, image/gif, image/jpeg"
+          className="absolute inset-0 cursor-pointer opacity-0 file:hidden"
+        />
+      </div>
+      <div>
+        <p className="flex flex-col font-semibold capitalize">images:</p>
+
+        {formValues.images.length > 0 ? (
+          <div className="flex snap-x gap-6 overflow-auto p-3">
+            {formValues.images.map((image) => (
+              <div key={image.id} className="relative snap-end">
+                <Image
+                  height={49}
+                  width={49}
+                  alt="image"
+                  className="aspect-square min-w-[49px] rounded-md"
+                  src={image.src}
+                />
+                <button
+                  name="remove-image"
+                  title="remove image"
+                  type="button"
+                  className="absolute right-1 top-0 aspect-square w-6 -translate-y-1/2 translate-x-1/2 rounded-full border border-black/30 p-0.5 backdrop-blur-sm"
+                  onClick={() => removeImage(image.id)}
+                >
+                  <svg viewBox="-1 0 24 24" xmlns="http://www.w2.org/2000/svg">
+                    <path d="m11 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-500 first-letter:capitalize">
+            no images selected
+          </p>
+        )}
+
+        <button
+          type="button"
+          className="w-full rounded-md border border-black/10 bg-white/20 p-2 text-sm font-semibold capitalize duration-300 hover:bg-white/40 lg:hidden"
+          onClick={() => inputRef.current?.click()}
+        >
+          browse
+        </button>
+
+        {formErrors.images && (
+          <p className="text-center text-sm font-normal text-red-500">
+            {formErrors.images}
+          </p>
+        )}
+      </div>
+
+      <button
+        disabled={
+          formValues.images.length < 1 ||
+          formValues.images.length > 5 ||
+          !formValues.location ||
+          !formValues.description
+        }
+        className="rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        upload
+      </button>
+    </form>
+  );
+};
+
 const NewPostButton = ({ className = "" }: { className?: string }) => {
   const modal = useExitAnimation();
 
@@ -202,100 +399,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 
       {modal.isOpen && (
         <Modal modal={modal}>
-          <form
-            className="flex h-full w-full flex-col gap-5 overflow-auto bg-white/70 p-5 backdrop-blur-sm lg:h-auto lg:max-h-[90%] lg:w-auto lg:max-w-[75%] lg:rounded-md "
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-center text-xl capitalize">new post</h2>
-
-            <label className="flex flex-col gap-1 font-semibold capitalize">
-              location:{" "}
-              <input
-                type="text"
-                placeholder="enter location"
-                className="rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none duration-300 placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
-              />
-            </label>
-
-            <label className="flex flex-col gap-1 font-semibold capitalize">
-              description:{" "}
-              <textarea
-                rows={3}
-                placeholder="enter description"
-                className="duration300 rounded-md border border-black/10 bg-transparent p-1 text-sm font-normal outline-none placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
-              />
-            </label>
-
-            <div className="hidden grid-cols-[auto_1fr] rounded-md border-2 border-dashed border-black/10 p-3 lg:grid">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                className="row-span-2 mx-3 aspect-square w-16 fill-black/10"
-              >
-                <path d="M9 12c0-.552.448-1 1.001-1s.999.448.999 1-.446 1-.999 1-1.001-.448-1.001-1zm6.2 0l-1.7 2.6-1.3-1.6-3.2 4h10l-3.8-5zm5.8-7v-2h-21v15h2v-13h19zm3 2v14h-20v-14h20zm-2 2h-16v10h16v-10z" />
-              </svg>
-              <p className="self-center text-center text-2xl font-bold text-slate-800">
-                Drag Images here or click to select files
-              </p>
-              <p className="text-center text-sm text-slate-500">
-                Attach as many files as you like, each file should not exceed
-                5mb
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <p className="flex flex-col font-semibold capitalize">images:</p>
-
-              <div className="flex snap-x gap-5 overflow-auto p-3">
-                {[...Array<unknown>(20)].map((_, i) => (
-                  <div key={i} className="relative snap-end">
-                    <Image
-                      height={100}
-                      width={100}
-                      alt="image"
-                      className="aspect-square min-w-[50px] rounded-md"
-                      src={
-                        "https://lh3.googleusercontent.com/a/AGNmyxYHKOQgnozDdnUPzghP0njenXIu0rMdHBrQmOktxA=s96-c"
-                      }
-                    />
-                    <button
-                      name="delete-image"
-                      title="delete image"
-                      type="button"
-                      className="absolute right-0 top-0 aspect-square w-6 -translate-y-1/2 translate-x-1/2 rounded-full border border-black/30 p-0.5 backdrop-blur-sm"
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="m12 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z" />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                className="w-full rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm font-semibold capitalize duration-300 hover:bg-white/40 lg:hidden"
-              >
-                browse
-              </button>
-            </div>
-
-            <div className="mt-auto flex justify-center gap-5">
-              <button
-                onClick={modal.triggerClosingAnimation}
-                type="button"
-                className="w-max rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-white/40 lg:hidden"
-              >
-                cancel
-              </button>
-              <button className="w-max rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-white/40">
-                upload
-              </button>
-            </div>
-          </form>
+          <NewPostForm />
         </Modal>
       )}
     </>

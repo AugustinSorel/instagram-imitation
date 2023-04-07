@@ -8,6 +8,8 @@ const config = {
         "fade-out": { from: { opacity: "1" }, to: { opacity: "0" } },
         "drop-in": { from: { translate: "0 -100%" }, to: { translate: "0" } },
         "drop-out": { from: { translate: "0" }, to: { translate: "0 100%" } },
+        "scale-in-sm": { from: { scale: "0.8" }, to: { scale: "1" } },
+        "scale-out-sm": { from: { scale: "1" }, to: { scale: "0.8" } },
       },
 
       animation: {
@@ -15,6 +17,8 @@ const config = {
         "fade-out": "fade-out 300ms ease-out forwards",
         "drop-in": "drop-in 300ms ease-out",
         "drop-out": "drop-out 300ms ease-out forwards",
+        "scale-in-sm": "scale-in-sm 300ms ease-out",
+        "scale-out-sm": "scale-out-sm 300ms ease-out forwards",
       },
 
       backgroundImage: {
