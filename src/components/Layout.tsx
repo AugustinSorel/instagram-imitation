@@ -6,10 +6,6 @@ import Image, { type ImageProps } from "next/image";
 import Modal, { useExitAnimation } from "./Modal";
 import { useRouter } from "next/router";
 
-const NewPostModal = () => {
-  return <h1>nice</h1>;
-};
-
 const Avatar = (props: Pick<ImageProps, "src">) => {
   return (
     <Image
@@ -281,7 +277,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 
               <button
                 type="button"
-                className="w-full rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm font-semibold capitalize duration-300 hover:bg-white/40 lg:hidden lg:hidden"
+                className="w-full rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm font-semibold capitalize duration-300 hover:bg-white/40 lg:hidden"
               >
                 browse
               </button>
