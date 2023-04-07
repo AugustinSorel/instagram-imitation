@@ -247,7 +247,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
               <p className="flex flex-col font-semibold capitalize">images:</p>
 
               <div className="flex snap-x gap-5 overflow-auto p-3">
-                {[...Array(20)].map((_, i) => (
+                {[...Array<unknown>(20)].map((_, i) => (
                   <div key={i} className="relative snap-end">
                     <Image
                       height={100}
