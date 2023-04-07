@@ -207,62 +207,65 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
       {modal.isOpen && (
         <Modal modal={modal}>
           <form
-            className="flex h-full w-full max-w-full flex-col gap-12 overflow-auto bg-white/80 p-5 backdrop-blur-3xl lg:h-auto lg:w-auto lg:rounded-md"
+            className="flex h-full w-full flex-col gap-5 overflow-auto bg-white/70 p-5 backdrop-blur-sm lg:h-auto lg:max-h-[90%] lg:w-auto lg:max-w-[75%] lg:rounded-md "
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-center text-xl capitalize">new post</h2>
 
-            <label className="flex flex-col font-semibold capitalize">
+            <label className="flex flex-col gap-1 font-semibold capitalize">
               location:{" "}
               <input
                 type="text"
                 placeholder="enter location"
-                className="rounded-md border border-black/10 bg-transparent p-1 font-normal placeholder:capitalize placeholder:text-slate-500"
+                className="rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none duration-300 placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
               />
             </label>
 
-            <label className="flex flex-col font-semibold capitalize">
+            <label className="flex flex-col gap-1 font-semibold capitalize">
               description:{" "}
               <textarea
                 rows={3}
                 placeholder="enter description"
-                className="rounded-md border border-black/10 bg-transparent p-1 font-normal placeholder:capitalize placeholder:text-slate-500"
+                className="duration300 rounded-md border border-black/10 bg-transparent p-1 text-sm font-normal outline-none placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
               />
             </label>
 
-            <div className="grid grid-cols-[auto_1fr] gap-x-10 rounded-md border-4 border-dashed border-slate-400 p-10">
+            <div className="hidden grid-cols-[auto_1fr] rounded-md border-2 border-dashed border-black/10 p-3 lg:grid">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                className="row-span-2 aspect-square w-24 place-self-center fill-slate-400"
+                className="row-span-2 mx-3 aspect-square w-16 fill-black/10"
               >
                 <path d="M9 12c0-.552.448-1 1.001-1s.999.448.999 1-.446 1-.999 1-1.001-.448-1.001-1zm6.2 0l-1.7 2.6-1.3-1.6-3.2 4h10l-3.8-5zm5.8-7v-2h-21v15h2v-13h19zm3 2v14h-20v-14h20zm-2 2h-16v10h16v-10z" />
               </svg>
-              <p className="text-2xl font-bold">
+              <p className="self-center text-center text-2xl font-bold text-slate-800">
                 Drag Images here or click to select files
               </p>
-              <p className="text-slate-600">
+              <p className="text-center text-sm text-slate-500">
                 Attach as many files as you like, each file should not exceed
                 5mb
               </p>
             </div>
 
-            <div>
+            <div className="space-y-1">
               <p className="flex flex-col font-semibold capitalize">images:</p>
-              <div className="flex snap-x gap-10 overflow-auto p-3">
+
+              <div className="flex snap-x gap-5 overflow-auto p-3">
                 {[...Array(20)].map((_, i) => (
-                  <div key={i} className="relative snap-center">
+                  <div key={i} className="relative snap-end">
                     <Image
                       height={100}
                       width={100}
                       alt="image"
-                      className="aspect-squar min-w-[96px] rounded-md"
+                      className="aspect-square min-w-[50px] rounded-md"
                       src={
                         "https://lh3.googleusercontent.com/a/AGNmyxYHKOQgnozDdnUPzghP0njenXIu0rMdHBrQmOktxA=s96-c"
                       }
                     />
                     <button
                       name="delete-image"
+                      title="delete image"
+                      type="button"
                       className="absolute right-0 top-0 aspect-square w-6 -translate-y-1/2 translate-x-1/2 rounded-full border border-black/30 p-0.5 backdrop-blur-sm"
                     >
                       <svg
@@ -275,11 +278,27 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
                   </div>
                 ))}
               </div>
+
+              <button
+                type="button"
+                className="w-full rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm font-semibold capitalize duration-300 hover:bg-white/40 lg:hidden lg:hidden"
+              >
+                browse
+              </button>
             </div>
 
-            <button className="rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 capitalize duration-300 hover:bg-white/40">
-              upload
-            </button>
+            <div className="mt-auto flex justify-center gap-5">
+              <button
+                onClick={modal.triggerClosingAnimation}
+                type="button"
+                className="w-max rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-white/40 lg:hidden"
+              >
+                cancel
+              </button>
+              <button className="w-max rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-white/40">
+                upload
+              </button>
+            </div>
           </form>
         </Modal>
       )}

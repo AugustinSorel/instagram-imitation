@@ -5,3 +5,15 @@
 body {
   @apply overflow-x-hidden bg-slate-200;
 }
+
+::-webkit-scrollbar {
+  @apply h-1 w-1;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-black/20;
+}
