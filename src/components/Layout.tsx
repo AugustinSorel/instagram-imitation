@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+import { ZodError, z } from "zod";
 import {
   useState,
   type PropsWithChildren,
@@ -11,8 +13,9 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Image, { type ImageProps } from "next/image";
 import Modal from "./Modal";
 import { useRouter } from "next/router";
-import { randomBytes } from "crypto";
 import Backdrop, { useComponentControl } from "./Backdrop";
+import { api } from "~/utils/api";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 const Avatar = (props: Pick<ImageProps, "src">) => {
   return (
@@ -193,26 +196,84 @@ const SignInButton = () => {
   );
 };
 
-const NewPostForm = () => {
-  const [formValues, setFormValues] = useState<{
-    location: string;
-    description: string;
-    images: {
-      id: string;
-      src: string;
-    }[];
-  }>({
-    location: "",
-    description: "",
-    images: [],
-  });
+export const newPostSchema = z.object({
+  location: z
+    .string({ required_error: "location is required" })
+    .min(1, "location must be at least one character")
+    .max(255, "location must be at least 255 characters"),
+  description: z
+    .string({ required_error: "description is required" })
+    .min(1, "location must be at least one character")
+    .max(2047, "location must be at least 255 characters"),
+  images: z
+    .object(
+      {
+        id: z.string().uuid("image id must be of type uuid"),
+        src: z.string().url("image src must be a valid url"),
+      },
+      { required_error: "minimum of one image is required" }
+    )
+    .array()
+    .min(1, "minimum of one image is allowed")
+    .max(5, "maximum of five images is allowed"),
+});
 
-  const [formErrors, setFormErrors] = useState({
-    location: "",
-    description: "",
-    images: "",
-  });
+const defautltFormErrors = {
+  location: "",
+  description: "",
+  images: "",
+};
+
+const defaultFormValues: z.TypeOf<typeof newPostSchema> = {
+  location: "",
+  description: "",
+  images: [],
+};
+
+const NewPostForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [formValues, setFormValues] = useState(defaultFormValues);
+  const [formErrors, setFormErrors] = useState(defautltFormErrors);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const query = api.media.uploadNewPostImageToS3.useMutation();
+
+  const getImagesUrl = async (imagesURL: string[]) => {
+    const urls = [];
+    for (const imageURL of imagesURL) {
+      const res = await fetch(imageURL);
+      const blob = await res.blob();
+
+      const data = await query.mutateAsync({ imageExtension: blob.type });
+      urls.push(data.url);
+
+      await fetch(data.preSignedUrl, { method: "PUT", body: blob });
+    }
+
+    return urls;
+  };
+
+  const newPostMutation = api.post.newPost.useMutation({
+    onSuccess: () => {
+      setFormValues(defaultFormValues);
+    },
+
+    onError: (error) => {
+      setFormErrors({
+        location: error.data?.zodError?.fieldErrors["location"]?.at(0) ?? "",
+        description:
+          error.data?.zodError?.fieldErrors["description"]?.at(0) ?? "",
+        images: error.data?.zodError?.fieldErrors["images"]?.at(0) ?? "",
+      });
+    },
+
+    onMutate: () => {
+      setFormErrors(defautltFormErrors);
+    },
+
+    onSettled: () => {
+      setIsLoading(() => false);
+    },
+  });
 
   const onFileDrop = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -226,7 +287,7 @@ const NewPostForm = () => {
       images: [
         ...prev.images,
         ...Array.from(files).map((file) => ({
-          id: randomBytes(20).toString("hex"),
+          id: uuidv4(),
           src: URL.createObjectURL(file),
         })),
       ],
@@ -249,13 +310,28 @@ const NewPostForm = () => {
     }));
   };
 
-  const submitHandler = (e: FormEvent) => {
+  const submitHandler = async (e: FormEvent) => {
     e.preventDefault();
-    console.log(formValues);
+
+    try {
+      setIsLoading(() => true);
+      newPostSchema.parse(formValues);
+      const imagesSrc = formValues.images.map((image) => image.src);
+      const imagesUrl = await getImagesUrl(imagesSrc);
+      newPostMutation.mutate({ ...formValues, images: imagesUrl });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        setFormErrors({
+          location: error.formErrors.fieldErrors["location"]?.at(0) ?? "",
+          description: error.formErrors.fieldErrors["description"]?.at(0) ?? "",
+          images: error.formErrors.fieldErrors["images"]?.at(0) ?? "",
+        });
+      }
+    }
   };
 
   return (
-    <form onSubmit={submitHandler} className="flex h-full flex-col space-y-5 ">
+    <form onSubmit={submitHandler} className="flex h-full flex-col gap-5 ">
       <h2 className="text-center text-xl capitalize">new post</h2>
 
       <label className="flex flex-col gap-1 font-semibold capitalize">
@@ -275,6 +351,13 @@ const NewPostForm = () => {
         )}
       </label>
 
+      <Image
+        height={100}
+        width={100}
+        src="https://instagram-imitation-bucket.s3.amazonaws.com/f2b79f78-cab7-4d27-916a-2f1d975e0041.png"
+        alt="de"
+      />
+
       <label className="flex flex-col gap-1 font-semibold capitalize">
         description:{" "}
         <textarea
@@ -293,7 +376,7 @@ const NewPostForm = () => {
       </label>
 
       <div
-        className="group relative hidden cursor-pointer grid-cols-[auto_1fr] gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 duration-300 hover:border-black/30 lg:grid"
+        className="group relative hidden cursor-pointer grid-cols-[auto_1fr] gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 duration-300 hover:border-black/30 focus:border-black/30 lg:grid"
         role="button"
       >
         <svg
@@ -375,9 +458,11 @@ const NewPostForm = () => {
           !formValues.location ||
           !formValues.description
         }
-        className="rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        upload
+        {isLoading && <LoadingSpinner />}
+
+        <span className="col-start-2">upload</span>
       </button>
     </form>
   );
