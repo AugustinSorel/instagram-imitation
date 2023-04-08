@@ -9,9 +9,10 @@ import { Grand_Hotel } from "next/font/google";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image, { type ImageProps } from "next/image";
-import Modal, { useExitAnimation } from "./Modal";
+import Modal from "./Modal";
 import { useRouter } from "next/router";
 import { randomBytes } from "crypto";
+import Backdrop, { useComponentControl } from "./Backdrop";
 
 const Avatar = (props: Pick<ImageProps, "src">) => {
   return (
@@ -39,7 +40,7 @@ const googleSignin = () => {
 
 const AvatarMenu = () => {
   const { data: session } = useSession();
-  const menu = useExitAnimation();
+  const menu = useComponentControl();
   const router = useRouter();
 
   return (
@@ -120,7 +121,7 @@ const AvatarMenu = () => {
 };
 
 const SignInButton = () => {
-  const menu = useExitAnimation();
+  const menu = useComponentControl();
 
   return (
     <div
@@ -383,7 +384,7 @@ const NewPostForm = () => {
 };
 
 const NewPostButton = ({ className = "" }: { className?: string }) => {
-  const modal = useExitAnimation();
+  const modal = useComponentControl();
 
   return (
     <>
@@ -398,7 +399,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
       </button>
 
       {modal.isOpen && (
-        <Modal modal={modal}>
+        <Modal componentControl={modal}>
           <NewPostForm />
         </Modal>
       )}
@@ -407,7 +408,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 };
 
 const MenuButton = () => {
-  const modal = useExitAnimation();
+  const backdrop = useComponentControl();
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -416,15 +417,15 @@ const MenuButton = () => {
       <button
         title="Open Menu"
         className="flex aspect-square h-10 items-center justify-center rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 duration-300 hover:bg-white/40"
-        onClick={modal.open}
+        onClick={backdrop.open}
       >
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="m22 16.75c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75zm0-5c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75zm0-5c0-.414-.336-.75-.75-.75h-18.5c-.414 0-.75.336-.75.75s.336.75.75.75h18.5c.414 0 .75-.336.75-.75z" />
         </svg>
       </button>
 
-      {modal.isOpen && (
-        <Modal modal={modal}>
+      {backdrop.isOpen && (
+        <Backdrop componentControl={backdrop}>
           <nav
             className="flex flex-col gap-1 fill-current capitalize text-slate-100"
             onClick={(e) => e.stopPropagation()}
@@ -596,7 +597,7 @@ const MenuButton = () => {
               </>
             )}
           </nav>
-        </Modal>
+        </Backdrop>
       )}
     </>
   );
