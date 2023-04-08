@@ -10,12 +10,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -50,6 +44,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    posts         Post[]
 }
 
 model VerificationToken {
@@ -58,4 +53,13 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Post {
+    id          String   @id @default(cuid())
+    location    String
+    description String
+    images      String[]
+    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId      String
 }
