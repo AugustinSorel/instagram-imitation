@@ -269,10 +269,6 @@ const NewPostForm = () => {
     onMutate: () => {
       setFormErrors(defautltFormErrors);
     },
-
-    onSettled: () => {
-      setIsLoading(() => false);
-    },
   });
 
   const onFileDrop = (e: ChangeEvent<HTMLInputElement>) => {
@@ -314,8 +310,8 @@ const NewPostForm = () => {
     e.preventDefault();
 
     try {
-      setIsLoading(() => true);
       newPostSchema.parse(formValues);
+      setIsLoading(() => true);
       const imagesSrc = formValues.images.map((image) => image.src);
       const imagesUrl = await getImagesUrl(imagesSrc);
       newPostMutation.mutate({ ...formValues, images: imagesUrl });
@@ -327,6 +323,8 @@ const NewPostForm = () => {
           images: error.formErrors.fieldErrors["images"]?.at(0) ?? "",
         });
       }
+    } finally {
+      setIsLoading(() => false);
     }
   };
 
@@ -452,7 +450,8 @@ const NewPostForm = () => {
           formValues.images.length < 1 ||
           formValues.images.length > 5 ||
           !formValues.location ||
-          !formValues.description
+          !formValues.description ||
+          isLoading
         }
         className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center rounded-md border border-black/10 bg-white/20 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-50"
       >
