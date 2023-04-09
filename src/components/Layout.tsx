@@ -246,7 +246,7 @@ const NewPostForm = () => {
       const data = await query.mutateAsync({ imageExtension: blob.type });
       urls.push(data.url);
 
-      await fetch(data.preSignedUrl, { method: "PUT", body: blob });
+      fetch(data.preSignedUrl, { method: "PUT", body: blob });
     }
 
     return urls;
@@ -350,13 +350,6 @@ const NewPostForm = () => {
           </p>
         )}
       </label>
-
-      <Image
-        height={100}
-        width={100}
-        src="https://instagram-imitation-bucket.s3.amazonaws.com/f2b79f78-cab7-4d27-916a-2f1d975e0041.png"
-        alt="de"
-      />
 
       <label className="flex flex-col gap-1 font-semibold capitalize">
         description:{" "}
