@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { type PropsWithChildren, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 export const useComponentControl = () => {

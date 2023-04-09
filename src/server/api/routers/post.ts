@@ -1,6 +1,5 @@
-import { newPostSchema } from "~/components/Layout";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const postRouter = createTRPCRouter({
   newPost: protectedProcedure

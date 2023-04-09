@@ -1,21 +1,21 @@
+import { signIn, signOut, useSession } from "next-auth/react";
+import { Grand_Hotel } from "next/font/google";
+import Image, { type ImageProps } from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import {
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type PropsWithChildren,
+} from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
-import {
-  useState,
-  type PropsWithChildren,
-  ChangeEvent,
-  useRef,
-  FormEvent,
-} from "react";
-import { Grand_Hotel } from "next/font/google";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
-import Image, { type ImageProps } from "next/image";
-import Modal from "./Modal";
-import { useRouter } from "next/router";
-import Backdrop, { useComponentControl } from "./Backdrop";
 import { api } from "~/utils/api";
+import Backdrop, { useComponentControl } from "./Backdrop";
 import { LoadingSpinner } from "./LoadingSpinner";
+import Modal from "./Modal";
 
 const Avatar = (props: Pick<ImageProps, "src">) => {
   return (
@@ -246,7 +246,7 @@ const NewPostForm = () => {
       const data = await query.mutateAsync({ imageExtension: blob.type });
       urls.push(data.url);
 
-      fetch(data.preSignedUrl, { method: "PUT", body: blob });
+      void fetch(data.preSignedUrl, { method: "PUT", body: blob });
     }
 
     return urls;
@@ -331,7 +331,10 @@ const NewPostForm = () => {
   };
 
   return (
-    <form onSubmit={submitHandler} className="flex h-full flex-col gap-5 ">
+    <form
+      onSubmit={(e) => void submitHandler(e)}
+      className="flex h-full flex-col gap-5 "
+    >
       <h2 className="text-center text-xl capitalize">new post</h2>
 
       <label className="flex flex-col gap-1 font-semibold capitalize">
