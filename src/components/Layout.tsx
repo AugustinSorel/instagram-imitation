@@ -463,13 +463,21 @@ const NewPostForm = () => {
 
 const NewPostButton = ({ className = "" }: { className?: string }) => {
   const modal = useComponentControl();
+  const { data: session } = useSession();
+
+  const showNewPostModal = () => {
+    if (!session) {
+      return;
+    }
+    modal.open();
+  };
 
   return (
     <>
       <button
-        title="Add Post"
+        title="New Post"
         className={`relative flex aspect-square h-10 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white/20 bg-origin-border fill-slate-600 p-2 duration-300 hover:bg-white/40 ${className}`}
-        onClick={modal.open}
+        onClick={showNewPostModal}
       >
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="m11 11h-7.25c-.414 0-.75.336-.75.75s.336.75.75.75h7.25v7.25c0 .414.336.75.75.75s.75-.336.75-.75v-7.25h7.25c.414 0 .75-.336.75-.75s-.336-.75-.75-.75h-7.25v-7.25c0-.414-.336-.75-.75-.75s-.75.336-.75.75z" />
