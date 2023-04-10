@@ -62,6 +62,9 @@ const Backdrop = ({ children, componentControl }: Props) => {
       aria-expanded={!componentControl.isClosing}
       onClick={componentControl.triggerClosingAnimation}
       onAnimationEnd={componentControl.animationEndHandler}
+      onKeyDown={(e) =>
+        e.code === "Escape" && componentControl.triggerClosingAnimation()
+      }
     >
       {children}
     </div>,
