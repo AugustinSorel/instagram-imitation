@@ -17,6 +17,8 @@ import Backdrop, { useComponentControl } from "./Backdrop";
 import { LoadingSpinner } from "./LoadingSpinner";
 import Modal from "./Modal";
 
+// TODO: create components
+
 const Avatar = (props: Pick<ImageProps, "src">) => {
   return (
     <Image
@@ -370,13 +372,15 @@ const NewPostForm = () => {
       </label>
 
       <div
-        className="group relative hidden cursor-pointer grid-cols-[auto_1fr] gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 duration-300 hover:border-black/30 focus:border-black/30 lg:grid"
+        className="group relative hidden cursor-pointer grid-cols-[auto_1fr] gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 outline-none duration-300 hover:border-black/30 focus:border-black/30 lg:grid"
         role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
-          className="row-span-2 mx-3 aspect-square w-16 fill-black/10 duration-300 group-hover:fill-black/30"
+          className="row-span-2 mx-3 aspect-square w-16 fill-black/10 duration-300 group-hover:fill-black/30 group-focus:fill-black/30"
         >
           <path d="M9 12c0-.552.448-1 1.001-1s.999.448.999 1-.446 1-.999 1-1.001-.448-1.001-1zm6.2 0l-1.7 2.6-1.3-1.6-3.2 4h10l-3.8-5zm5.8-7v-2h-21v15h2v-13h19zm3 2v14h-20v-14h20zm-2 2h-16v10h16v-10z" />
         </svg>
@@ -389,6 +393,7 @@ const NewPostForm = () => {
         <input
           ref={inputRef}
           type="file"
+          tabIndex={-1}
           multiple
           value=""
           onChange={onFileDrop}
