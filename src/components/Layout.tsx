@@ -18,6 +18,8 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import Modal from "./Modal";
 
 // TODO: create components
+// TODO: toaster when not signed in
+// FIX s3
 
 const Avatar = (props: Pick<ImageProps, "src">) => {
   return (
@@ -232,7 +234,7 @@ const defaultFormValues: z.TypeOf<typeof newPostSchema> = {
   images: [],
 };
 
-const NewPostForm = () => {
+const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formValues, setFormValues] = useState(defaultFormValues);
   const [formErrors, setFormErrors] = useState(defautltFormErrors);
@@ -257,6 +259,7 @@ const NewPostForm = () => {
   const newPostMutation = api.post.newPost.useMutation({
     onSuccess: () => {
       setFormValues(defaultFormValues);
+      successHandler();
     },
 
     onError: (error) => {
@@ -493,7 +496,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 
       {modal.isOpen && (
         <Modal componentControl={modal}>
-          <NewPostForm />
+          <NewPostForm successHandler={modal.triggerClosingAnimation} />
         </Modal>
       )}
     </>
