@@ -27,10 +27,66 @@ const signoutHandler = () => {
   void signOut();
 };
 
+const DesktopMenu = () => {
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  return (
+    <>
+      <Link
+        aria-current={router.asPath === "/"}
+        href={"/"}
+        className="rounded-md p-2 capitalize duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+      >
+        home
+      </Link>
+      <Link
+        aria-current={router.asPath === `/users/${session?.user?.id ?? ""}`}
+        href={`/users/${session?.user?.id ?? ""}`}
+        className="rounded-md p-2 capitalize duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+      >
+        profile
+      </Link>
+      <button className="rounded-md p-2 text-left capitalize duration-300 hover:bg-black/10">
+        darkmode
+      </button>
+      <Link
+        aria-current={
+          router.asPath === `/users/${session?.user?.id ?? ""}?tab=bookmarked`
+        }
+        href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
+        className="rounded-md p-2 capitalize duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+      >
+        bookmarked
+      </Link>
+      <Link
+        aria-current={
+          router.asPath === `/users/${session?.user?.id ?? ""}?tab=liked`
+        }
+        href={`/users/${session?.user?.id ?? ""}?tab=liked`}
+        className="rounded-md p-2 capitalize duration-300 hover:bg-black/5 aria-[current=true]:bg-black/10"
+      >
+        liked
+      </Link>
+
+      <hr className="my-1 border-slate-400" />
+
+      <button
+        className="rounded-md p-2 text-left capitalize duration-300 hover:bg-black/10"
+        onClick={signoutHandler}
+      >
+        signout
+      </button>
+      <button className="rounded-md p-2 text-left capitalize text-red-500 duration-300 hover:bg-red-500/10">
+        delete my account
+      </button>
+    </>
+  );
+};
+
 const AvatarMenu = () => {
   const { data: session } = useSession();
   const menu = useComponentControl();
-  const router = useRouter();
 
   return (
     <div
@@ -55,54 +111,7 @@ const AvatarMenu = () => {
           className="absolute right-0 mt-3 flex w-max animate-fade-in flex-col gap-1 overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 backdrop-blur-md aria-[expanded=false]:animate-fade-out"
           onAnimationEnd={menu.animationEndHandler}
         >
-          <Link
-            aria-current={router.asPath === "/"}
-            href={"/"}
-            className="rounded-md p-2 capitalize duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
-          >
-            home
-          </Link>
-          <Link
-            aria-current={router.asPath === `/users/${session?.user?.id ?? ""}`}
-            href={`/users/${session?.user?.id ?? ""}`}
-            className="rounded-md p-2 capitalize duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
-          >
-            profile
-          </Link>
-          <button className="rounded-md p-2 text-left capitalize duration-300 hover:bg-black/10">
-            darkmode
-          </button>
-          <Link
-            aria-current={
-              router.asPath ===
-              `/users/${session?.user?.id ?? ""}?tab=bookmarked`
-            }
-            href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
-            className="rounded-md p-2 capitalize duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
-          >
-            bookmarked
-          </Link>
-          <Link
-            aria-current={
-              router.asPath === `/users/${session?.user?.id ?? ""}?tab=liked`
-            }
-            href={`/users/${session?.user?.id ?? ""}?tab=liked`}
-            className="rounded-md p-2 capitalize duration-300 hover:bg-black/5 aria-[current=true]:bg-black/10"
-          >
-            liked
-          </Link>
-
-          <hr className="my-1 border-slate-400" />
-
-          <button
-            className="rounded-md p-2 text-left capitalize duration-300 hover:bg-black/10"
-            onClick={signoutHandler}
-          >
-            signout
-          </button>
-          <button className="rounded-md p-2 text-left capitalize text-red-500 duration-300 hover:bg-red-500/10">
-            delete my account
-          </button>
+          <DesktopMenu />
         </div>
       )}
     </div>
