@@ -101,10 +101,15 @@ const AvatarMenu = () => {
     >
       <button
         onClick={menu.open}
-        className="flex aspect-square w-10 items-center justify-center"
+        className="flex aspect-square w-9 items-center justify-center"
         title="Open Menu"
       >
-        <Avatar src={session?.user?.image ?? ""} />
+        <Avatar
+          src={session?.user?.image ?? ""}
+          height={100}
+          width={100}
+          alt="user profile picture"
+        />
       </button>
 
       {menu.isOpen && (

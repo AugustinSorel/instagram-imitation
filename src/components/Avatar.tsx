@@ -1,12 +1,12 @@
 import Image, { type ImageProps } from "next/image";
 
-export const Avatar = (props: Pick<ImageProps, "src">) => {
+export const Avatar = (props: ImageProps) => {
   return (
     <Image
       {...props}
       alt="user profile"
-      width={36}
-      height={36}
+      width={400}
+      height={400}
       className="rounded-full"
     />
   );
