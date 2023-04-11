@@ -1,6 +1,6 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { Grand_Hotel } from "next/font/google";
-import Image, { type ImageProps } from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import {
@@ -16,23 +16,12 @@ import { api } from "~/utils/api";
 import Backdrop, { useComponentControl } from "./Backdrop";
 import { LoadingSpinner } from "./LoadingSpinner";
 import Modal from "./Modal";
+import { Avatar } from "./Avatar";
 
 // TODO: create components
 // TODO: toaster when not signed in
 // FIXME: s3
 // FIXME: sign in with different providers
-
-const Avatar = (props: Pick<ImageProps, "src">) => {
-  return (
-    <Image
-      {...props}
-      alt="user profile"
-      width={36}
-      height={36}
-      className="rounded-full"
-    />
-  );
-};
 
 const signoutHandler = () => {
   void signOut();
