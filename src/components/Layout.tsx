@@ -17,6 +17,7 @@ import Backdrop, { useComponentControl } from "./Backdrop";
 import { LoadingSpinner } from "./LoadingSpinner";
 import Modal from "./Modal";
 import { Avatar } from "./Avatar";
+import { Menu } from "./Menu";
 
 // TODO: create components
 // TODO: toaster when not signed in
@@ -106,13 +107,9 @@ const AvatarMenu = () => {
       </button>
 
       {menu.isOpen && (
-        <div
-          aria-expanded={!menu.isClosing}
-          className="absolute right-0 mt-3 flex w-max animate-fade-in flex-col gap-1 overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 backdrop-blur-md aria-[expanded=false]:animate-fade-out"
-          onAnimationEnd={menu.animationEndHandler}
-        >
+        <Menu componentControl={menu}>
           <DesktopMenu />
-        </div>
+        </Menu>
       )}
     </div>
   );
@@ -195,13 +192,9 @@ const SignInButton = () => {
       </button>
 
       {menu.isOpen && (
-        <div
-          aria-expanded={!menu.isClosing}
-          className="absolute right-0 mt-3 w-max animate-fade-in overflow-hidden rounded-md border border-black/20 bg-white/10 p-1 font-normal backdrop-blur-md aria-[expanded=false]:animate-fade-out"
-          onAnimationEnd={menu.animationEndHandler}
-        >
+        <Menu componentControl={menu}>
           <SignInOptions />
-        </div>
+        </Menu>
       )}
     </div>
   );
