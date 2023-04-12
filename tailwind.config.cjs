@@ -10,6 +10,12 @@ const config = {
         "drop-out": { from: { translate: "0" }, to: { translate: "0 100%" } },
         "scale-in-sm": { from: { scale: "0.8" }, to: { scale: "1" } },
         "scale-out-sm": { from: { scale: "1" }, to: { scale: "0.8" } },
+        "slide-in": { from: { translate: "-100% 0" }, to: { translate: "0" } },
+        "slide-out": { from: { translate: "0" }, to: { translate: "-100% 0" } },
+        "toast-slide-in": {
+          from: { translate: "-25% 0" },
+          to: { translate: "0" },
+        },
       },
 
       animation: {
@@ -19,6 +25,9 @@ const config = {
         "drop-out": "drop-out 300ms ease-out forwards",
         "scale-in-sm": "scale-in-sm 300ms ease-out",
         "scale-out-sm": "scale-out-sm 300ms ease-out forwards",
+        "slide-in": "slide-in 300ms ease-out",
+        "slide-out": "slide-out 300ms ease-out forwards",
+        "toaster-in": "toast-slide-in 300ms ease-out, fade-in 300ms ease-out",
       },
 
       backgroundImage: {

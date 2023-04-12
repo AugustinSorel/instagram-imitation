@@ -19,8 +19,8 @@ import Modal from "./Modal";
 import { Avatar } from "./Avatar";
 import { Menu } from "./Menu";
 import { SvgIcon } from "./SvgIcon";
+import { Toaster, useToaster } from "./Toaster";
 
-// TODO: create components
 // TODO: toaster when not signed in
 // FIXME: s3
 // FIXME: sign in with different providers
@@ -342,7 +342,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
   return (
     <form
       onSubmit={(e) => void submitHandler(e)}
-      className="flex h-full flex-col gap-5 "
+      className="flex h-full flex-col gap-5"
     >
       <h2 className="text-center text-xl capitalize">new post</h2>
 
@@ -477,9 +477,11 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
 const NewPostButton = ({ className = "" }: { className?: string }) => {
   const modal = useComponentControl();
   const { data: session } = useSession();
+  const addToast = useToaster((state) => state.addToast);
 
   const showNewPostModal = () => {
     if (!session) {
+      addToast("please sign in");
       return;
     }
 
@@ -790,6 +792,7 @@ const Layout = ({ children }: PropsWithChildren) => {
       {children}
 
       <Background />
+      <Toaster />
     </>
   );
 };
