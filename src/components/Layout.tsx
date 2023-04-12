@@ -346,7 +346,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
     >
       <h2 className="text-center text-xl capitalize">new post</h2>
 
-      <label className="flex flex-col gap-1 font-semibold capitalize">
+      <label className="flex flex-col gap-1 capitalize">
         location:{" "}
         <input
           type="text"
@@ -363,7 +363,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
         )}
       </label>
 
-      <label className="flex flex-col gap-1 font-semibold capitalize">
+      <label className="flex flex-col gap-1 capitalize">
         description:{" "}
         <textarea
           rows={3}
@@ -381,7 +381,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
       </label>
 
       <div className="space-y-1">
-        <p className="flex flex-col font-semibold capitalize">images:</p>
+        <p className="flex flex-col capitalize">images:</p>
 
         {formValues.images.length > 0 && (
           <div className="flex snap-x gap-6 overflow-auto p-3">
@@ -423,7 +423,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
           >
             <path d="M9 12c0-.552.448-1 1.001-1s.999.448.999 1-.446 1-.999 1-1.001-.448-1.001-1zm6.2 0l-1.7 2.6-1.3-1.6-3.2 4h10l-3.8-5zm5.8-7v-2h-21v15h2v-13h19zm3 2v14h-20v-14h20zm-2 2h-16v10h16v-10z" />
           </svg>
-          <p className="self-center text-center text-xl font-bold text-slate-800">
+          <p className="self-center text-center text-xl font-semibold text-slate-800">
             Drag Images here or click to select files
           </p>
           <p className="text-center text-sm text-slate-500">

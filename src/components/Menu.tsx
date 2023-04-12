@@ -1,5 +1,5 @@
 import { type PropsWithChildren } from "react";
-import { useComponentControl } from "./Backdrop";
+import { type useComponentControl } from "./Backdrop";
 
 type Props = {
   componentControl: ReturnType<typeof useComponentControl>;
