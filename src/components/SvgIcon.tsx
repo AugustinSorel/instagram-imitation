@@ -28,7 +28,7 @@ export const SvgIcon = ({ svgName }: Props) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className="aspect-square w-4 fill-current"
+      className="aspect-square w-4 fill-inherit"
     >
       <path d={paths[svgName]} />
     </svg>

@@ -191,7 +191,7 @@ const SignInButton = () => {
     >
       <button
         aria-pressed={menu.isOpen}
-        className="rounded-md border border-black/10 bg-brand-gradient bg-origin-border px-5 py-2 text-sm font-bold capitalize text-white opacity-75 backdrop-blur-sm duration-300 hover:opacity-100 aria-[pressed=true]:opacity-100"
+        className="h-9 rounded-md border border-black/10 bg-brand-gradient bg-origin-border px-5 text-sm font-bold capitalize text-white opacity-75 backdrop-blur-sm duration-300 hover:opacity-100 aria-[pressed=true]:opacity-100"
         onClick={menu.open}
       >
         signin
@@ -490,7 +490,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
     <>
       <button
         title="New Post"
-        className={`relative flex aspect-square h-10 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white/20 bg-origin-border p-2 text-slate-600 duration-300 hover:bg-white/40 ${className}`}
+        className={`relative flex aspect-square h-9 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white/20 bg-origin-border fill-slate-600 duration-300 hover:bg-white/40 ${className}`}
         onClick={showNewPostModal}
       >
         <SvgIcon svgName="plus" />
@@ -600,7 +600,7 @@ const MobileMenuButton = () => {
     <>
       <button
         title="Open Menu"
-        className="flex aspect-square items-center justify-center rounded-md border border-black/10 bg-white/20 text-slate-600 duration-300 hover:bg-white/40"
+        className="flex aspect-square items-center justify-center rounded-md border border-black/10 bg-white/20 fill-slate-600 duration-300 hover:bg-white/40"
         onClick={backdrop.open}
       >
         <SvgIcon svgName="menu" />
@@ -617,7 +617,7 @@ const MobileMenuButton = () => {
 
 const QuickSearchButton = () => {
   return (
-    <button className="relative flex w-80 items-center gap-2 rounded-md border border-black/10 bg-white/20 p-2 text-sm capitalize text-slate-600 duration-300 hover:bg-white/40">
+    <button className="t-sm relative flex h-9 w-80 items-center gap-2 rounded-md border border-black/10 bg-white/20 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-white/40">
       <SvgIcon svgName="magnifier" />
       quick search...
       <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
@@ -667,7 +667,7 @@ const DesktopHeader = () => {
 const MobileHeader = () => {
   return (
     <div className="fixed bottom-0 left-0 right-0 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-red-500 bg-white/30 p-5 backdrop-blur-sm lg:hidden">
-      <NewPostButton className="col-start-2 bg-brand-gradient text-white opacity-75 hover:opacity-100" />
+      <NewPostButton className="col-start-2 bg-brand-gradient fill-white opacity-75 hover:opacity-100" />
       <MobileMenuButton />
     </div>
   );
