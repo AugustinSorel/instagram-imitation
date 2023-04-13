@@ -22,56 +22,6 @@ import { SvgIcon } from "./SvgIcon";
 import { Toaster, useToaster } from "./Toaster";
 import { create } from "zustand";
 
-type InputProps = {
-  errorText: string;
-  value: string;
-  changeHandler: (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-};
-
-const TextArea = ({ value, errorText, changeHandler }: InputProps) => {
-  return (
-    <label className="flex flex-col gap-1 capitalize">
-      description:{" "}
-      <textarea
-        rows={3}
-        placeholder="enter description"
-        className="duration300 rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
-        value={value}
-        onChange={changeHandler}
-        name="description"
-      />
-      {errorText && (
-        <p className="text-center text-sm font-normal text-red-500">
-          {errorText}
-        </p>
-      )}
-    </label>
-  );
-};
-
-const Input = ({ errorText, value, changeHandler }: InputProps) => {
-  return (
-    <label className="flex flex-col gap-1 capitalize">
-      location:{" "}
-      <input
-        type="text"
-        placeholder="enter location"
-        className="rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none duration-300 placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
-        value={value}
-        onChange={changeHandler}
-        name="location"
-      />
-      {errorText && (
-        <p className="text-center text-sm font-normal text-red-500">
-          {errorText}
-        </p>
-      )}
-    </label>
-  );
-};
-
 export const newPostSchema = z.object({
   location: z
     .string({ required_error: "location is required" })
@@ -219,17 +169,39 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
     >
       <h2 className="text-center text-xl capitalize">new post</h2>
 
-      <Input
-        changeHandler={changeHandler}
-        errorText={formErrors.location}
-        value={formValues.location}
-      />
+      <label className="flex flex-col gap-1 capitalize">
+        location:{" "}
+        <input
+          type="text"
+          className="rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none duration-300 placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
+          value={formValues.location}
+          placeholder="enter location"
+          onChange={changeHandler}
+          name="location"
+        />
+        {formErrors.location && (
+          <p className="text-center text-sm font-normal text-red-500">
+            {formErrors.location}
+          </p>
+        )}
+      </label>
 
-      <TextArea
-        changeHandler={changeHandler}
-        errorText={formErrors.description}
-        value={formValues.description}
-      />
+      <label className="flex flex-col gap-1 capitalize">
+        description:{" "}
+        <textarea
+          rows={3}
+          className="duration300 rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
+          value={formValues.description}
+          placeholder="enter description"
+          onChange={changeHandler}
+          name="description"
+        />
+        {formErrors.description && (
+          <p className="text-center text-sm font-normal text-red-500">
+            {formErrors.description}
+          </p>
+        )}
+      </label>
 
       <div className="space-y-1">
         <p className="flex flex-col capitalize">images:</p>
