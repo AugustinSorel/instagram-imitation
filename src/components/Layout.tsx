@@ -172,6 +172,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
       <label className="flex flex-col gap-1 capitalize">
         location:{" "}
         <input
+          autoFocus
           type="text"
           className="rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none duration-300 placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
           value={formValues.location}
@@ -264,7 +265,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
 
         <button
           type="button"
-          className="w-full rounded-md border border-black/10 bg-white/20 p-2 text-sm font-semibold capitalize duration-300 hover:bg-white/40 lg:hidden"
+          className="w-full rounded-md border border-black/10 bg-white/20 p-2 text-sm capitalize text-slate-600 duration-300 hover:bg-white/40 lg:hidden"
           onClick={() => inputRef.current?.click()}
         >
           browse
@@ -340,7 +341,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 
 const ThemeButton = () => {
   return (
-    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize duration-300 hover:bg-black/10">
+    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/10 focus:bg-black/10">
       <SvgIcon svgName="moon" />
       darkmode
     </button>
@@ -349,7 +350,7 @@ const ThemeButton = () => {
 
 const DeleteAccountButton = () => {
   return (
-    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize text-red-400 duration-300 hover:bg-red-400/30">
+    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize text-red-400 outline-none duration-300 hover:bg-red-400/30 focus:bg-red-400/30">
       <SvgIcon svgName="trash" />
       delete my account
     </button>
@@ -359,7 +360,7 @@ const DeleteAccountButton = () => {
 const SignOutButton = () => {
   return (
     <button
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize duration-300 hover:bg-black/10"
+      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/10 focus:bg-black/10"
       onClick={() => void signOut()}
     >
       <SvgIcon svgName="logout" />
@@ -375,7 +376,7 @@ const SignInWithGoogle = () => {
 
   return (
     <button
-      className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/10"
+      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10"
       onClick={googleSignin}
     >
       <svg
@@ -412,7 +413,7 @@ const SignInWithGithub = () => {
 
   return (
     <button
-      className="flex items-center gap-3 rounded-md p-2 duration-300 hover:bg-black/10"
+      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10"
       onClick={githubSignin}
     >
       <svg
@@ -439,13 +440,13 @@ const MenuContent = () => {
       <Link
         aria-current={router.asPath === "/"}
         href="/"
-        className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+        className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10 aria-[current=true]:bg-black/10"
       >
         <SvgIcon svgName="house" />
         home
       </Link>
 
-      <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize duration-300 hover:bg-black/10">
+      <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/10 focus:bg-black/10">
         <SvgIcon svgName="magnifier" />
         search
       </button>
@@ -457,7 +458,7 @@ const MenuContent = () => {
           <Link
             aria-current={router.asPath === `/users/${session?.user?.id}`}
             href={`/users/${session?.user?.id ?? ""}`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10 aria-[current=true]:bg-black/10"
           >
             <SvgIcon svgName="user" />
             profile
@@ -469,7 +470,7 @@ const MenuContent = () => {
               `/users/${session?.user?.id ?? ""}?tab=bookmarked`
             }
             href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10 aria-[current=true]:bg-black/10"
           >
             <SvgIcon svgName="bookmark" />
             bookmarked
@@ -477,10 +478,10 @@ const MenuContent = () => {
 
           <Link
             aria-current={
-              router.basePath === `/users/${session?.user?.id ?? ""}?tab=liked`
+              router.asPath === `/users/${session?.user?.id ?? ""}?tab=liked`
             }
             href={`/users/${session?.user?.id ?? ""}?tab=liked`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 duration-300 hover:bg-black/10 aria-[current=true]:bg-black/10"
+            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10 aria-[current=true]:bg-black/10"
           >
             <SvgIcon svgName="heart" />
             liked
