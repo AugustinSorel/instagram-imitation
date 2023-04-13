@@ -1,10 +1,8 @@
 import { type NextPage } from "next";
-import { useSession } from "next-auth/react";
 import Head from "next/head";
+import Image from "next/image";
 
 const Home: NextPage = () => {
-  const { data: session } = useSession();
-
   return (
     <>
       <Head>
@@ -13,60 +11,25 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <p>{JSON.stringify(session)}</p>
-
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
-      <h1>hello</h1>
+      <main className="mx-auto flex justify-center py-5">
+        <div className="group relative isolate h-post w-post overflow-hidden rounded-3xl border border-black/20 p-2 shadow-xl duration-300 hover:shadow-2xl">
+          <header>
+            <div className="grid w-32 grid-cols-[auto_1fr] gap-x-1 rounded-full border border-black/10 bg-white/30 p-1 backdrop-blur-sm">
+              <div className="row-span-2 my-auto aspect-square w-9 rounded-full bg-green-400" />
+              <h2 className="self-end truncate text-xs font-medium capitalize">
+                jhon
+              </h2>
+              <p className="truncate text-xs capitalize">Seatle, USA</p>
+            </div>
+          </header>
+          <Image
+            src={"/de.jpg"}
+            alt="image"
+            fill
+            className="-z-10 object-cover duration-300 group-hover:scale-105"
+          />
+        </div>
+      </main>
     </>
   );
 };
