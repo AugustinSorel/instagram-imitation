@@ -21,8 +21,6 @@ import { SvgIcon } from "./SvgIcon";
 import { Toaster, useToaster } from "./Toaster";
 import { create } from "zustand";
 
-// FIXME: s3
-// FIXME: sign in with different providers
 
 type InputProps = {
   errorText: string;
@@ -566,7 +564,6 @@ const useMenu = create<UseMenu>((set) => ({
   close: () => set(() => ({ isOpen: false })),
 }));
 
-//FIXME: create a hook to encapsulate the animation
 const Menu = () => {
   const [isClosing, setIsClosing] = useState(false);
   const isOpen = useMenu((state) => state.isOpen);
