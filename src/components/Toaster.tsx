@@ -26,6 +26,7 @@ export const useToaster = create<UseToaster>((set, _) => {
   };
 });
 
+// FIXME: use the hook
 const Toast = ({ toast }: { toast: Toast }) => {
   const deleteToast = useToaster((state) => state.deleteToast);
   const [isClosing, setIsClosing] = useState(false);
