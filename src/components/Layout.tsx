@@ -510,7 +510,7 @@ const MenuContent = () => {
 
 const QuickSearchButton = () => {
   return (
-    <button className="t-sm relative flex h-9 w-80 items-center gap-2 rounded-md border border-black/10 bg-white/20 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-white/40">
+    <button className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-white/20 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-white/40">
       <SvgIcon svgName="magnifier" />
       quick search...
       <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
