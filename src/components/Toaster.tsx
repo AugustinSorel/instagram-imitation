@@ -40,11 +40,17 @@ const Toast = ({ toast }: { toast: Toast }) => {
     };
   }, []);
 
+  const onAnimationEndHandler = () => {
+    if (isClosing) {
+      deleteToast(toast.id);
+    }
+  };
+
   return (
     <div
       className="flex animate-toaster-in gap-5 rounded-md border border-black/20 bg-white/20 px-5 py-2 capitalize text-slate-600 backdrop-blur-sm transition-all data-[active=false]:animate-fade-out"
       data-active={!isClosing}
-      onAnimationEnd={() => isClosing && deleteToast(toast.id)}
+      onAnimationEnd={onAnimationEndHandler}
     >
       {toast.text}
     </div>
