@@ -167,7 +167,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
       onSubmit={(e) => void submitHandler(e)}
       className="flex h-full flex-col gap-5"
     >
-      <h2 className="text-center text-xl capitalize">new post</h2>
+      <h2 className="mb-auto text-center text-xl capitalize">new post</h2>
 
       <label className="flex flex-col gap-1 capitalize">
         location:{" "}
@@ -221,12 +221,10 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
                   name="remove-image"
                   title="remove image"
                   type="button"
-                  className="absolute right-1 top-0 aspect-square w-6 -translate-y-1/2 translate-x-1/2 rounded-full border border-black/30 p-0.5 backdrop-blur-sm"
+                  className="absolute right-1 top-0 flex aspect-square w-6 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border border-black/30 bg-white/20 p-0.5 backdrop-blur-sm"
                   onClick={() => removeImage(image.id)}
                 >
-                  <svg viewBox="-1 0 24 24" xmlns="http://www.w2.org/2000/svg">
-                    <path d="m11 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z" />
-                  </svg>
+                  <SvgIcon svgName="close" />
                 </button>
               </div>
             ))}
