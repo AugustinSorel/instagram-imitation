@@ -9,6 +9,7 @@ import {
   type ChangeEvent,
   type FormEvent,
   type PropsWithChildren,
+  useEffect,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
@@ -20,7 +21,6 @@ import { Avatar } from "./Avatar";
 import { SvgIcon } from "./SvgIcon";
 import { Toaster, useToaster } from "./Toaster";
 import { create } from "zustand";
-
 
 type InputProps = {
   errorText: string;
@@ -568,6 +568,7 @@ const Menu = () => {
   const [isClosing, setIsClosing] = useState(false);
   const isOpen = useMenu((state) => state.isOpen);
   const close = useMenu((state) => state.close);
+  const router = useRouter();
 
   const animationEndHandler = () => {
     if (isClosing) {
@@ -579,6 +580,14 @@ const Menu = () => {
   const triggerClosingAnimation = () => {
     setIsClosing(() => true);
   };
+
+  useEffect(() => {
+    const handleRouteChange = () => triggerClosingAnimation();
+
+    router.events.on("routeChangeStart", handleRouteChange);
+
+    return () => router.events.off("routeChangeStart", handleRouteChange);
+  }, [router.events]);
 
   if (!isOpen) {
     return null;
