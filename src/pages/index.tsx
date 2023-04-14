@@ -24,7 +24,10 @@ const Post = ({ images }: { images: string[] }) => {
   };
 
   return (
-    <div className="group relative isolate flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 p-2 shadow-xl duration-300 hover:shadow-2xl">
+    <div
+      className="group relative isolate flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 p-2 shadow-xl duration-300 focus-within:shadow-2xl hover:shadow-2xl"
+      tabIndex={0}
+    >
       <header className="flex items-center justify-between">
         <div className="grid w-32 grid-cols-[auto_1fr] gap-x-1 rounded-full border border-black/10 bg-white/50 p-1 backdrop-blur-md">
           <div className="row-span-2 my-auto aspect-square w-7 rounded-full bg-green-400" />
@@ -39,7 +42,7 @@ const Post = ({ images }: { images: string[] }) => {
         <button
           title="bookmark this post"
           name="bookmark this post"
-          className="aspect-square -translate-y-14 rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 group-hover:translate-y-0"
+          className="aspect-square -translate-y-14 rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus:bg-white/80 focus:fill-slate-900 group-focus-within:translate-y-0 group-hover:translate-y-0"
         >
           <SvgIcon svgName="bookmark" />
         </button>
@@ -49,7 +52,7 @@ const Post = ({ images }: { images: string[] }) => {
         <button
           title="view previous image"
           name="view previous image"
-          className="aspect-square -translate-x-10 rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 group-hover:translate-x-0"
+          className="aspect-square -translate-x-10 rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus:bg-white/80 focus:fill-slate-900 group-focus-within:translate-x-0 group-hover:translate-x-0"
           onClick={viewPrevImage}
         >
           <SvgIcon svgName="leftArrow" />
@@ -57,7 +60,7 @@ const Post = ({ images }: { images: string[] }) => {
         <button
           title="view next image"
           name="view next image"
-          className="aspect-square translate-x-10 rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 group-hover:translate-x-0"
+          className="aspect-square translate-x-10 rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus:bg-white/80 focus:fill-slate-900 group-focus-within:translate-x-0 group-hover:translate-x-0"
           onClick={viewNextImage}
         >
           <SvgIcon svgName="rightArrow" />
@@ -78,18 +81,18 @@ const Post = ({ images }: { images: string[] }) => {
           ))}
         </nav>
 
-        <div className="ml-auto translate-y-14 space-x-3 duration-300 group-hover:translate-y-0">
+        <div className="ml-auto translate-y-14 space-x-3 duration-300 group-focus-within:translate-y-0 group-hover:translate-y-0">
           <button
             title="view comments"
             name="view comments"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900"
+            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus:bg-white/80 focus:fill-slate-900"
           >
             <SvgIcon svgName="speech" />
           </button>
           <button
             title="like"
             name="like"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900"
+            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus:bg-white/80 focus:fill-slate-900"
           >
             <SvgIcon svgName="heart" />
           </button>
@@ -109,7 +112,7 @@ const Post = ({ images }: { images: string[] }) => {
               alt="image"
               fill
               sizes="1000px"
-              className="object-cover duration-300 aria-[current=true]:group-hover:scale-105"
+              className="object-cover duration-300 group-focus-within:aria-[current=true]:scale-105 aria-[current=true]:group-hover:scale-105"
             />
           </li>
         ))}
