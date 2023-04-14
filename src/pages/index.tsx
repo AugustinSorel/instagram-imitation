@@ -26,7 +26,7 @@ const Post = ({ images }: { images: string[] }) => {
   return (
     <div className="group relative isolate flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 p-2 shadow-xl duration-300 hover:shadow-2xl">
       <header className="flex items-center justify-between">
-        <div className="grid w-32 grid-cols-[auto_1fr] gap-x-1 rounded-full border border-black/10 bg-white/30 p-1 backdrop-blur-sm">
+        <div className="grid w-32 grid-cols-[auto_1fr] gap-x-1 rounded-full border border-black/10 bg-white/50 p-1 backdrop-blur-md">
           <div className="row-span-2 my-auto aspect-square w-7 rounded-full bg-green-400" />
           <h2 className="self-end truncate text-[0.7rem] font-medium capitalize leading-3">
             jhon
@@ -39,7 +39,7 @@ const Post = ({ images }: { images: string[] }) => {
         <button
           title="bookmark this post"
           name="bookmark this post"
-          className="aspect-square -translate-y-14 rounded-full border border-black/20 bg-white/30 fill-slate-600 p-2 backdrop-blur-sm duration-300 hover:bg-white/70 hover:fill-slate-900 group-hover:translate-y-0"
+          className="aspect-square -translate-y-14 rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 group-hover:translate-y-0"
         >
           <SvgIcon svgName="bookmark" />
         </button>
@@ -49,7 +49,7 @@ const Post = ({ images }: { images: string[] }) => {
         <button
           title="view previous image"
           name="view previous image"
-          className="aspect-square -translate-x-10 rounded-full border border-black/20 bg-white/30 fill-slate-600 p-2 backdrop-blur-sm duration-300 hover:bg-white/70 hover:fill-slate-900 group-hover:translate-x-0"
+          className="aspect-square -translate-x-10 rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 group-hover:translate-x-0"
           onClick={viewPrevImage}
         >
           <SvgIcon svgName="leftArrow" />
@@ -57,7 +57,7 @@ const Post = ({ images }: { images: string[] }) => {
         <button
           title="view next image"
           name="view next image"
-          className="aspect-square translate-x-10 rounded-full border border-black/20 bg-white/30 fill-slate-600 p-2 backdrop-blur-sm duration-300 hover:bg-white/70 hover:fill-slate-900 group-hover:translate-x-0"
+          className="aspect-square translate-x-10 rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 group-hover:translate-x-0"
           onClick={viewNextImage}
         >
           <SvgIcon svgName="rightArrow" />
@@ -72,7 +72,7 @@ const Post = ({ images }: { images: string[] }) => {
               aria-current={i === imageIndex}
               name={`view post ${i + 1}`}
               title={`view post ${i + 1}`}
-              className="aspect-square w-5 rounded-full border border-black/20 backdrop-blur-md duration-300 hover:bg-white/70 hover:fill-slate-900 aria-[current=true]:bg-white/70"
+              className="aspect-square w-5 rounded-full border border-black/20 bg-white/50 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 aria-[current=true]:bg-white/80"
               onClick={() => gotToImage(i)}
             />
           ))}
@@ -82,14 +82,14 @@ const Post = ({ images }: { images: string[] }) => {
           <button
             title="view comments"
             name="view comments"
-            className="aspect-square rounded-full border border-black/20 bg-white/30 p-2 backdrop-blur-sm duration-300 hover:bg-white/70 hover:fill-slate-900"
+            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900"
           >
             <SvgIcon svgName="speech" />
           </button>
           <button
             title="like"
             name="like"
-            className="aspect-square rounded-full border border-black/20 bg-white/30 p-2 backdrop-blur-sm duration-300 hover:bg-white/70 hover:fill-slate-900"
+            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900"
           >
             <SvgIcon svgName="heart" />
           </button>
