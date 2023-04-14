@@ -320,7 +320,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
     <>
       <button
         title="New Post"
-        className={`relative flex aspect-square h-9 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white/20 bg-origin-border fill-slate-600 duration-300 hover:bg-white/40 ${className}`}
+        className={`relative flex aspect-square h-9 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white/40 bg-origin-border fill-slate-600 duration-300 hover:bg-white/60 ${className}`}
         onClick={showNewPostModal}
       >
         <SvgIcon svgName="plus" />
@@ -341,7 +341,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 
 const ThemeButton = () => {
   return (
-    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/10 focus:bg-black/10">
+    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 focus:bg-black/20">
       <SvgIcon svgName="moon" />
       darkmode
     </button>
@@ -360,7 +360,7 @@ const DeleteAccountButton = () => {
 const SignOutButton = () => {
   return (
     <button
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/10 focus:bg-black/10"
+      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 focus:bg-black/20"
       onClick={() => void signOut()}
     >
       <SvgIcon svgName="logout" />
@@ -376,7 +376,7 @@ const SignInWithGoogle = () => {
 
   return (
     <button
-      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10"
+      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20"
       onClick={googleSignin}
     >
       <svg
@@ -413,7 +413,7 @@ const SignInWithGithub = () => {
 
   return (
     <button
-      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10"
+      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20"
       onClick={githubSignin}
     >
       <svg
@@ -440,13 +440,13 @@ const MenuContent = () => {
       <Link
         aria-current={router.asPath === "/"}
         href="/"
-        className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10 aria-[current=true]:bg-black/10"
+        className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20 aria-[current=true]:bg-black/20"
       >
         <SvgIcon svgName="house" />
         home
       </Link>
 
-      <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/10 focus:bg-black/10">
+      <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 focus:bg-black/20">
         <SvgIcon svgName="magnifier" />
         search
       </button>
@@ -458,7 +458,7 @@ const MenuContent = () => {
           <Link
             aria-current={router.asPath === `/users/${session?.user?.id}`}
             href={`/users/${session?.user?.id ?? ""}`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10 aria-[current=true]:bg-black/10"
+            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20 aria-[current=true]:bg-black/20"
           >
             <SvgIcon svgName="user" />
             profile
@@ -470,7 +470,7 @@ const MenuContent = () => {
               `/users/${session?.user?.id ?? ""}?tab=bookmarked`
             }
             href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10 aria-[current=true]:bg-black/10"
+            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20 aria-[current=true]:bg-black/20"
           >
             <SvgIcon svgName="bookmark" />
             bookmarked
@@ -481,7 +481,7 @@ const MenuContent = () => {
               router.asPath === `/users/${session?.user?.id ?? ""}?tab=liked`
             }
             href={`/users/${session?.user?.id ?? ""}?tab=liked`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/10 focus:bg-black/10 aria-[current=true]:bg-black/10"
+            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20 aria-[current=true]:bg-black/20"
           >
             <SvgIcon svgName="heart" />
             liked
@@ -510,7 +510,7 @@ const MenuContent = () => {
 
 const QuickSearchButton = () => {
   return (
-    <button className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-white/20 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-white/40">
+    <button className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-white/40 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-white/60">
       <SvgIcon svgName="magnifier" />
       quick search...
       <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
@@ -581,7 +581,7 @@ const MenuButton = () => {
   return (
     <button
       title="Open Menu"
-      className="flex aspect-square items-center justify-center rounded-md border border-black/10 bg-white/20 fill-slate-600 duration-300 hover:bg-white/40"
+      className="flex aspect-square items-center justify-center rounded-md border border-black/10 bg-white/40 fill-slate-600 duration-300 hover:bg-white/60"
       onClick={openMenu}
     >
       <SvgIcon svgName="menu" />
@@ -641,7 +641,7 @@ const DesktopHeader = () => {
   const { data: session } = useSession();
 
   return (
-    <header className="sticky top-0 z-10 hidden p-5 after:absolute after:inset-0 after:-z-10 after:bg-white/30 after:backdrop-blur-sm lg:block">
+    <header className="sticky top-0 z-10 hidden p-5 after:absolute after:inset-0 after:-z-10 after:bg-white/50 after:backdrop-blur-md lg:block">
       <div className="mx-auto grid max-w-5xl grid-cols-[1fr_auto_1fr] items-center">
         <Title />
 
@@ -658,7 +658,7 @@ const DesktopHeader = () => {
 
 const MobileHeader = () => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-red-500 bg-white/30 p-5 backdrop-blur-sm lg:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-white/50 p-5 backdrop-blur-md lg:hidden">
       <NewPostButton className="col-start-2 bg-brand-gradient fill-white opacity-75 hover:opacity-100" />
       <MenuButton />
     </div>
