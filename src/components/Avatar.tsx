@@ -1,13 +1,13 @@
 import Image, { type ImageProps } from "next/image";
 
-export const Avatar = (props: ImageProps) => {
+export const Avatar = ({ alt, className = "", ...props }: ImageProps) => {
   return (
     <Image
+      width={36}
+      height={36}
+      className={`rounded-full ${className}`}
+      alt={alt}
       {...props}
-      alt="user profile"
-      width={400}
-      height={400}
-      className="rounded-full"
     />
   );
 };

@@ -18,7 +18,7 @@ const Backdrop = (props: Props) => {
   return createPortal(
     <div
       aria-modal={true}
-      className="fixed inset-0 z-30 flex animate-fade-in flex-col items-center justify-center border border-black/10 bg-black/50 backdrop-blur-sm aria-[expanded=false]:animate-fade-out"
+      className="fixed inset-0 z-30 flex animate-fade-in flex-col items-center justify-center border border-black/10 bg-black/50 backdrop-blur-md aria-[expanded=false]:animate-fade-out"
       aria-expanded={isExpanded}
       onClick={clickHandler}
       onAnimationEnd={animationEndHandler}
