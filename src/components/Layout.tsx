@@ -62,6 +62,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
   const [formErrors, setFormErrors] = useState(defautltFormErrors);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const query = api.media.uploadNewPostImageToS3.useMutation();
+  const utils = api.useContext();
 
   const isFormValid =
     formValues.images.length < 1 ||
@@ -102,6 +103,10 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
 
     onMutate: () => {
       setFormErrors(defautltFormErrors);
+    },
+
+    onSettled: () => {
+      void utils.post.all.invalidate();
     },
   });
 
