@@ -3,7 +3,11 @@
 @tailwind utilities;
 
 body {
-  @apply overflow-x-hidden bg-slate-200;
+  @apply max-h-screen overflow-hidden bg-slate-200;
+}
+
+#__next {
+  @apply max-h-screen overflow-auto;
 }
 
 ::-webkit-scrollbar {
