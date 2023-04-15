@@ -26,10 +26,33 @@ export const postRouter = createTRPCRouter({
         data: { ...input, userId: ctx.session.user.id },
       });
     }),
-  all: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.post.findMany({
-      include: { user: true },
-      orderBy: { createdAt: "desc" },
-    });
-  }),
+  all: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 50;
+      const { cursor } = input;
+
+      const posts = await ctx.prisma.post.findMany({
+        take: limit + 1,
+        include: { user: true },
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: { createdAt: "desc" },
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+
+      if (posts.length > limit) {
+        const nextItem = posts.pop();
+        nextCursor = nextItem!.id;
+      }
+      return {
+        posts,
+        nextCursor,
+      };
+    }),
 });
