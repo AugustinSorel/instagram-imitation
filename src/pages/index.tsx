@@ -1,10 +1,13 @@
-import { type NextPage } from "next";
+import { createServerSideHelpers } from "@trpc/react-query/server";
 import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
-import { SvgIcon } from "~/components/SvgIcon";
-import { api, type RouterOutputs } from "~/utils/api";
+import superjson from "superjson";
 import { Avatar } from "~/components/Avatar";
+import { SvgIcon } from "~/components/SvgIcon";
+import { appRouter } from "~/server/api/root";
+import { prisma } from "~/server/db";
+import { api, type RouterOutputs } from "~/utils/api";
 
 const SkeletonPost = () => {
   return (
@@ -151,7 +154,7 @@ const Post = ({ post }: { post: RouterOutputs["post"]["all"][number] }) => {
   );
 };
 
-const Home: NextPage = () => {
+const Home = () => {
   const postsQuery = api.post.all.useQuery();
 
   if (postsQuery.isLoading || !postsQuery.data) {
@@ -182,3 +185,18 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getStaticProps = async () => {
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: { prisma: prisma, session: null },
+    transformer: superjson,
+  });
+
+  await helpers.post.all.prefetch();
+
+  return {
+    props: { trpcState: helpers.dehydrate() },
+    revalidate: 1,
+  };
+};
