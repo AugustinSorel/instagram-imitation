@@ -16,6 +16,10 @@ const config = {
           from: { translate: "-25% 0" },
           to: { translate: "0" },
         },
+        "post-skeleton": {
+          from: { translate: "-600% 0" },
+          to: { translate: "400% 0" },
+        },
       },
 
       animation: {
@@ -28,6 +32,7 @@ const config = {
         "slide-in": "slide-in 300ms ease-out",
         "slide-out": "slide-out 300ms ease-out forwards",
         "toaster-in": "toast-slide-in 300ms ease-out, fade-in 300ms ease-out",
+        "post-skeleton": "post-skeleton 1s ease-out infinite",
       },
 
       backgroundImage: {
@@ -40,7 +45,7 @@ const config = {
       },
 
       width: {
-        post: "350px",
+        post: "min(350px,100%)",
       },
     },
   },

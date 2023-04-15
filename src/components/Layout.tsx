@@ -642,7 +642,7 @@ const DesktopHeader = () => {
 
   return (
     <header className="sticky top-0 z-10 hidden p-5 after:absolute after:inset-0 after:-z-10 after:bg-white/50 after:backdrop-blur-md lg:block">
-      <div className="mx-auto grid max-w-5xl grid-cols-[1fr_auto_1fr] items-center">
+      <div className="mx-auto grid max-w-5xl grid-cols-[1fr_350px_1fr] items-center">
         <Title />
 
         <QuickSearchButton />
