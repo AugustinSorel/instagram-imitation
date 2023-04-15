@@ -27,6 +27,9 @@ export const postRouter = createTRPCRouter({
       });
     }),
   all: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.post.findMany({ include: { user: true } });
+    return await ctx.prisma.post.findMany({
+      include: { user: true },
+      orderBy: { createdAt: "desc" },
+    });
   }),
 });
