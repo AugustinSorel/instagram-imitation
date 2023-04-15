@@ -1,7 +1,8 @@
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import Head from "next/head";
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useEffect } from "react";
+import { type PropsWithChildren, useState } from "react";
 import superjson from "superjson";
 import { Avatar } from "~/components/Avatar";
 import { SvgIcon } from "~/components/SvgIcon";
@@ -27,7 +28,21 @@ const SkeletonPost = () => {
   );
 };
 
-const Post = ({ post }: { post: RouterOutputs["post"]["all"][number] }) => {
+const ListOfSkeletons = () => {
+  return (
+    <>
+      {[...Array<unknown>(5)].map((_, i) => (
+        <SkeletonPost key={i} />
+      ))}
+    </>
+  );
+};
+
+type PostProps = {
+  post: RouterOutputs["post"]["all"]["posts"][number];
+};
+
+const Post = ({ post }: PostProps) => {
   const [imageIndex, setImageIndex] = useState(0);
 
   const viewNextImage = () => {
@@ -154,16 +169,48 @@ const Post = ({ post }: { post: RouterOutputs["post"]["all"][number] }) => {
   );
 };
 
-const Home = () => {
-  const postsQuery = api.post.all.useQuery();
+const MainContainer = ({ children }: PropsWithChildren) => {
+  return (
+    <main className="mx-auto flex flex-col items-center justify-center gap-5 py-5">
+      {children}
+    </main>
+  );
+};
 
-  if (postsQuery.isLoading || !postsQuery.data) {
+const Home = () => {
+  const postsInfiniteQuery = api.post.all.useInfiniteQuery(
+    { limit: 5 },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
+
+  const onScroll = useCallback(
+    (e: Event) => {
+      const target = e.target as HTMLElement;
+      const bottom =
+        target.scrollHeight - target.clientHeight <= target.scrollTop + 100;
+
+      if (bottom && postsInfiniteQuery.hasNextPage) {
+        void postsInfiniteQuery.fetchNextPage();
+      }
+    },
+    [postsInfiniteQuery]
+  );
+
+  useEffect(() => {
+    const nextDiv = document.getElementById("__next") as HTMLElement;
+    nextDiv.addEventListener("scroll", onScroll);
+    return () => {
+      nextDiv.removeEventListener("scroll", onScroll);
+    };
+  }, [onScroll]);
+
+  if (postsInfiniteQuery.status !== "success") {
     return (
-      <main className="mx-auto flex flex-col items-center justify-center gap-5 py-5">
-        {[...Array<unknown>(5)].map((_, i) => (
-          <SkeletonPost key={i} />
-        ))}
-      </main>
+      <MainContainer>
+        <ListOfSkeletons />
+      </MainContainer>
     );
   }
 
@@ -175,11 +222,13 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="mx-auto flex flex-col items-center justify-center gap-5 py-5">
-        {postsQuery.data.map((post) => (
-          <Post key={post.id} post={post} />
-        ))}
-      </main>
+      <MainContainer>
+        {postsInfiniteQuery.data.pages.map((page) =>
+          page.posts.map((post) => <Post key={post.id} post={post} />)
+        )}
+
+        {postsInfiniteQuery.isFetchingNextPage && <ListOfSkeletons />}
+      </MainContainer>
     </>
   );
 };
@@ -193,7 +242,7 @@ export const getStaticProps = async () => {
     transformer: superjson,
   });
 
-  await helpers.post.all.prefetch();
+  await helpers.post.all.prefetchInfinite({ limit: 5 });
 
   return {
     props: { trpcState: helpers.dehydrate() },
