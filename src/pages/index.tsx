@@ -1,6 +1,7 @@
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect } from "react";
 import { type PropsWithChildren, useState } from "react";
 import superjson from "superjson";
@@ -9,9 +10,6 @@ import { SvgIcon } from "~/components/SvgIcon";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api, type RouterOutputs } from "~/utils/api";
-
-//TODO: fix position of comment and like
-//TODO: increase image quality
 
 const SkeletonPost = () => {
   return (
@@ -75,9 +73,12 @@ const Post = ({ post }: PostProps) => {
             src={post.user.image ?? ""}
             className="row-span-2 w-7"
           />
-          <h2 className="self-end truncate text-[0.7rem] font-medium capitalize leading-3">
+          <Link
+            href={`/users/${post.userId}`}
+            className="self-end truncate text-[0.7rem] font-medium capitalize leading-3 hover:underline"
+          >
             {post.user.name}
-          </h2>
+          </Link>
           <p className="truncate text-[0.6rem] capitalize leading-3">
             {post.location}
           </p>
