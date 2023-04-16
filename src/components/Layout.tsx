@@ -635,7 +635,9 @@ const grandHotel = Grand_Hotel({
 const Title = () => {
   return (
     <Link href={"/"} className="w-max">
-      <h1 className={`${grandHotel.className} text-3xl capitalize`}>
+      <h1
+        className={`${grandHotel.className} text-3xl capitalize dark:text-slate-300`}
+      >
         instagram
       </h1>
     </Link>
@@ -646,7 +648,7 @@ const DesktopHeader = () => {
   const { data: session } = useSession();
 
   return (
-    <header className="sticky top-0 z-10 hidden p-5 after:absolute after:inset-0 after:-z-10 after:bg-white/50 after:backdrop-blur-md lg:block">
+    <header className="sticky top-0 z-10 hidden p-5 after:absolute after:inset-0 after:-z-10 after:bg-white/50 after:backdrop-blur-md dark:after:bg-black/50 lg:block">
       <div className="mx-auto grid max-w-5xl grid-cols-[1fr_350px_1fr] items-center">
         <Title />
 
@@ -663,7 +665,7 @@ const DesktopHeader = () => {
 
 const MobileHeader = () => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-white/50 p-5 backdrop-blur-md lg:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-white/50 p-5 backdrop-blur-md dark:bg-black/50 lg:hidden">
       <NewPostButton className="col-start-2 bg-brand-gradient fill-white opacity-75 hover:opacity-100" />
       <MenuButton />
     </div>
@@ -749,8 +751,7 @@ const Background = () => {
         height="100%"
         fill="transparent"
         filter="url(#noise)"
-        opacity="0.5"
-        className="bg-blend-overlay"
+        className="opacity-50 bg-blend-overlay dark:opacity-5"
       ></rect>
 
       <pattern
@@ -762,7 +763,13 @@ const Background = () => {
         patternUnits="userSpaceOnUse"
         patternContentUnits="userSpaceOnUse"
       >
-        <circle id="pattern-circle" cx="5" cy="5" r="1" fill="#cccccc"></circle>
+        <circle
+          id="pattern-circle"
+          cx="5"
+          cy="5"
+          r="1"
+          className="fill-slate-300 dark:fill-black/10"
+        ></circle>
       </pattern>
 
       <rect

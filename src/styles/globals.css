@@ -3,11 +3,15 @@
 @tailwind utilities;
 
 body {
-  @apply max-h-screen overflow-hidden bg-slate-200;
+  @apply max-h-screen overflow-hidden bg-slate-200 dark:bg-slate-900;
 }
 
 #__next {
   @apply max-h-screen overflow-auto;
+}
+
+#__next::-webkit-scrollbar {
+  display: none;
 }
 
 ::-webkit-scrollbar {
