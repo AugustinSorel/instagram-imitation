@@ -278,7 +278,8 @@ const Post = ({ post }: PostProps) => {
               priority={i === 0}
               src={src}
               height={500}
-              width={500}
+              width={350}
+              quality={100}
               className="h-post w-post object-cover"
             />
           </li>
