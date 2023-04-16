@@ -1,12 +1,19 @@
 import { createServerSideHelpers } from "@trpc/react-query/server";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect } from "react";
-import { type PropsWithChildren, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type PropsWithChildren,
+} from "react";
 import superjson from "superjson";
+import { v4 as uuidV4 } from "uuid";
 import { Avatar } from "~/components/Avatar";
 import { SvgIcon } from "~/components/SvgIcon";
+import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api, type RouterOutputs } from "~/utils/api";
@@ -36,6 +43,121 @@ const ListOfSkeletons = () => {
         <SkeletonPost key={i} />
       ))}
     </>
+  );
+};
+
+const LikeButton = ({ post }: PostProps) => {
+  const { data: session } = useSession();
+  const addToast = useToaster((state) => state.addToast);
+  const hasLiked = post.likes.some(
+    (like) => like.postId === post.id && like.userId === session?.user.id
+  );
+
+  const utils = api.useContext();
+
+  const likeMutation = api.post.like.useMutation({
+    onMutate: async () => {
+      await utils.post.all.cancel();
+
+      utils.post.all.setInfiniteData({ limit: 5 }, (data) => {
+        if (!data || !session) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        return {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            posts: page.posts.map((p) => {
+              if (p.id === post.id) {
+                return {
+                  ...p,
+                  likes: [
+                    ...p.likes,
+                    {
+                      id: uuidV4(),
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                      userId: session.user.id,
+                      postId: post.id,
+                    },
+                  ],
+                };
+              }
+
+              return p;
+            }),
+          })),
+        };
+      });
+    },
+
+    onSettled: () => {
+      void utils.post.all.invalidate();
+    },
+  });
+
+  const removeLikeMutation = api.post.removeLike.useMutation({
+    onMutate: async () => {
+      await utils.post.all.cancel();
+
+      utils.post.all.setInfiniteData({ limit: 5 }, (data) => {
+        if (!data) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        return {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            posts: page.posts.map((p) => {
+              return {
+                ...p,
+                likes: p.likes.filter(
+                  (like) =>
+                    like.postId !== post.id || like.userId !== session?.user.id
+                ),
+              };
+            }),
+          })),
+        };
+      });
+    },
+
+    onSettled: () => {
+      void utils.post.all.invalidate();
+    },
+  });
+
+  const clickHandler = () => {
+    if (!session) {
+      addToast("Please sign in");
+      return;
+    }
+    if (hasLiked) {
+      removeLikeMutation.mutate({ postId: post.id });
+      return;
+    }
+
+    likeMutation.mutate({ postId: post.id });
+  };
+
+  return (
+    <button
+      aria-pressed={hasLiked}
+      title="like"
+      name="like"
+      className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500"
+      onClick={clickHandler}
+    >
+      <SvgIcon svgName={hasLiked ? "heartFilled" : "heart"} />
+    </button>
   );
 };
 
@@ -99,13 +221,7 @@ const Post = ({ post }: PostProps) => {
           >
             <SvgIcon svgName="speech" />
           </button>
-          <button
-            title="like"
-            name="like"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100"
-          >
-            <SvgIcon svgName="heart" />
-          </button>
+          <LikeButton post={post} />
         </div>
       </header>
 
