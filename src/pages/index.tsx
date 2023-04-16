@@ -108,7 +108,7 @@ const Post = ({ post }: PostProps) => {
         </div>
       </header>
 
-      {post.images.length > 0 && (
+      {post.images.length > 1 && (
         <nav className="absolute left-0 right-0 top-1/2 mx-2 flex -translate-y-1/2 justify-between">
           <button
             title="view previous image"
@@ -161,7 +161,7 @@ const Post = ({ post }: PostProps) => {
               priority={i === 0}
               src={src}
               height={500}
-              width={350}
+              width={500}
               className="h-post w-post object-cover"
             />
           </li>
