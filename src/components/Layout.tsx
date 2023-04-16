@@ -80,7 +80,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
       const data = await query.mutateAsync({ imageExtension: blob.type });
       urls.push(data.url);
 
-      void fetch(data.preSignedUrl, { method: "PUT", body: blob });
+      await fetch(data.preSignedUrl, { method: "PUT", body: blob });
     }
 
     return urls;
