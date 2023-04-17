@@ -48,7 +48,7 @@ const Toast = ({ toast }: { toast: Toast }) => {
 
   return (
     <div
-      className="flex animate-toaster-in gap-5 rounded-md border border-black/20 bg-white/40 px-5 py-2 capitalize text-slate-600 backdrop-blur-md transition-all data-[active=false]:animate-fade-out"
+      className="flex animate-toaster-in gap-5 rounded-md border border-black/20 bg-white/40 px-5 py-2 capitalize text-slate-600 backdrop-blur-md transition-all data-[active=false]:animate-fade-out dark:border-white/10 dark:bg-black/40 dark:text-slate-300"
       data-active={!isClosing}
       onAnimationEnd={onAnimationEndHandler}
     >

@@ -21,6 +21,7 @@ import { Avatar } from "./Avatar";
 import { SvgIcon } from "./SvgIcon";
 import { Toaster, useToaster } from "./Toaster";
 import { create } from "zustand";
+import { useTheme } from "next-themes";
 
 export const newPostSchema = z.object({
   location: z
@@ -80,7 +81,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
       const data = await query.mutateAsync({ imageExtension: blob.type });
       urls.push(data.url);
 
-      void fetch(data.preSignedUrl, { method: "PUT", body: blob });
+      await fetch(data.preSignedUrl, { method: "PUT", body: blob });
     }
 
     return urls;
@@ -179,7 +180,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
         <input
           autoFocus
           type="text"
-          className="rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none duration-300 placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
+          className="rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none duration-300 placeholder:capitalize placeholder:text-neutral-500 focus:border-black/30 dark:border-white/10 dark:focus:border-white/30"
           value={formValues.location}
           placeholder="enter location"
           onChange={changeHandler}
@@ -196,7 +197,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
         description:{" "}
         <textarea
           rows={3}
-          className="duration300 rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none placeholder:capitalize placeholder:text-slate-500 focus:border-black/30"
+          className="duration300 rounded-md border border-black/10 bg-transparent p-2 text-sm font-normal outline-none placeholder:capitalize placeholder:text-neutral-500 focus:border-black/30 dark:border-white/10 dark:focus:border-white/30"
           value={formValues.description}
           placeholder="enter description"
           onChange={changeHandler}
@@ -238,7 +239,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
         )}
 
         <div
-          className="group relative hidden cursor-pointer grid-cols-[auto_1fr] gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 outline-none duration-300 hover:border-black/30 focus:border-black/30 lg:grid"
+          className="group relative hidden cursor-pointer grid-cols-[auto_1fr] gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 outline-none duration-300 hover:border-black/30 focus:border-black/30 dark:border-white/10 dark:hover:border-white/30 dark:focus:border-white/30 lg:grid"
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
@@ -246,14 +247,14 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
-            className="row-span-2 mx-3 aspect-square w-16 fill-black/10 duration-300 group-hover:fill-black/30 group-focus:fill-black/30"
+            className="row-span-2 mx-3 aspect-square w-16 fill-black/10 duration-300 group-hover:fill-black/30 group-focus:fill-black/30 dark:fill-white/10 dark:group-hover:fill-white/30 dark:group-focus:fill-white/30"
           >
             <path d="M9 12c0-.552.448-1 1.001-1s.999.448.999 1-.446 1-.999 1-1.001-.448-1.001-1zm6.2 0l-1.7 2.6-1.3-1.6-3.2 4h10l-3.8-5zm5.8-7v-2h-21v15h2v-13h19zm3 2v14h-20v-14h20zm-2 2h-16v10h16v-10z" />
           </svg>
-          <p className="self-center text-center text-xl font-semibold text-slate-800">
+          <p className="self-center text-center text-xl font-semibold text-neutral-600 dark:text-neutral-400">
             Drag Images here or click to select files
           </p>
-          <p className="text-center text-sm text-slate-500">
+          <p className="text-center text-sm text-neutral-500">
             Attach up to 5 files as you like
           </p>
           <input
@@ -270,7 +271,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
 
         <button
           type="button"
-          className="w-full rounded-md border border-black/10 bg-white/40 p-2 text-sm capitalize text-slate-600 duration-300 hover:bg-white/80 lg:hidden"
+          className="w-full rounded-md border border-black/10 bg-black/5 p-2 text-sm capitalize duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 lg:hidden"
           onClick={() => inputRef.current?.click()}
         >
           browse
@@ -285,7 +286,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
 
       <button
         disabled={isFormValid}
-        className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center rounded-md border border-black/10 bg-white/40 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center rounded-md border border-black/10 bg-black/5 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-black/10 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
       >
         {isLoading && <LoadingSpinner />}
 
@@ -325,7 +326,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
     <>
       <button
         title="New Post"
-        className={`relative flex aspect-square h-9 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white/40 bg-origin-border fill-slate-600 duration-300 hover:bg-white/80 ${className}`}
+        className={`relative flex aspect-square h-9 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-black/5 bg-origin-border fill-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:hover:bg-white/10 ${className}`}
         onClick={showNewPostModal}
       >
         <SvgIcon svgName="plus" />
@@ -345,17 +346,31 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 };
 
 const ThemeButton = () => {
+  const { theme, setTheme } = useTheme();
+
   return (
-    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 focus:bg-black/20">
-      <SvgIcon svgName="moon" />
-      darkmode
+    <button
+      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
+      onClick={() => (theme == "dark" ? setTheme("light") : setTheme("dark"))}
+    >
+      {theme === "light" ? (
+        <>
+          <SvgIcon svgName="moon" />
+          darkmode
+        </>
+      ) : (
+        <>
+          <SvgIcon svgName="sun" />
+          lightmode
+        </>
+      )}
     </button>
   );
 };
 
 const DeleteAccountButton = () => {
   return (
-    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize text-red-400 outline-none duration-300 hover:bg-red-400/30 focus:bg-red-400/30">
+    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize text-red-400 outline-none duration-300 hover:bg-red-400/30">
       <SvgIcon svgName="trash" />
       delete my account
     </button>
@@ -365,7 +380,7 @@ const DeleteAccountButton = () => {
 const SignOutButton = () => {
   return (
     <button
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 focus:bg-black/20"
+      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
       onClick={() => void signOut()}
     >
       <SvgIcon svgName="logout" />
@@ -381,7 +396,7 @@ const SignInWithGoogle = () => {
 
   return (
     <button
-      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20"
+      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
       onClick={googleSignin}
     >
       <svg
@@ -418,7 +433,7 @@ const SignInWithGithub = () => {
 
   return (
     <button
-      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20"
+      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
       onClick={githubSignin}
     >
       <svg
@@ -445,13 +460,13 @@ const MenuContent = () => {
       <Link
         aria-current={router.asPath === "/"}
         href="/"
-        className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20 aria-[current=true]:bg-black/20"
+        className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
       >
         <SvgIcon svgName="house" />
         home
       </Link>
 
-      <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 focus:bg-black/20">
+      <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10">
         <SvgIcon svgName="magnifier" />
         search
       </button>
@@ -463,7 +478,7 @@ const MenuContent = () => {
           <Link
             aria-current={router.asPath === `/users/${session?.user?.id}`}
             href={`/users/${session?.user?.id ?? ""}`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20 aria-[current=true]:bg-black/20"
+            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
           >
             <SvgIcon svgName="user" />
             profile
@@ -475,7 +490,7 @@ const MenuContent = () => {
               `/users/${session?.user?.id ?? ""}?tab=bookmarked`
             }
             href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20 aria-[current=true]:bg-black/20"
+            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
           >
             <SvgIcon svgName="bookmark" />
             bookmarked
@@ -486,7 +501,7 @@ const MenuContent = () => {
               router.asPath === `/users/${session?.user?.id ?? ""}?tab=liked`
             }
             href={`/users/${session?.user?.id ?? ""}?tab=liked`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 focus:bg-black/20 aria-[current=true]:bg-black/20"
+            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
           >
             <SvgIcon svgName="heart" />
             liked
@@ -515,7 +530,7 @@ const MenuContent = () => {
 
 const QuickSearchButton = () => {
   return (
-    <button className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-white/40 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-white/80">
+    <button className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-black/5 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:text-slate-300 dark:hover:bg-white/10">
       <SvgIcon svgName="magnifier" />
       quick search...
       <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
@@ -586,7 +601,7 @@ const MenuButton = () => {
   return (
     <button
       title="Open Menu"
-      className="flex aspect-square items-center justify-center rounded-md border border-black/10 bg-white/40 fill-slate-600 duration-300 hover:bg-white/80"
+      className="flex aspect-square items-center justify-center rounded-md border border-black/10 bg-black/5 fill-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:hover:bg-white/10"
       onClick={openMenu}
     >
       <SvgIcon svgName="menu" />
@@ -635,7 +650,9 @@ const grandHotel = Grand_Hotel({
 const Title = () => {
   return (
     <Link href={"/"} className="w-max">
-      <h1 className={`${grandHotel.className} text-3xl capitalize`}>
+      <h1
+        className={`${grandHotel.className} text-3xl capitalize dark:text-slate-300`}
+      >
         instagram
       </h1>
     </Link>
@@ -646,7 +663,7 @@ const DesktopHeader = () => {
   const { data: session } = useSession();
 
   return (
-    <header className="sticky top-0 z-10 hidden p-5 after:absolute after:inset-0 after:-z-10 after:bg-white/50 after:backdrop-blur-md lg:block">
+    <header className="sticky top-0 z-10 hidden p-5 after:absolute after:inset-0 after:-z-10 after:bg-white/50 after:backdrop-blur-md dark:after:bg-black/50 lg:block">
       <div className="mx-auto grid max-w-5xl grid-cols-[1fr_350px_1fr] items-center">
         <Title />
 
@@ -663,7 +680,7 @@ const DesktopHeader = () => {
 
 const MobileHeader = () => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-white/50 p-5 backdrop-blur-md lg:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-white/50 p-5 backdrop-blur-md dark:bg-black/50 lg:hidden">
       <NewPostButton className="col-start-2 bg-brand-gradient fill-white opacity-75 hover:opacity-100" />
       <MenuButton />
     </div>
@@ -749,8 +766,7 @@ const Background = () => {
         height="100%"
         fill="transparent"
         filter="url(#noise)"
-        opacity="0.5"
-        className="bg-blend-overlay"
+        className="opacity-50 bg-blend-overlay dark:opacity-5"
       ></rect>
 
       <pattern
@@ -762,7 +778,13 @@ const Background = () => {
         patternUnits="userSpaceOnUse"
         patternContentUnits="userSpaceOnUse"
       >
-        <circle id="pattern-circle" cx="5" cy="5" r="1" fill="#cccccc"></circle>
+        <circle
+          id="pattern-circle"
+          cx="5"
+          cy="5"
+          r="1"
+          className="fill-slate-300 dark:fill-black/10"
+        ></circle>
       </pattern>
 
       <rect

@@ -20,16 +20,19 @@ import { api, type RouterOutputs } from "~/utils/api";
 
 const SkeletonPost = () => {
   return (
-    <div className="relative flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 bg-white/20 p-2 shadow-2xl backdrop-blur-md after:absolute after:bottom-0 after:left-0 after:top-0 after:w-32 after:rotate-[20deg] after:scale-150 after:animate-post-skeleton after:bg-black/10 after:blur-xl">
+    <div className="relative flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 bg-white/20 p-2 shadow-2xl backdrop-blur-md after:absolute after:bottom-0 after:left-0 after:top-0 after:w-32 after:rotate-[20deg] after:scale-150 after:animate-post-skeleton after:bg-black/10 after:blur-xl dark:border-white/10 dark:bg-black/20 dark:after:bg-white/10">
       <header className="grid grid-cols-[auto_1fr] gap-1 p-1">
-        <div className="row-span-2 my-auto aspect-square w-7 rounded-full bg-black/10" />
-        <div className="h-3 w-20 self-end rounded-full bg-black/10" />
-        <div className="h-2 w-14 rounded-full bg-black/10" />
+        <div className="row-span-2 my-auto aspect-square w-7 rounded-full bg-black/10 dark:bg-white/10" />
+        <div className="h-3 w-20 self-end rounded-full bg-black/10 dark:bg-white/10" />
+        <div className="h-2 w-14 rounded-full bg-black/10 dark:bg-white/10" />
       </header>
 
       <div className="mb-3 flex items-center justify-center gap-3">
         {[...Array<unknown>(3)].map((_, i) => (
-          <div key={i} className="aspect-square w-5 rounded-full bg-black/10" />
+          <div
+            key={i}
+            className="aspect-square w-5 rounded-full bg-black/10 dark:bg-white/10"
+          />
         ))}
       </div>
     </div>
@@ -153,7 +156,7 @@ const LikeButton = ({ post }: PostProps) => {
       aria-pressed={hasLiked}
       title="like"
       name="like"
-      className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500"
+      className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
       onClick={clickHandler}
     >
       <SvgIcon svgName={hasLiked ? "heartFilled" : "heart"} />
@@ -185,9 +188,9 @@ const Post = ({ post }: PostProps) => {
   };
 
   return (
-    <div className="group relative isolate flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 p-2 shadow-xl duration-300 hover:shadow-2xl">
+    <div className="group relative isolate flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 p-2 shadow-xl duration-300 hover:shadow-2xl dark:border-white/10">
       <header className="flex items-center justify-between">
-        <div className="grid w-32 grid-cols-[auto_1fr] gap-x-1 rounded-full border border-black/10 bg-white/50 p-1 backdrop-blur-md">
+        <div className="grid w-32 grid-cols-[auto_1fr] gap-x-1 rounded-full border border-black/10 bg-white/50 p-1 backdrop-blur-md dark:bg-black/50">
           <Avatar
             alt="avatar"
             width={28}
@@ -206,18 +209,18 @@ const Post = ({ post }: PostProps) => {
           </p>
         </div>
 
-        <div className="space-x-2 fill-slate-600">
+        <div className="space-x-2 fill-neutral-600 dark:fill-neutral-400">
           <button
             title="bookmark this post"
             name="bookmark this post"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100"
+            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
           >
             <SvgIcon svgName="bookmark" />
           </button>
           <button
             title="view comments"
             name="view comments"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100"
+            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
           >
             <SvgIcon svgName="speech" />
           </button>
@@ -230,7 +233,7 @@ const Post = ({ post }: PostProps) => {
           <button
             title="view previous image"
             name="view previous image"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100"
+            className="aspect-square rounded-full border border-black/20 bg-white/50 fill-neutral-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:fill-neutral-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
             onClick={viewPrevImage}
           >
             <SvgIcon svgName="leftArrow" />
@@ -238,7 +241,7 @@ const Post = ({ post }: PostProps) => {
           <button
             title="view next image"
             name="view next image"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 fill-slate-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100"
+            className="aspect-square rounded-full border border-black/20 bg-white/50 fill-neutral-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:fill-neutral-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
             onClick={viewNextImage}
           >
             <SvgIcon svgName="rightArrow" />
@@ -255,7 +258,7 @@ const Post = ({ post }: PostProps) => {
                 aria-current={i === imageIndex}
                 name={`view post ${i + 1}`}
                 title={`view post ${i + 1}`}
-                className="aspect-square w-5 rounded-full border border-black/20 bg-white/50 backdrop-blur-md duration-300 hover:bg-white/80 focus-visible:bg-white/80 aria-[current=true]:bg-white/80"
+                className="aspect-square w-5 rounded-full border border-black/20 bg-white/50 backdrop-blur-md duration-300 hover:bg-white/80 focus-visible:bg-white/80 aria-[current=true]:bg-white/80 dark:border-white/10 dark:bg-black/40 dark:hover:bg-black/80 dark:focus-visible:bg-black/80 dark:aria-[current=true]:bg-black/80"
                 onClick={() => gotToImage(i)}
               />
             ))}
