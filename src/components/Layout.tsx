@@ -21,6 +21,7 @@ import { Avatar } from "./Avatar";
 import { SvgIcon } from "./SvgIcon";
 import { Toaster, useToaster } from "./Toaster";
 import { create } from "zustand";
+import { useTheme } from "next-themes";
 
 export const newPostSchema = z.object({
   location: z
@@ -270,7 +271,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
 
         <button
           type="button"
-          className="w-full rounded-md border border-black/10 bg-white/40 p-2 text-sm capitalize duration-300 hover:bg-white/80 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 lg:hidden"
+          className="w-full rounded-md border border-black/10 bg-black/5 p-2 text-sm capitalize duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 lg:hidden"
           onClick={() => inputRef.current?.click()}
         >
           browse
@@ -285,7 +286,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
 
       <button
         disabled={isFormValid}
-        className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center rounded-md border border-black/10 bg-white/40 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+        className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center rounded-md border border-black/10 bg-black/5 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-black/10 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
       >
         {isLoading && <LoadingSpinner />}
 
@@ -325,7 +326,7 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
     <>
       <button
         title="New Post"
-        className={`relative flex aspect-square h-9 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-white/40 bg-origin-border fill-slate-600 duration-300 hover:bg-white/80 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:hover:bg-white/10 ${className}`}
+        className={`relative flex aspect-square h-9 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-black/5 bg-origin-border fill-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:hover:bg-white/10 ${className}`}
         onClick={showNewPostModal}
       >
         <SvgIcon svgName="plus" />
@@ -345,10 +346,24 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 };
 
 const ThemeButton = () => {
+  const { theme, setTheme } = useTheme();
+
   return (
-    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10">
-      <SvgIcon svgName="moon" />
-      darkmode
+    <button
+      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
+      onClick={() => (theme == "dark" ? setTheme("light") : setTheme("dark"))}
+    >
+      {theme === "light" ? (
+        <>
+          <SvgIcon svgName="moon" />
+          darkmode
+        </>
+      ) : (
+        <>
+          <SvgIcon svgName="sun" />
+          lightmode
+        </>
+      )}
     </button>
   );
 };
@@ -515,7 +530,7 @@ const MenuContent = () => {
 
 const QuickSearchButton = () => {
   return (
-    <button className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-white/40 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-white/80 dark:border-white/10 dark:bg-black/40 dark:fill-slate-300 dark:text-slate-300 dark:hover:bg-black/20">
+    <button className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-black/5 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:text-slate-300 dark:hover:bg-white/10">
       <SvgIcon svgName="magnifier" />
       quick search...
       <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
@@ -586,7 +601,7 @@ const MenuButton = () => {
   return (
     <button
       title="Open Menu"
-      className="flex aspect-square items-center justify-center rounded-md border border-black/10 bg-white/40 fill-slate-600 duration-300 hover:bg-white/80 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:hover:bg-white/10"
+      className="flex aspect-square items-center justify-center rounded-md border border-black/10 bg-black/5 fill-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:hover:bg-white/10"
       onClick={openMenu}
     >
       <SvgIcon svgName="menu" />

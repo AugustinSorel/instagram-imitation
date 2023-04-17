@@ -17,7 +17,7 @@ const Modal = (props: ComponentProps<typeof Backdrop>) => {
       >
         <button
           title="Close Modal"
-          className="dark:hover:bg-white/10lg:hidden absolute right-3 top-3 flex aspect-square h-8 items-center justify-center rounded-md border border-black/10 bg-white/20 fill-slate-600 p-1 duration-300 hover:bg-white/40 dark:border-white/10 dark:bg-white/5 dark:fill-current dark:hover:bg-white/10"
+          className="dark:hover:bg-white/10lg:hidden absolute right-3 top-3 flex aspect-square h-8 items-center justify-center rounded-md border border-black/10 bg-black/5 fill-slate-600 p-1 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-current dark:hover:bg-white/10"
           onClick={clickHandler}
         >
           <SvgIcon svgName="close" />
