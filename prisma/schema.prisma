@@ -46,6 +46,7 @@ model User {
     sessions      Session[]
     posts         Post[]
     likes         Like[]
+    bookmarks     Bookmark[]
 }
 
 model VerificationToken {
@@ -62,6 +63,7 @@ model Post {
     description String
     images      String[]
     likes       Like[]
+    bookmarks   Bookmark[]
     user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId      String
     createdAt   DateTime @default(now())
@@ -69,6 +71,18 @@ model Post {
 }
 
 model Like {
+    id        String   @id @default(cuid())
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    String
+    post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postId    String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([userId, postId])
+}
+
+model Bookmark {
     id        String   @id @default(cuid())
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String

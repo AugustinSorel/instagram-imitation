@@ -164,6 +164,122 @@ const LikeButton = ({ post }: PostProps) => {
   );
 };
 
+const BookmarkButton = ({ post }: PostProps) => {
+  const { data: session } = useSession();
+  const addToast = useToaster((state) => state.addToast);
+  const hasBookmarked = post.bookmarks.some(
+    (like) => like.postId === post.id && like.userId === session?.user.id
+  );
+
+  const utils = api.useContext();
+
+  const bookmarkMutation = api.post.bookmark.useMutation({
+    onMutate: async () => {
+      await utils.post.all.cancel();
+
+      utils.post.all.setInfiniteData({ limit: 5 }, (data) => {
+        if (!data || !session) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        return {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            posts: page.posts.map((p) => {
+              if (p.id === post.id) {
+                return {
+                  ...p,
+                  bookmarks: [
+                    ...p.bookmarks,
+                    {
+                      id: uuidV4(),
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                      userId: session.user.id,
+                      postId: post.id,
+                    },
+                  ],
+                };
+              }
+
+              return p;
+            }),
+          })),
+        };
+      });
+    },
+
+    onSettled: () => {
+      void utils.post.all.invalidate();
+    },
+  });
+
+  const removeBookmarkMutation = api.post.removeBookmark.useMutation({
+    onMutate: async () => {
+      await utils.post.all.cancel();
+
+      utils.post.all.setInfiniteData({ limit: 5 }, (data) => {
+        if (!data) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        return {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            posts: page.posts.map((p) => {
+              return {
+                ...p,
+                bookmarks: p.bookmarks.filter(
+                  (bookmark) =>
+                    bookmark.postId !== post.id ||
+                    bookmark.userId !== session?.user.id
+                ),
+              };
+            }),
+          })),
+        };
+      });
+    },
+
+    onSettled: () => {
+      void utils.post.all.invalidate();
+    },
+  });
+
+  const clickHandler = () => {
+    if (!session) {
+      addToast("Please sign in");
+      return;
+    }
+    if (hasBookmarked) {
+      removeBookmarkMutation.mutate({ postId: post.id });
+      return;
+    }
+
+    bookmarkMutation.mutate({ postId: post.id });
+  };
+
+  return (
+    <button
+      aria-pressed={hasBookmarked}
+      title="bookmark this post"
+      name="bookmark this post"
+      className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-slate-900 dark:border-white/20 dark:bg-black/50 dark:fill-slate-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
+      onClick={clickHandler}
+    >
+      <SvgIcon svgName={hasBookmarked ? "bookmarkFilled" : "bookmark"} />
+    </button>
+  );
+};
+
 type PostProps = {
   post: RouterOutputs["post"]["all"]["posts"][number];
 };
@@ -210,13 +326,7 @@ const Post = ({ post }: PostProps) => {
         </div>
 
         <div className="space-x-2 fill-neutral-600 dark:fill-neutral-400">
-          <button
-            title="bookmark this post"
-            name="bookmark this post"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
-          >
-            <SvgIcon svgName="bookmark" />
-          </button>
+          <BookmarkButton post={post} />
           <button
             title="view comments"
             name="view comments"
