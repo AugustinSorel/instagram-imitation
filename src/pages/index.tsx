@@ -12,6 +12,7 @@ import {
 import superjson from "superjson";
 import { v4 as uuidV4 } from "uuid";
 import { Avatar } from "~/components/Avatar";
+import { BottomSheet } from "~/components/BottomSheet";
 import { SvgIcon } from "~/components/SvgIcon";
 import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
@@ -280,6 +281,88 @@ const BookmarkButton = ({ post }: PostProps) => {
   );
 };
 
+const CommentButton = ({ post }: PostProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const showComments = () => {
+    setIsOpen(() => true);
+  };
+
+  const triggerCloseAnimation = () => {
+    setIsClosing(() => true);
+  };
+
+  const animationEndHandler = () => {
+    if (isClosing) {
+      setIsClosing(() => false);
+      setIsOpen(() => false);
+    }
+  };
+
+  return (
+    <>
+      <button
+        title="view comments"
+        name="view comments"
+        className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
+        onClick={showComments}
+      >
+        <SvgIcon svgName="speech" />
+      </button>
+
+      {isOpen && (
+        <BottomSheet
+          backdropProps={{
+            isExpanded: !isClosing,
+            animationEndHandler: animationEndHandler,
+            clickHandler: triggerCloseAnimation,
+          }}
+        >
+          <header className="sticky top-0 flex items-center gap-5">
+            <Avatar alt={`${post.user.name} avatar`} src={post.user.image} />
+            <Link
+              href={`/users/${post.user.name}`}
+              className="text-2xl capitalize hover:underline"
+            >
+              {post.user.name}
+            </Link>
+          </header>
+
+          <hr className="my-5 border-black/20 dark:border-white/20" />
+
+          <ul className="space-y-5">
+            {[...Array<unknown>(20)].map((_, i) => (
+              <li
+                className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-3"
+                key={i}
+              >
+                <Avatar
+                  src={post.user.image}
+                  alt={`${post.user.image} profile picture`}
+                />
+                <Link
+                  href={`/users/${post.user.name}`}
+                  className="text-lg hover:underline"
+                >
+                  {post.user.name}
+                </Link>
+                <p className="text-sm italic text-neutral-500">2 months ago</p>
+                <p className="col-span-full">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Aliquid incidunt id accusantium accusamus explicabo ab
+                  voluptatem, placeat deserunt aliquam modi adipisci ipsum
+                  dolores! Mollitia neque vero ullam, harum enim consequatur?
+                </p>
+              </li>
+            ))}
+          </ul>
+        </BottomSheet>
+      )}
+    </>
+  );
+};
+
 type PostProps = {
   post: RouterOutputs["post"]["all"]["posts"][number];
 };
@@ -327,13 +410,7 @@ const Post = ({ post }: PostProps) => {
 
         <div className="space-x-2 fill-neutral-600 dark:fill-neutral-400">
           <BookmarkButton post={post} />
-          <button
-            title="view comments"
-            name="view comments"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
-          >
-            <SvgIcon svgName="speech" />
-          </button>
+          <CommentButton post={post} />
           <LikeButton post={post} />
         </div>
       </header>
