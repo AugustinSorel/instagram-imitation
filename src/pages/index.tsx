@@ -334,7 +334,7 @@ const CommentButton = ({ post }: PostProps) => {
           <ul className="my-auto grow space-y-5 overflow-auto">
             {[...Array<unknown>(20)].map((_, i) => (
               <li
-                className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-3"
+                className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-3 p-2"
                 key={i}
               >
                 <Avatar
@@ -354,6 +354,21 @@ const CommentButton = ({ post }: PostProps) => {
                   voluptatem, placeat deserunt aliquam modi adipisci ipsum
                   dolores! Mollitia neque vero ullam, harum enim consequatur?
                 </p>
+              </li>
+            ))}
+            {[...Array<unknown>(20)].map((_, i) => (
+              <li
+                className="relative grid grid-cols-[auto_auto_auto_1fr] items-center gap-3 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:top-0 after:w-32 after:rotate-[45deg] after:scale-150 after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10"
+                key={i}
+              >
+                <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
+                <div className="h-3 w-28 rounded-md bg-black/10 dark:bg-white/10" />
+                <div className="h-1 w-12 rounded-md bg-black/10 dark:bg-white/10" />
+                <div className="col-span-full space-y-1">
+                  <div className="h-3 w-1/2 rounded-md bg-black/10 dark:bg-white/10" />
+                  <div className="h-3 w-1/2 rounded-md bg-black/10 dark:bg-white/10" />
+                  <div className="h-3 w-1/3 rounded-md bg-black/10 dark:bg-white/10" />
+                </div>
               </li>
             ))}
           </ul>

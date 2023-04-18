@@ -29,6 +29,10 @@ const config = {
           from: { translate: "-600% 0" },
           to: { translate: "400% 0" },
         },
+        "comment-skeleton": {
+          from: { translate: "-100% 0" },
+          to: { translate: "100% 0" },
+        },
       },
 
       animation: {
@@ -44,6 +48,7 @@ const config = {
         "slide-out": "slide-out 300ms ease-out forwards",
         "toaster-in": "toast-slide-in 300ms ease-out, fade-in 300ms ease-out",
         "post-skeleton": "post-skeleton 1s ease-out infinite",
+        "comment-skeleton": "comment-skeleton 1s ease-out infinite",
       },
 
       backgroundImage: {
