@@ -23,5 +23,5 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-black/20;
+  @apply rounded-full bg-neutral-500/50;
 }
