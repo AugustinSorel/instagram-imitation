@@ -319,7 +319,7 @@ const CommentButton = ({ post }: PostProps) => {
             clickHandler: triggerCloseAnimation,
           }}
         >
-          <header className="sticky top-0 flex items-center gap-5">
+          <header className="flex items-center gap-5">
             <Avatar alt={`${post.user.name} avatar`} src={post.user.image} />
             <Link
               href={`/users/${post.user.name}`}
@@ -331,7 +331,7 @@ const CommentButton = ({ post }: PostProps) => {
 
           <hr className="my-5 border-black/20 dark:border-white/20" />
 
-          <ul className="space-y-5">
+          <ul className="my-auto grow space-y-5 overflow-auto">
             {[...Array<unknown>(20)].map((_, i) => (
               <li
                 className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-3"
@@ -357,6 +357,20 @@ const CommentButton = ({ post }: PostProps) => {
               </li>
             ))}
           </ul>
+
+          <hr className="my-5 border-black/20 dark:border-white/20" />
+
+          <form className="flex items-center gap-5">
+            <textarea
+              rows={1}
+              autoFocus
+              placeholder="Add your comment"
+              className="grow bg-transparent outline-none"
+            />
+            <button className="rounded-md border border-black/10 bg-black/5 p-2 px-5 text-sm capitalize duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
+              post
+            </button>
+          </form>
         </BottomSheet>
       )}
     </>
