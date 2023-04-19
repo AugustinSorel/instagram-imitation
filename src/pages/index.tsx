@@ -14,7 +14,7 @@ import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api, type RouterOutputs } from "~/utils/api";
-import { ZodError, set, z } from "zod";
+import { ZodError, z } from "zod";
 import { LoadingSpinner } from "~/components/LoadingSpinner";
 
 const SkeletonPost = () => {
@@ -368,25 +368,25 @@ const ListOfComments = ({ post }: PostProps) => {
     let interval = seconds / 31536000;
 
     if (interval > 1) {
-      return Math.floor(interval) + " years";
+      return `${Math.floor(interval)} years`;
     }
     interval = seconds / 2592000;
     if (interval > 1) {
-      return Math.floor(interval) + " months";
+      return `${Math.floor(interval)} months`;
     }
     interval = seconds / 86400;
     if (interval > 1) {
-      return Math.floor(interval) + " days";
+      return `${Math.floor(interval)} days`;
     }
     interval = seconds / 3600;
     if (interval > 1) {
-      return Math.floor(interval) + " hours";
+      return `${Math.floor(interval)} hours`;
     }
     interval = seconds / 60;
     if (interval > 1) {
-      return Math.floor(interval) + " minutes";
+      return `${Math.floor(interval)} minutes`;
     }
-    return Math.floor(seconds) + " seconds";
+    return `${Math.floor(seconds)} seconds`;
   };
 
   if (allCommentsQuery.status !== "success") {
@@ -436,10 +436,10 @@ const ListOfComments = ({ post }: PostProps) => {
         >
           <Avatar
             src={comment.user.image ?? ""}
-            alt={`${comment.user.image} profile picture`}
+            alt={`${comment.user.image ?? ""} profile picture`}
           />
           <Link
-            href={`/users/${comment.user.name}`}
+            href={`/users/${comment.user.name ?? ""}`}
             className="text-lg hover:underline"
           >
             {comment.user.name}
