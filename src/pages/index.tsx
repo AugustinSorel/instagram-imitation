@@ -3,12 +3,8 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  useCallback,
-  useEffect,
-  useState,
-  type PropsWithChildren,
-} from "react";
+import type { PropsWithChildren, ChangeEvent, FormEvent } from "react";
+import { useCallback, useEffect, useState } from "react";
 import superjson from "superjson";
 import { v4 as uuidV4 } from "uuid";
 import { Avatar } from "~/components/Avatar";
@@ -18,6 +14,8 @@ import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api, type RouterOutputs } from "~/utils/api";
+import { ZodError, set, z } from "zod";
+import { LoadingSpinner } from "~/components/LoadingSpinner";
 
 const SkeletonPost = () => {
   return (
@@ -281,6 +279,63 @@ const BookmarkButton = ({ post }: PostProps) => {
   );
 };
 
+const NewCommentForm = () => {
+  const [comment, setComment] = useState("");
+  const [errorComment, setErrorComment] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const schema = z.object({
+    comment: z
+      .string({ required_error: "comment is required" })
+      .min(3, "comment must be at least 3 characters")
+      .max(2048, "comment must be at most 2048 characters"),
+  });
+
+  const changeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(e.target.value);
+  };
+
+  const submitHandler = (e: FormEvent) => {
+    e.preventDefault();
+
+    try {
+      schema.parse({ comment });
+      setIsLoading(() => true);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        setErrorComment(error.formErrors.fieldErrors["comment"]?.at(0) ?? "");
+      }
+    } finally {
+      setIsLoading(() => false);
+    }
+  };
+
+  return (
+    <form
+      className="grid grid-cols-[1fr_auto] items-center gap-x-5"
+      onSubmit={submitHandler}
+    >
+      <textarea
+        rows={1}
+        autoFocus
+        placeholder="Add your comment"
+        className="grow bg-transparent outline-none"
+        onChange={changeHandler}
+        value={comment}
+      />
+      <button className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center gap-x-2 rounded-md border border-black/10 bg-black/5 fill-slate-600 px-2 py-2 text-sm capitalize duration-300 hover:bg-black/10 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
+        {isLoading && <LoadingSpinner />}
+        <span className="col-start-2">upload</span>
+      </button>
+      {errorComment && (
+        <p className="text-sm text-red-500 first-letter:capitalize">
+          {errorComment}
+        </p>
+      )}
+    </form>
+  );
+};
+
 const CommentButton = ({ post }: PostProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -358,16 +413,15 @@ const CommentButton = ({ post }: PostProps) => {
             ))}
             {[...Array<unknown>(20)].map((_, i) => (
               <li
-                className="relative grid grid-cols-[auto_auto_auto_1fr] items-center gap-3 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:top-0 after:w-32 after:rotate-[45deg] after:scale-150 after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10"
+                className="relative grid grid-cols-[auto_auto_auto_1fr] items-center gap-3 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-30deg] after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10"
                 key={i}
               >
                 <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
                 <div className="h-3 w-28 rounded-md bg-black/10 dark:bg-white/10" />
-                <div className="h-1 w-12 rounded-md bg-black/10 dark:bg-white/10" />
                 <div className="col-span-full space-y-1">
+                  <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
+                  <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
                   <div className="h-3 w-1/2 rounded-md bg-black/10 dark:bg-white/10" />
-                  <div className="h-3 w-1/2 rounded-md bg-black/10 dark:bg-white/10" />
-                  <div className="h-3 w-1/3 rounded-md bg-black/10 dark:bg-white/10" />
                 </div>
               </li>
             ))}
@@ -375,17 +429,7 @@ const CommentButton = ({ post }: PostProps) => {
 
           <hr className="my-5 border-black/20 dark:border-white/20" />
 
-          <form className="flex items-center gap-5">
-            <textarea
-              rows={1}
-              autoFocus
-              placeholder="Add your comment"
-              className="grow bg-transparent outline-none"
-            />
-            <button className="rounded-md border border-black/10 bg-black/5 p-2 px-5 text-sm capitalize duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-              post
-            </button>
-          </form>
+          <NewCommentForm />
         </BottomSheet>
       )}
     </>
