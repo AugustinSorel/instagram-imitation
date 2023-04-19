@@ -412,15 +412,15 @@ const ListOfComments = ({ post }: PostProps) => {
 
   if (allCommentsQuery.data.length < 1) {
     return (
-      <div className="mx-auto">
+      <div className="mx-auto space-y-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           className="w-32 fill-black/20 dark:fill-white/20"
         >
-          <path d="M24 20h-3v4l-5.333-4h-7.667v-4h2v2h6.333l2.667 2v-2h3v-8.001h-2v-2h4v12.001zm-6-6h-9.667l-5.333 4v-4h-3v-14.001h18v14.001zm-13-8c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm4 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm4 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z" />
+          <path d="M24 20h-3v4l-5.333-4h-7.667v-4h2v2h6.333l2.667 2v-2h3v-8.001h-2v-2h4v12.001zm-15.667-6l-5.333 4v-4h-3v-14.001l18 .001v14h-9.667zm-6.333-2h3v2l2.667-2h8.333v-10l-14-.001v10.001z" />
         </svg>
-        <p className="text-center text-black/20 dark:text-white/20">
+        <p className="text-center text-xl text-black/20 dark:text-white/20">
           no comments
         </p>
       </div>
