@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { addCommentSchema } from "~/pages";
 
 export const postRouter = createTRPCRouter({
   newPost: protectedProcedure
@@ -41,7 +40,12 @@ export const postRouter = createTRPCRouter({
 
       const posts = await ctx.prisma.post.findMany({
         take: limit + 1,
-        include: { user: true, likes: true, bookmarks: true },
+        include: {
+          user: true,
+          likes: true,
+          bookmarks: true,
+          comments: { include: { user: true }, orderBy: { createdAt: "desc" } },
+        },
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: { createdAt: "desc" },
       });
@@ -117,11 +121,31 @@ export const postRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      return ctx.prisma.comment.create({
+      return await ctx.prisma.comment.create({
         data: {
           content: input.content,
           userId: ctx.session.user.id,
           postId: input.postId,
+        },
+      });
+    }),
+
+  allComments: publicProcedure
+    .input(
+      z.object({
+        postId: z.string().cuid(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.comment.findMany({
+        where: {
+          postId: input.postId,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: true,
         },
       });
     }),

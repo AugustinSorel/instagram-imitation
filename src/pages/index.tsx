@@ -279,17 +279,18 @@ const BookmarkButton = ({ post }: PostProps) => {
   );
 };
 
-export const addCommentSchema = z.object({
-  content: z
-    .string({ required_error: "comment is required" })
-    .min(3, "comment must be at least 3 characters")
-    .max(2048, "comment must be at most 2048 characters"),
-});
-
 const NewCommentForm = ({ post }: PostProps) => {
   const [comment, setComment] = useState("");
   const [errorComment, setErrorComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const utils = api.useContext();
+
+  const addCommentSchema = z.object({
+    content: z
+      .string({ required_error: "comment is required" })
+      .min(3, "comment must be at least 3 characters")
+      .max(2048, "comment must be at most 2048 characters"),
+  });
 
   const addCommentMutation = api.post.addComment.useMutation({
     onSuccess: () => {
@@ -304,6 +305,7 @@ const NewCommentForm = ({ post }: PostProps) => {
 
     onSettled: () => {
       setIsLoading(() => false);
+      void utils.post.allComments.invalidate({ postId: post.id });
     },
 
     onMutate: () => {
@@ -355,6 +357,103 @@ const NewCommentForm = ({ post }: PostProps) => {
   );
 };
 
+const ListOfComments = ({ post }: PostProps) => {
+  const allCommentsQuery = api.post.allComments.useQuery(
+    { postId: post.id },
+    { placeholderData: post.comments }
+  );
+
+  const timeSince = (date: Date) => {
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    let interval = seconds / 31536000;
+
+    if (interval > 1) {
+      return Math.floor(interval) + " years";
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+      return Math.floor(interval) + " months";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+      return Math.floor(interval) + " days";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+      return Math.floor(interval) + " hours";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+      return Math.floor(interval) + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+  };
+
+  if (allCommentsQuery.status !== "success") {
+    return (
+      <ul className="grow space-y-5 overflow-auto">
+        {[...Array<unknown>(20)].map((_, i) => (
+          <li
+            className="relative grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-30deg] after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10"
+            key={i}
+          >
+            <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
+            <div className="h-3 w-28 rounded-md bg-black/10 dark:bg-white/10" />
+            <div className="col-span-full space-y-1">
+              <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
+              <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
+              <div className="h-3 w-1/2 rounded-md bg-black/10 dark:bg-white/10" />
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (allCommentsQuery.data.length < 1) {
+    return (
+      <div className="mx-auto">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          className="w-32 fill-black/20 dark:fill-white/20"
+        >
+          <path d="M24 20h-3v4l-5.333-4h-7.667v-4h2v2h6.333l2.667 2v-2h3v-8.001h-2v-2h4v12.001zm-6-6h-9.667l-5.333 4v-4h-3v-14.001h18v14.001zm-13-8c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm4 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm4 0c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z" />
+        </svg>
+        <p className="text-center text-black/20 dark:text-white/20">
+          no comments
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <ul className="grow space-y-3 overflow-auto">
+      {allCommentsQuery.data.map((comment) => (
+        <li
+          className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 p-2"
+          key={comment.id}
+        >
+          <Avatar
+            src={comment.user.image ?? ""}
+            alt={`${comment.user.image} profile picture`}
+          />
+          <Link
+            href={`/users/${comment.user.name}`}
+            className="text-lg hover:underline"
+          >
+            {comment.user.name}
+          </Link>
+          <p className="text-sm italic text-neutral-500">
+            {timeSince(comment.createdAt)}
+          </p>
+          <p className="col-span-full">{comment.content}</p>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
 const CommentButton = ({ post }: PostProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -393,10 +492,13 @@ const CommentButton = ({ post }: PostProps) => {
             clickHandler: triggerCloseAnimation,
           }}
         >
-          <header className="flex items-center gap-5">
-            <Avatar alt={`${post.user.name} avatar`} src={post.user.image} />
+          <header className="flex items-center gap-5 p-2">
+            <Avatar
+              alt={`${post.user.name ?? ""} avatar`}
+              src={post.user.image ?? ""}
+            />
             <Link
-              href={`/users/${post.user.name}`}
+              href={`/users/${post.user.name ?? ""}`}
               className="text-2xl capitalize hover:underline"
             >
               {post.user.name}
@@ -405,46 +507,7 @@ const CommentButton = ({ post }: PostProps) => {
 
           <hr className="my-5 border-black/20 dark:border-white/20" />
 
-          <ul className="my-auto grow space-y-5 overflow-auto">
-            {[...Array<unknown>(20)].map((_, i) => (
-              <li
-                className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-3 p-2"
-                key={i}
-              >
-                <Avatar
-                  src={post.user.image}
-                  alt={`${post.user.image} profile picture`}
-                />
-                <Link
-                  href={`/users/${post.user.name}`}
-                  className="text-lg hover:underline"
-                >
-                  {post.user.name}
-                </Link>
-                <p className="text-sm italic text-neutral-500">2 months ago</p>
-                <p className="col-span-full">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Aliquid incidunt id accusantium accusamus explicabo ab
-                  voluptatem, placeat deserunt aliquam modi adipisci ipsum
-                  dolores! Mollitia neque vero ullam, harum enim consequatur?
-                </p>
-              </li>
-            ))}
-            {[...Array<unknown>(20)].map((_, i) => (
-              <li
-                className="relative grid grid-cols-[auto_auto_auto_1fr] items-center gap-3 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-30deg] after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10"
-                key={i}
-              >
-                <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
-                <div className="h-3 w-28 rounded-md bg-black/10 dark:bg-white/10" />
-                <div className="col-span-full space-y-1">
-                  <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
-                  <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
-                  <div className="h-3 w-1/2 rounded-md bg-black/10 dark:bg-white/10" />
-                </div>
-              </li>
-            ))}
-          </ul>
+          <ListOfComments post={post} />
 
           <hr className="my-5 border-black/20 dark:border-white/20" />
 
