@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { addCommentSchema } from "~/pages";
 
 export const postRouter = createTRPCRouter({
   newPost: protectedProcedure
@@ -101,6 +102,26 @@ export const postRouter = createTRPCRouter({
             postId: input.postId,
             userId: ctx.session.user.id,
           },
+        },
+      });
+    }),
+
+  addComment: protectedProcedure
+    .input(
+      z.object({
+        postId: z.string().cuid(),
+        content: z
+          .string({ required_error: "comment is required" })
+          .min(3, "comment must be at least 3 characters")
+          .max(2048, "comment must be at most 2048 characters"),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return ctx.prisma.comment.create({
+        data: {
+          content: input.content,
+          userId: ctx.session.user.id,
+          postId: input.postId,
         },
       });
     }),
