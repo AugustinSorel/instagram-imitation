@@ -279,16 +279,37 @@ const BookmarkButton = ({ post }: PostProps) => {
   );
 };
 
-const NewCommentForm = () => {
+export const addCommentSchema = z.object({
+  content: z
+    .string({ required_error: "comment is required" })
+    .min(3, "comment must be at least 3 characters")
+    .max(2048, "comment must be at most 2048 characters"),
+});
+
+const NewCommentForm = ({ post }: PostProps) => {
   const [comment, setComment] = useState("");
   const [errorComment, setErrorComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const schema = z.object({
-    comment: z
-      .string({ required_error: "comment is required" })
-      .min(3, "comment must be at least 3 characters")
-      .max(2048, "comment must be at most 2048 characters"),
+  const addCommentMutation = api.post.addComment.useMutation({
+    onSuccess: () => {
+      setComment("");
+    },
+
+    onError: (error) => {
+      setErrorComment(
+        error.data?.zodError?.fieldErrors["comment"]?.at(0) ?? ""
+      );
+    },
+
+    onSettled: () => {
+      setIsLoading(() => false);
+    },
+
+    onMutate: () => {
+      setErrorComment("");
+      setIsLoading(() => true);
+    },
   });
 
   const changeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -299,14 +320,12 @@ const NewCommentForm = () => {
     e.preventDefault();
 
     try {
-      schema.parse({ comment });
-      setIsLoading(() => true);
+      addCommentSchema.parse({ content: comment });
+      addCommentMutation.mutate({ content: comment, postId: post.id });
     } catch (error) {
       if (error instanceof ZodError) {
         setErrorComment(error.formErrors.fieldErrors["comment"]?.at(0) ?? "");
       }
-    } finally {
-      setIsLoading(() => false);
     }
   };
 
@@ -429,7 +448,7 @@ const CommentButton = ({ post }: PostProps) => {
 
           <hr className="my-5 border-black/20 dark:border-white/20" />
 
-          <NewCommentForm />
+          <NewCommentForm post={post} />
         </BottomSheet>
       )}
     </>
