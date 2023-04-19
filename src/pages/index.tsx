@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import type { PropsWithChildren, ChangeEvent, FormEvent } from "react";
+import type { PropsWithChildren, ChangeEvent, FormEvent, UIEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 import superjson from "superjson";
 import { v4 as uuidV4 } from "uuid";
@@ -38,11 +38,35 @@ const SkeletonPost = () => {
   );
 };
 
-const ListOfSkeletons = () => {
+const ListOfPostSkeleton = () => {
   return (
     <>
       {[...Array<unknown>(5)].map((_, i) => (
         <SkeletonPost key={i} />
+      ))}
+    </>
+  );
+};
+
+const SkeletonComment = () => {
+  return (
+    <li className="relative grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-30deg] after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10">
+      <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
+      <div className="h-3 w-28 rounded-md bg-black/10 dark:bg-white/10" />
+      <div className="col-span-full space-y-1">
+        <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
+        <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
+        <div className="h-3 w-1/2 rounded-md bg-black/10 dark:bg-white/10" />
+      </div>
+    </li>
+  );
+};
+
+const ListOfCommentSkeletons = () => {
+  return (
+    <>
+      {[...Array<unknown>(10)].map((_, i) => (
+        <SkeletonComment key={i} />
       ))}
     </>
   );
@@ -284,6 +308,7 @@ const NewCommentForm = ({ post }: PostProps) => {
   const [errorComment, setErrorComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const utils = api.useContext();
+  const { data: session } = useSession();
 
   const addCommentSchema = z.object({
     content: z
@@ -305,16 +330,55 @@ const NewCommentForm = ({ post }: PostProps) => {
 
     onSettled: () => {
       setIsLoading(() => false);
-      void utils.post.allComments.invalidate({ postId: post.id });
+      void utils.post.comments.invalidate({ postId: post.id, limit: 5 });
     },
 
-    onMutate: () => {
+    onMutate: async () => {
       setErrorComment("");
       setIsLoading(() => true);
+
+      await utils.post.comments.cancel({ limit: 10, postId: post.id });
+
+      utils.post.comments.setInfiniteData(
+        { limit: 10, postId: post.id },
+        (data) => {
+          if (!data || !session) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+
+          return {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              comments: [
+                {
+                  id: uuidV4(),
+                  content: comment,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                  userId: session.user.id ?? "",
+                  postId: post.id,
+                  user: {
+                    id: session.user.id ?? "",
+                    email: session.user.email ?? "",
+                    emailVerified: new Date(),
+                    image: session.user.image ?? "",
+                    name: session.user.name ?? "",
+                  },
+                },
+                ...page.comments,
+              ],
+            })),
+          };
+        }
+      );
     },
   });
 
-  const changeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
+  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
   };
 
@@ -336,8 +400,8 @@ const NewCommentForm = ({ post }: PostProps) => {
       className="grid grid-cols-[1fr_auto] items-center gap-x-5"
       onSubmit={submitHandler}
     >
-      <textarea
-        rows={1}
+      <input
+        type="text"
         autoFocus
         placeholder="Add your comment"
         className="grow bg-transparent outline-none"
@@ -357,12 +421,11 @@ const NewCommentForm = ({ post }: PostProps) => {
   );
 };
 
-const ListOfComments = ({ post }: PostProps) => {
-  const allCommentsQuery = api.post.allComments.useQuery(
-    { postId: post.id },
-    { placeholderData: post.comments }
-  );
+type CommentProps = {
+  comment: RouterOutputs["post"]["comments"]["comments"][number];
+};
 
+const Comment = ({ comment }: CommentProps) => {
   const timeSince = (date: Date) => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     let interval = seconds / 31536000;
@@ -389,67 +452,91 @@ const ListOfComments = ({ post }: PostProps) => {
     return `${Math.floor(seconds)} seconds`;
   };
 
-  if (allCommentsQuery.status !== "success") {
+  return (
+    <li
+      className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 p-2"
+      key={comment.id}
+    >
+      <Avatar
+        src={comment.user.image ?? ""}
+        alt={`${comment.user.image ?? ""} profile picture`}
+      />
+      <Link
+        href={`/users/${comment.user.name ?? ""}`}
+        className="text-lg hover:underline"
+      >
+        {comment.user.name}
+      </Link>
+      <p className="text-sm italic text-neutral-500">
+        {timeSince(comment.createdAt)}
+      </p>
+      <p className="col-span-full">{comment.content}</p>
+    </li>
+  );
+};
+
+const NoCommentPanel = () => {
+  return (
+    <div className="flex grow flex-col items-center justify-center space-y-2">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        className="w-32 fill-black/20 dark:fill-white/20"
+      >
+        <path d="M24 20h-3v4l-5.333-4h-7.667v-4h2v2h6.333l2.667 2v-2h3v-8.001h-2v-2h4v12.001zm-15.667-6l-5.333 4v-4h-3v-14.001l18 .001v14h-9.667zm-6.333-2h3v2l2.667-2h8.333v-10l-14-.001v10.001z" />
+      </svg>
+      <p className="text-center text-xl text-black/20 dark:text-white/20">
+        no comments
+      </p>
+    </div>
+  );
+};
+
+const ListOfComments = ({ post }: PostProps) => {
+  const allCommentsInfiniteQuery = api.post.comments.useInfiniteQuery(
+    { postId: post.id, limit: 10 },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      placeholderData: {
+        pages: [{ comments: post.comments, nextCursor: {} }],
+        pageParams: [],
+      },
+    }
+  );
+
+  const onScroll = (e: UIEvent) => {
+    const target = e.target as HTMLElement;
+    const bottom =
+      target.scrollHeight - target.clientHeight <= target.scrollTop + 100;
+
+    if (bottom && allCommentsInfiniteQuery.hasNextPage) {
+      void allCommentsInfiniteQuery.fetchNextPage();
+    }
+  };
+
+  if (allCommentsInfiniteQuery.status !== "success") {
     return (
       <ul className="grow space-y-5 overflow-auto">
-        {[...Array<unknown>(20)].map((_, i) => (
-          <li
-            className="relative grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-30deg] after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10"
-            key={i}
-          >
-            <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
-            <div className="h-3 w-28 rounded-md bg-black/10 dark:bg-white/10" />
-            <div className="col-span-full space-y-1">
-              <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
-              <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
-              <div className="h-3 w-1/2 rounded-md bg-black/10 dark:bg-white/10" />
-            </div>
-          </li>
-        ))}
+        <ListOfCommentSkeletons />
       </ul>
     );
   }
 
-  if (allCommentsQuery.data.length < 1) {
-    return (
-      <div className="mx-auto space-y-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          className="w-32 fill-black/20 dark:fill-white/20"
-        >
-          <path d="M24 20h-3v4l-5.333-4h-7.667v-4h2v2h6.333l2.667 2v-2h3v-8.001h-2v-2h4v12.001zm-15.667-6l-5.333 4v-4h-3v-14.001l18 .001v14h-9.667zm-6.333-2h3v2l2.667-2h8.333v-10l-14-.001v10.001z" />
-        </svg>
-        <p className="text-center text-xl text-black/20 dark:text-white/20">
-          no comments
-        </p>
-      </div>
-    );
+  if ((allCommentsInfiniteQuery.data.pages[0]?.comments ?? []).length < 1) {
+    return <NoCommentPanel />;
   }
 
   return (
-    <ul className="grow space-y-3 overflow-auto">
-      {allCommentsQuery.data.map((comment) => (
-        <li
-          className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 p-2"
-          key={comment.id}
-        >
-          <Avatar
-            src={comment.user.image ?? ""}
-            alt={`${comment.user.image ?? ""} profile picture`}
-          />
-          <Link
-            href={`/users/${comment.user.name ?? ""}`}
-            className="text-lg hover:underline"
-          >
-            {comment.user.name}
-          </Link>
-          <p className="text-sm italic text-neutral-500">
-            {timeSince(comment.createdAt)}
-          </p>
-          <p className="col-span-full">{comment.content}</p>
-        </li>
-      ))}
+    <ul className="grow space-y-3 overflow-auto" onScroll={(e) => onScroll(e)}>
+      {allCommentsInfiniteQuery.data.pages.map((page) =>
+        page.comments.map((comment) => (
+          <Comment key={comment.id} comment={comment} />
+        ))
+      )}
+
+      {allCommentsInfiniteQuery.isFetchingNextPage && (
+        <ListOfCommentSkeletons />
+      )}
     </ul>
   );
 };
@@ -674,7 +761,7 @@ const Home = () => {
   if (postsInfiniteQuery.status !== "success") {
     return (
       <MainContainer>
-        <ListOfSkeletons />
+        <ListOfPostSkeleton />
       </MainContainer>
     );
   }
@@ -692,7 +779,7 @@ const Home = () => {
           page.posts.map((post) => <Post key={post.id} post={post} />)
         )}
 
-        {postsInfiniteQuery.isFetchingNextPage && <ListOfSkeletons />}
+        {postsInfiniteQuery.isFetchingNextPage && <ListOfPostSkeleton />}
       </MainContainer>
     </>
   );

@@ -44,7 +44,11 @@ export const postRouter = createTRPCRouter({
           user: true,
           likes: true,
           bookmarks: true,
-          comments: { include: { user: true }, orderBy: { createdAt: "desc" } },
+          comments: {
+            include: { user: true },
+            orderBy: { createdAt: "desc" },
+            take: 10,
+          },
         },
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: { createdAt: "desc" },
@@ -130,17 +134,24 @@ export const postRouter = createTRPCRouter({
       });
     }),
 
-  allComments: publicProcedure
+  comments: publicProcedure
     .input(
       z.object({
         postId: z.string().cuid(),
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(),
       })
     )
     .query(async ({ ctx, input }) => {
-      return await ctx.prisma.comment.findMany({
+      const limit = input.limit ?? 50;
+      const { cursor } = input;
+
+      const comments = await ctx.prisma.comment.findMany({
+        take: limit + 1,
         where: {
           postId: input.postId,
         },
+        cursor: cursor ? { id: cursor } : undefined,
         orderBy: {
           createdAt: "desc",
         },
@@ -148,5 +159,17 @@ export const postRouter = createTRPCRouter({
           user: true,
         },
       });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+
+      if (comments.length > limit) {
+        const nextItem = comments.pop();
+        nextCursor = nextItem!.id;
+      }
+
+      return {
+        comments,
+        nextCursor,
+      };
     }),
 });
