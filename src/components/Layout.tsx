@@ -334,9 +334,11 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 
       {isOpen && (
         <Modal
-          isExpanded={!isClosing}
-          animationEndHandler={animationEndHandler}
-          clickHandler={triggerCloseAnimation}
+          backdropProps={{
+            isExpanded: !isClosing,
+            animationEndHandler: animationEndHandler,
+            clickHandler: triggerCloseAnimation,
+          }}
         >
           <NewPostForm successHandler={triggerCloseAnimation} />
         </Modal>
@@ -454,7 +456,7 @@ const MenuContent = () => {
 
   return (
     <nav
-      className="flex flex-col gap-1 fill-current capitalize text-slate-100"
+      className="m-auto flex flex-col gap-1 fill-current capitalize text-slate-100"
       onClick={(e) => e.stopPropagation()}
     >
       <Link

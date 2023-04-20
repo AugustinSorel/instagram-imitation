@@ -40,7 +40,21 @@ export const postRouter = createTRPCRouter({
 
       const posts = await ctx.prisma.post.findMany({
         take: limit + 1,
-        include: { user: true, likes: true, bookmarks: true },
+        include: {
+          user: true,
+          likes: true,
+          bookmarks: true,
+          comments: {
+            include: { user: true },
+            orderBy: { createdAt: "desc" },
+            take: 10,
+          },
+          _count: {
+            select: {
+              comments: true,
+            },
+          },
+        },
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: { createdAt: "desc" },
       });
@@ -103,5 +117,64 @@ export const postRouter = createTRPCRouter({
           },
         },
       });
+    }),
+
+  addComment: protectedProcedure
+    .input(
+      z.object({
+        postId: z.string().cuid(),
+        content: z
+          .string({ required_error: "comment is required" })
+          .min(3, "comment must be at least 3 characters")
+          .max(2048, "comment must be at most 2048 characters"),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.prisma.comment.create({
+        data: {
+          content: input.content,
+          userId: ctx.session.user.id,
+          postId: input.postId,
+        },
+      });
+    }),
+
+  comments: publicProcedure
+    .input(
+      z.object({
+        postId: z.string().cuid(),
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input.limit ?? 50;
+      const { cursor } = input;
+
+      const comments = await ctx.prisma.comment.findMany({
+        take: limit + 1,
+        where: {
+          postId: input.postId,
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: true,
+        },
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+
+      if (comments.length > limit) {
+        const nextItem = comments.pop();
+        nextCursor = nextItem!.id;
+      }
+
+      return {
+        comments,
+        nextCursor,
+      };
     }),
 });

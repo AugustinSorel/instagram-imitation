@@ -13,6 +13,14 @@ const config = {
         "scale-out-sm": { from: { scale: "1" }, to: { scale: "0.8" } },
         "slide-in": { from: { translate: "-100% 0" }, to: { translate: "0" } },
         "slide-out": { from: { translate: "0" }, to: { translate: "-100% 0" } },
+        "drop-in-from-bottom": {
+          from: { translate: "0 100%" },
+          to: { translate: "0" },
+        },
+        "drop-out-from-bottom": {
+          from: { translate: "0" },
+          to: { translate: "0 100%" },
+        },
         "toast-slide-in": {
           from: { translate: "-25% 0" },
           to: { translate: "0" },
@@ -21,6 +29,10 @@ const config = {
           from: { translate: "-600% 0" },
           to: { translate: "400% 0" },
         },
+        "comment-skeleton": {
+          from: { translate: "-100% 0" },
+          to: { translate: "100% 0" },
+        },
       },
 
       animation: {
@@ -28,12 +40,15 @@ const config = {
         "fade-out": "fade-out 300ms ease-out forwards",
         "drop-in": "drop-in 300ms ease-out",
         "drop-out": "drop-out 300ms ease-out forwards",
+        "drop-in-from-bottom": "drop-in-from-bottom 300ms ease-out",
+        "drop-out-from-bottom": "drop-out-from-bottom 300ms ease-out",
         "scale-in-sm": "scale-in-sm 300ms ease-out",
         "scale-out-sm": "scale-out-sm 300ms ease-out forwards",
         "slide-in": "slide-in 300ms ease-out",
         "slide-out": "slide-out 300ms ease-out forwards",
         "toaster-in": "toast-slide-in 300ms ease-out, fade-in 300ms ease-out",
         "post-skeleton": "post-skeleton 1s ease-out infinite",
+        "comment-skeleton": "comment-skeleton 1s ease-out infinite",
       },
 
       backgroundImage: {
