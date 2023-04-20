@@ -49,6 +49,11 @@ export const postRouter = createTRPCRouter({
             orderBy: { createdAt: "desc" },
             take: 10,
           },
+          _count: {
+            select: {
+              comments: true,
+            },
+          },
         },
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: { createdAt: "desc" },

@@ -179,7 +179,8 @@ const LikeButton = ({ post }: PostProps) => {
       aria-pressed={hasLiked}
       title="like"
       name="like"
-      className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
+      data-number-of-likes={post.likes.length}
+      className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-likes)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
       onClick={clickHandler}
     >
       <SvgIcon svgName={hasLiked ? "heartFilled" : "heart"} />
@@ -295,7 +296,8 @@ const BookmarkButton = ({ post }: PostProps) => {
       aria-pressed={hasBookmarked}
       title="bookmark this post"
       name="bookmark this post"
-      className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-slate-900 dark:border-white/20 dark:bg-black/50 dark:fill-slate-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
+      data-number-of-bookmarked={post.bookmarks.length}
+      className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-bookmarked)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-slate-600 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100 dark:aria-[pressed=true]:fill-slate-400"
       onClick={clickHandler}
     >
       <SvgIcon svgName={hasBookmarked ? "bookmarkFilled" : "bookmark"} />
@@ -338,7 +340,6 @@ const NewCommentForm = ({ post }: PostProps) => {
       setIsLoading(() => true);
 
       await utils.post.comments.cancel({ limit: 10, postId: post.id });
-
       utils.post.comments.setInfiniteData(
         { limit: 10, postId: post.id },
         (data) => {
@@ -375,6 +376,34 @@ const NewCommentForm = ({ post }: PostProps) => {
           };
         }
       );
+
+      await utils.post.all.cancel({ limit: 5 });
+      utils.post.all.setInfiniteData({ limit: 5 }, (data) => {
+        if (!data) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        return {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            posts: page.posts.map((p) => {
+              if (p.id === post.id) {
+                return {
+                  ...p,
+                  _count: {
+                    comments: p._count.comments + 1,
+                  },
+                };
+              }
+              return p;
+            }),
+          })),
+        };
+      });
     },
   });
 
@@ -509,7 +538,11 @@ const ListOfComments = ({ post }: PostProps) => {
     const bottom =
       target.scrollHeight - target.clientHeight <= target.scrollTop + 100;
 
-    if (bottom && allCommentsInfiniteQuery.hasNextPage) {
+    if (
+      bottom &&
+      allCommentsInfiniteQuery.hasNextPage &&
+      !allCommentsInfiniteQuery.isFetchingNextPage
+    ) {
       void allCommentsInfiniteQuery.fetchNextPage();
     }
   };
@@ -565,7 +598,8 @@ const CommentButton = ({ post }: PostProps) => {
       <button
         title="view comments"
         name="view comments"
-        className="aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
+        data-number-of-comments={post._count.comments}
+        className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-comments)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
         onClick={showComments}
       >
         <SvgIcon svgName="speech" />
@@ -743,7 +777,11 @@ const Home = () => {
       const bottom =
         target.scrollHeight - target.clientHeight <= target.scrollTop + 100;
 
-      if (bottom && postsInfiniteQuery.hasNextPage) {
+      if (
+        bottom &&
+        postsInfiniteQuery.hasNextPage &&
+        !postsInfiniteQuery.isFetchingNextPage
+      ) {
         void postsInfiniteQuery.fetchNextPage();
       }
     },
