@@ -3,7 +3,13 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import type { PropsWithChildren, ChangeEvent, FormEvent, UIEvent } from "react";
+import type {
+  PropsWithChildren,
+  ChangeEvent,
+  FormEvent,
+  UIEvent,
+  TouchEvent,
+} from "react";
 import { useCallback, useEffect, useState } from "react";
 import superjson from "superjson";
 import { v4 as uuidV4 } from "uuid";
@@ -662,6 +668,39 @@ const Post = ({ post }: PostProps) => {
     setImageIndex(index);
   };
 
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [draggingDistance, setDraggingDistance] = useState(0);
+
+  const minSwipeDistance = 5;
+
+  const onTouchStart = (e: TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart((prev) => e.targetTouches[0]?.clientX ?? prev);
+  };
+
+  const onTouchMove = (e: TouchEvent) => {
+    setTouchEnd((prev) => e.targetTouches[0]?.clientX ?? prev);
+    const distance = (touchStart ?? 0) - (e.targetTouches[0]?.clientX ?? 0);
+    setDraggingDistance(distance);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    setDraggingDistance(0);
+
+    if (isLeftSwipe) {
+      viewNextImage();
+    }
+
+    if (isRightSwipe) {
+      viewPrevImage();
+    }
+  };
+
   return (
     <div className="group relative isolate flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 p-2 shadow-xl duration-300 hover:shadow-2xl dark:border-white/10">
       <header className="flex items-center justify-between">
@@ -731,7 +770,12 @@ const Post = ({ post }: PostProps) => {
 
       <ul
         className="absolute inset-0 -z-10 flex w-max duration-300"
-        style={{ translate: `${350 * imageIndex * -1}px 0` }}
+        style={{
+          translate: `${350 * imageIndex * -1 - draggingDistance}px 0`,
+        }}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
         {post.images.map((src, i) => (
           <li
