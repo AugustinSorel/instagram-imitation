@@ -689,14 +689,13 @@ const Post = ({ post }: PostProps) => {
     if (!touchStart || !touchEnd) return;
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
     setDraggingDistance(0);
 
-    if (isLeftSwipe) {
+    if (isLeftSwipe && imageIndex !== post.images.length - 1) {
       viewNextImage();
     }
 
-    if (isRightSwipe) {
+    if (!isLeftSwipe && imageIndex !== 0) {
       viewPrevImage();
     }
   };
