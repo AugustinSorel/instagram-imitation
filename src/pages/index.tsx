@@ -9,6 +9,8 @@ import type {
   FormEvent,
   UIEvent,
   TouchEvent,
+  MouseEventHandler,
+  MouseEvent,
 } from "react";
 import { useCallback, useEffect, useState } from "react";
 import superjson from "superjson";
@@ -20,7 +22,7 @@ import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api, type RouterOutputs } from "~/utils/api";
-import { ZodError, z } from "zod";
+import { ZodError, set, z } from "zod";
 import { LoadingSpinner } from "~/components/LoadingSpinner";
 
 const SkeletonPost = () => {
@@ -668,28 +670,48 @@ const Post = ({ post }: PostProps) => {
     setImageIndex(index);
   };
 
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
   const [draggingDistance, setDraggingDistance] = useState(0);
+  const minSwipeDistance = 50;
 
-  const minSwipeDistance = 5;
+  const draggingStart = (startX: number) => {
+    if (post.images.length < 2) {
+      return;
+    }
 
-  const onTouchStart = (e: TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart((prev) => e.targetTouches[0]?.clientX ?? prev);
+    setTouchEnd(0);
+    setTouchStart(startX);
   };
 
-  const onTouchMove = (e: TouchEvent) => {
-    setTouchEnd((prev) => e.targetTouches[0]?.clientX ?? prev);
-    const distance = (touchStart ?? 0) - (e.targetTouches[0]?.clientX ?? 0);
+  const draggingMove = (currentX: number) => {
+    if (!touchStart) {
+      return;
+    }
+
+    setTouchEnd(currentX);
+    const distance = touchStart - currentX;
     setDraggingDistance(distance);
   };
 
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+  const draggingEnd = () => {
+    if (!draggingDistance) {
+      return;
+    }
+
     const distance = touchStart - touchEnd;
+
+    if (Math.abs(distance) < 50) {
+      setDraggingDistance(0);
+      setTouchStart(0);
+      setTouchEnd(0);
+      return;
+    }
+
     const isLeftSwipe = distance > minSwipeDistance;
     setDraggingDistance(0);
+    setTouchStart(0);
+    setTouchEnd(0);
 
     if (isLeftSwipe && imageIndex !== post.images.length - 1) {
       viewNextImage();
@@ -730,11 +752,11 @@ const Post = ({ post }: PostProps) => {
       </header>
 
       {post.images.length > 1 && (
-        <nav className="absolute left-0 right-0 top-1/2 mx-2 flex -translate-y-1/2 justify-between">
+        <nav className="pointer-events-none absolute left-0 right-0 top-1/2 mx-2 flex -translate-y-1/2 justify-between">
           <button
             title="view previous image"
             name="view previous image"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 fill-neutral-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:fill-neutral-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
+            className="pointer-events-auto aspect-square rounded-full border border-black/20 bg-white/50 fill-neutral-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:fill-neutral-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
             onClick={viewPrevImage}
           >
             <SvgIcon svgName="leftArrow" />
@@ -742,7 +764,7 @@ const Post = ({ post }: PostProps) => {
           <button
             title="view next image"
             name="view next image"
-            className="aspect-square rounded-full border border-black/20 bg-white/50 fill-neutral-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:fill-neutral-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
+            className="pointer-events-auto aspect-square rounded-full border border-black/20 bg-white/50 fill-neutral-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:fill-neutral-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
             onClick={viewNextImage}
           >
             <SvgIcon svgName="rightArrow" />
@@ -768,13 +790,19 @@ const Post = ({ post }: PostProps) => {
       </footer>
 
       <ul
-        className="absolute inset-0 -z-10 flex w-max duration-300"
+        className={`absolute inset-0 -z-10 flex w-max select-none duration-300 ${
+          post.images.length > 1 ? "cursor-grab" : "cursor-auto"
+        }`}
         style={{
           translate: `${350 * imageIndex * -1 - draggingDistance}px 0`,
         }}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+        onTouchStart={(e) => draggingStart(e.targetTouches[0]?.clientX ?? 0)}
+        onTouchMove={(e) => draggingMove(e.targetTouches[0]?.clientX ?? 0)}
+        onTouchEnd={draggingEnd}
+        onMouseDown={(e) => draggingStart(e.clientX)}
+        onMouseMove={(e) => draggingMove(e.clientX)}
+        onMouseUp={draggingEnd}
+        onMouseLeave={draggingEnd}
       >
         {post.images.map((src, i) => (
           <li
@@ -789,7 +817,7 @@ const Post = ({ post }: PostProps) => {
               height={500}
               width={350}
               quality={100}
-              className="h-post w-post object-cover"
+              className="pointer-events-none h-post w-post select-none object-cover"
             />
           </li>
         ))}
