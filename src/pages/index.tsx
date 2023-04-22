@@ -3,15 +3,7 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import type {
-  PropsWithChildren,
-  ChangeEvent,
-  FormEvent,
-  UIEvent,
-  TouchEvent,
-  MouseEventHandler,
-  MouseEvent,
-} from "react";
+import type { PropsWithChildren, ChangeEvent, FormEvent, UIEvent } from "react";
 import { useCallback, useEffect, useState } from "react";
 import superjson from "superjson";
 import { v4 as uuidV4 } from "uuid";
@@ -22,7 +14,7 @@ import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api, type RouterOutputs } from "~/utils/api";
-import { ZodError, set, z } from "zod";
+import { ZodError, z } from "zod";
 import { LoadingSpinner } from "~/components/LoadingSpinner";
 
 const SkeletonPost = () => {
