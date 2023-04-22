@@ -10,6 +10,7 @@ import {
   type FormEvent,
   type PropsWithChildren,
   useEffect,
+  useCallback,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
@@ -570,13 +571,13 @@ const Menu = () => {
     }
   };
 
-  const triggerClosingAnimation = () => {
+  const triggerClosingAnimation = useCallback(() => {
     if (!isOpen) {
       return;
     }
 
     setIsClosing(() => true);
-  };
+  }, [isOpen]);
 
   useEffect(() => {
     const handleRouteChange = () => triggerClosingAnimation();
@@ -584,7 +585,7 @@ const Menu = () => {
     router.events.on("routeChangeStart", handleRouteChange);
 
     return () => router.events.off("routeChangeStart", handleRouteChange);
-  }, [router.events]);
+  }, [router.events, triggerClosingAnimation]);
 
   if (!isOpen) {
     return null;
