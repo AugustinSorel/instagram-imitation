@@ -571,6 +571,10 @@ const Menu = () => {
   };
 
   const triggerClosingAnimation = () => {
+    if (!isOpen) {
+      return;
+    }
+
     setIsClosing(() => true);
   };
 
