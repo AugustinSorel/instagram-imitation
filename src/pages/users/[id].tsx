@@ -9,13 +9,103 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import SuperJSON from "superjson";
 import { Avatar } from "~/components/Avatar";
+import { Timeline } from "~/components/Timeline";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
+
+const UserDetails = ({ user }: { user: RouterOutputs["user"]["byId"] }) => {
+  return (
+    <div className="flex items-center">
+      <Avatar
+        src={user.image ?? ""}
+        height={56}
+        width={56}
+        priority
+        alt={`${user.name ?? ""}'s profile picture`}
+      />
+
+      <h2 className="ml-2 truncate font-medium capitalize">{user.name}</h2>
+
+      <button className="ml-auto rounded-md border border-white/10 bg-brand-gradient bg-origin-border px-10 py-1 font-medium capitalize text-white opacity-75 duration-300 hover:opacity-100">
+        follow
+      </button>
+    </div>
+  );
+};
+
+const UserStats = () => {
+  return (
+    <div className="mt-2 flex justify-between capitalize">
+      <p>
+        <strong>5</strong> posts
+      </p>
+      <p>
+        <strong>200</strong> followers
+      </p>
+      <p>
+        <strong>12</strong> followings
+      </p>
+    </div>
+  );
+};
+
+const Tabs = () => {
+  const router = useRouter();
+  return (
+    <nav className="relative mt-7 flex  text-center capitalize text-neutral-600 dark:text-neutral-400">
+      <Link
+        aria-current={router.query.tab === "posts"}
+        href={`/users/${router.query.id}?tab=posts`}
+        className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
+      >
+        posts
+      </Link>
+      <Link
+        aria-current={router.query.tab === "bookmarked"}
+        href={`/users/${router.query.id}?tab=bookmarked`}
+        className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
+      >
+        bookmarked
+      </Link>
+      <Link
+        aria-current={router.query.tab === "liked"}
+        href={`/users/${router.query.id}?tab=liked`}
+        className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
+      >
+        liked
+      </Link>
+
+      <div
+        className="absolute bottom-0 left-0 top-0 -z-10 w-[calc(100%/3)] rounded-md border border-black/10 bg-black/5 duration-300 dark:border-white/10 dark:bg-white/5"
+        style={{
+          translate: `${
+            router.query.tab === "posts"
+              ? 0
+              : router.query.tab === "bookmarked"
+              ? 100
+              : router.query.tab === "liked"
+              ? 200
+              : 0
+          }% 0`,
+        }}
+      />
+    </nav>
+  );
+};
 
 const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const userQuery = api.user.byId.useQuery({ id: props.id });
-  const router = useRouter();
+  const userPostsInfiniteQuery = api.user.posts.useInfiniteQuery(
+    {
+      id: props.id,
+      limit: 5,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
+  );
 
   if (userQuery.status !== "success" || !userQuery.data) {
     return <>Loading...</>;
@@ -34,88 +124,15 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="bg-white/50 px-[calc(50vw-175px)] pb-5 pt-3 backdrop-blur-md dark:bg-black/50">
-        <div className="flex items-center">
-          <Avatar
-            src={userQuery.data.image ?? ""}
-            height={56}
-            width={56}
-            priority
-            alt={`${userQuery.data.name ?? ""}'s profile picture`}
-          />
-          <h2 className="ml-2 truncate font-medium capitalize">
-            {userQuery.data.name}
-          </h2>
+      <div className="sticky top-0 z-10 rounded-b-3xl bg-white/50 px-[calc(50vw-175px)] pb-5 pt-3 backdrop-blur-md dark:bg-black/50 lg:static lg:rounded-none">
+        <UserDetails user={userQuery.data} />
 
-          <button className="ml-auto rounded-md border border-white/10 bg-brand-gradient bg-origin-border px-10 py-1 font-medium capitalize text-white opacity-75 duration-300 hover:opacity-100">
-            follow
-          </button>
-        </div>
+        <UserStats />
 
-        <div className="mt-2 flex justify-between capitalize">
-          <p>
-            <strong>5</strong> posts
-          </p>
-          <p>
-            <strong>200</strong> followers
-          </p>
-          <p>
-            <strong>12</strong> followings
-          </p>
-        </div>
-
-        <nav className="relative mt-7 flex  text-center capitalize text-neutral-600 dark:text-neutral-400">
-          <Link
-            aria-current={
-              router.asPath === `/users/${userQuery.data.id ?? ""}?tab=posts`
-            }
-            href={`/users/${userQuery.data.id}?tab=posts`}
-            className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
-          >
-            posts
-          </Link>
-          <Link
-            aria-current={
-              router.asPath ===
-              `/users/${userQuery.data.id ?? ""}?tab=bookmarked`
-            }
-            href={`/users/${userQuery.data.id}?tab=bookmarked`}
-            className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
-          >
-            bookmarked
-          </Link>
-          <Link
-            aria-current={
-              router.asPath === `/users/${userQuery.data.id ?? ""}?tab=liked`
-            }
-            href={`/users/${userQuery.data.id}?tab=liked`}
-            className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
-          >
-            liked
-          </Link>
-
-          <div
-            className="absolute bottom-0 left-0 top-0 -z-10 w-[calc(100%/3)] rounded-md border border-black/10 bg-black/5 duration-300 dark:border-white/10 dark:bg-white/5"
-            style={{
-              translate: `${
-                router.query.tab === "posts"
-                  ? 0
-                  : router.query.tab === "bookmarked"
-                  ? 100
-                  : router.query.tab === "liked"
-                  ? 200
-                  : 0
-              }% 0`,
-            }}
-          />
-        </nav>
+        <Tabs />
       </div>
 
-      <main className="mx-auto flex flex-col items-center justify-center gap-5 py-5">
-        {userQuery.data.posts.map((post) => (
-          <>{JSON.stringify(post)}</>
-        ))}
-      </main>
+      <Timeline infiniteQuery={userPostsInfiniteQuery} />
     </>
   );
 };
