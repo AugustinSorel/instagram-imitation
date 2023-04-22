@@ -653,6 +653,10 @@ type PostProps = {
 
 const Post = ({ post }: PostProps) => {
   const [imageIndex, setImageIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [draggingDistance, setDraggingDistance] = useState(0);
+  const minSwipeDistance = 50;
 
   const viewNextImage = () => {
     setImageIndex((prev) => (prev >= post.images.length - 1 ? 0 : prev + 1));
@@ -669,11 +673,6 @@ const Post = ({ post }: PostProps) => {
 
     setImageIndex(index);
   };
-
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
-  const [draggingDistance, setDraggingDistance] = useState(0);
-  const minSwipeDistance = 50;
 
   const draggingStart = (startX: number) => {
     if (post.images.length < 2) {
@@ -793,9 +792,7 @@ const Post = ({ post }: PostProps) => {
         className={`absolute inset-0 -z-10 flex w-max select-none duration-300 ${
           post.images.length > 1 ? "cursor-grab" : "cursor-auto"
         }`}
-        style={{
-          translate: `${350 * imageIndex * -1 - draggingDistance}px 0`,
-        }}
+        style={{ translate: `${350 * imageIndex * -1 - draggingDistance}px 0` }}
         onTouchStart={(e) => draggingStart(e.targetTouches[0]?.clientX ?? 0)}
         onTouchMove={(e) => draggingMove(e.targetTouches[0]?.clientX ?? 0)}
         onTouchEnd={draggingEnd}
