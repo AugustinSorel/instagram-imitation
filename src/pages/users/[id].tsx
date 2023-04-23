@@ -103,23 +103,6 @@ const Tabs = () => {
 
 const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const userQuery = api.user.byId.useQuery({ id: props.id });
-  const userPostsInfiniteQuery = api.post.all.useInfiniteQuery(
-    {
-      limit: 5,
-    },
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-      select: (data) => ({
-        pages: data.pages
-          .map((page) => ({
-            posts: page.posts.filter((post) => post.userId === props.id),
-            nextCursor: page.nextCursor,
-          }))
-          .filter((page) => page.posts.length > 0),
-        pageParams: data.pageParams,
-      }),
-    }
-  );
 
   if (userQuery.status !== "success" || !userQuery.data) {
     return <>Loading...</>;
@@ -146,7 +129,17 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <Tabs />
       </div>
 
-      <Timeline infiniteQuery={userPostsInfiniteQuery} />
+      <Timeline
+        select={(data) => ({
+          pages: data.pages
+            .map((page) => ({
+              posts: page.posts.filter((post) => post.userId === props.id),
+              nextCursor: page.nextCursor,
+            }))
+            .filter((page) => page.posts.length > 0),
+          pageParams: data.pageParams,
+        })}
+      />
     </>
   );
 };

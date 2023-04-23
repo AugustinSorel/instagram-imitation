@@ -1,19 +1,11 @@
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import Head from "next/head";
 import superjson from "superjson";
+import { Timeline } from "~/components/Timeline";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
-import { api } from "~/utils/api";
-import { Timeline } from "~/components/Timeline";
 
 const Home = () => {
-  const postsInfiniteQuery = api.post.all.useInfiniteQuery(
-    { limit: 5 },
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    }
-  );
-
   return (
     <>
       <Head>
@@ -25,7 +17,7 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Timeline infiniteQuery={postsInfiniteQuery} />
+      <Timeline />
     </>
   );
 };

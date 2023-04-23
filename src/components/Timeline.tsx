@@ -1,4 +1,7 @@
-import type { UseTRPCInfiniteQueryResult } from "@trpc/react-query/shared";
+import type {
+  UseTRPCInfiniteQueryOptions,
+  UseTRPCInfiniteQueryResult,
+} from "@trpc/react-query/shared";
 import { UIEvent, useCallback, useEffect, useState } from "react";
 import type { PropsWithChildren, FormEvent, ChangeEvent } from "react";
 import { api } from "~/utils/api";
@@ -13,6 +16,7 @@ import { BottomSheet } from "./BottomSheet";
 import { v4 as uuidV4 } from "uuid";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useToaster } from "./Toaster";
+import { TRPCClientError, TRPCClientErrorLike } from "@trpc/client";
 
 const SkeletonPost = () => {
   return (
@@ -819,15 +823,29 @@ const MainContainer = ({ children }: PropsWithChildren) => {
 };
 
 type Props = {
-  infiniteQuery: UseTRPCInfiniteQueryResult<
+  select?: UseTRPCInfiniteQueryOptions<
+    "post.all",
+    {
+      limit?: number | null | undefined;
+      cursor?: string | null | undefined;
+    },
     {
       posts: RouterOutputs["post"]["all"]["posts"];
+      nextCursor: string | undefined;
     },
-    {}
-  >;
+    unknown
+  >["select"];
 };
 
-export const Timeline = ({ infiniteQuery }: Props) => {
+export const Timeline = ({ select }: Props) => {
+  const postsInfiniteQuery = api.post.all.useInfiniteQuery(
+    { limit: 5 },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      select: select,
+    }
+  );
+
   const onScroll = useCallback(
     (e: Event) => {
       const target = e.target as HTMLElement;
@@ -836,13 +854,13 @@ export const Timeline = ({ infiniteQuery }: Props) => {
 
       if (
         bottom &&
-        infiniteQuery.hasNextPage &&
-        !infiniteQuery.isFetchingNextPage
+        postsInfiniteQuery.hasNextPage &&
+        !postsInfiniteQuery.isFetchingNextPage
       ) {
-        void infiniteQuery.fetchNextPage();
+        void postsInfiniteQuery.fetchNextPage();
       }
     },
-    [infiniteQuery]
+    [postsInfiniteQuery]
   );
 
   useEffect(() => {
@@ -853,7 +871,7 @@ export const Timeline = ({ infiniteQuery }: Props) => {
     };
   }, [onScroll]);
 
-  if (infiniteQuery.status !== "success") {
+  if (postsInfiniteQuery.status !== "success") {
     return (
       <MainContainer>
         <ListOfPostSkeleton />
@@ -863,11 +881,11 @@ export const Timeline = ({ infiniteQuery }: Props) => {
 
   return (
     <MainContainer>
-      {infiniteQuery.data.pages.map((page) =>
+      {postsInfiniteQuery.data.pages.map((page) =>
         page.posts.map((post) => <Post key={post.id} post={post} />)
       )}
 
-      {infiniteQuery.isFetchingNextPage && <ListOfPostSkeleton />}
+      {postsInfiniteQuery.isFetchingNextPage && <ListOfPostSkeleton />}
     </MainContainer>
   );
 };
