@@ -1,9 +1,6 @@
-import type {
-  UseTRPCInfiniteQueryOptions,
-  UseTRPCInfiniteQueryResult,
-} from "@trpc/react-query/shared";
-import { UIEvent, useCallback, useEffect, useState } from "react";
-import type { PropsWithChildren, FormEvent, ChangeEvent } from "react";
+import type { UseTRPCInfiniteQueryOptions } from "@trpc/react-query/shared";
+import { useCallback, useEffect, useState } from "react";
+import type { UIEvent, PropsWithChildren, FormEvent, ChangeEvent } from "react";
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 import { Avatar } from "./Avatar";
@@ -16,7 +13,6 @@ import { BottomSheet } from "./BottomSheet";
 import { v4 as uuidV4 } from "uuid";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useToaster } from "./Toaster";
-import { TRPCClientError, TRPCClientErrorLike } from "@trpc/client";
 
 const SkeletonPost = () => {
   return (
@@ -814,6 +810,24 @@ const Post = ({ post }: PostProps) => {
     </div>
   );
 };
+
+const NoPostPanel = () => {
+  return (
+    <MainContainer>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        className="w-32 fill-black/50 dark:fill-white/50"
+      >
+        <path d="M22 7v12h-20v-12h20zm2-2h-24v16h24v-16zm-15 6h-5v-2h5v2zm-4-7h-3v-1h3v1zm11 7c1.103 0 2 .897 2 2s-.897 2-2 2-2-.897-2-2 .897-2 2-2zm0-2c-2.209 0-4 1.791-4 4s1.791 4 4 4 4-1.791 4-4-1.791-4-4-4z" />
+      </svg>
+      <p className="text-center text-xl text-black/50 dark:text-white/50">
+        no posts
+      </p>
+    </MainContainer>
+  );
+};
+
 const MainContainer = ({ children }: PropsWithChildren) => {
   return (
     <main className="mx-auto flex flex-col items-center justify-center gap-5 py-5">
@@ -822,6 +836,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
   );
 };
 
+//FIXME: Tanstack v5 will fix this
 type Props = {
   select?: UseTRPCInfiniteQueryOptions<
     "post.all",
@@ -877,6 +892,10 @@ export const Timeline = ({ select }: Props) => {
         <ListOfPostSkeleton />
       </MainContainer>
     );
+  }
+
+  if (postsInfiniteQuery.data.pages.length < 1) {
+    return <NoPostPanel />;
   }
 
   return (
