@@ -109,19 +109,15 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
-      select: (data) => {
-        const filteredData = data.pages
+      select: (data) => ({
+        pages: data.pages
           .map((page) => ({
             posts: page.posts.filter((post) => post.userId === props.id),
             nextCursor: page.nextCursor,
           }))
-          .filter((page) => page.posts.length > 0);
-
-        return {
-          pages: filteredData,
-          pageParams: data.pageParams,
-        };
-      },
+          .filter((page) => page.posts.length > 0),
+        pageParams: data.pageParams,
+      }),
     }
   );
 
