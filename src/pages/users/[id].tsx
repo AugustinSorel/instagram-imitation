@@ -4,6 +4,7 @@ import type {
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -58,45 +59,33 @@ const UserStats = () => {
 const Tabs = () => {
   const router = useRouter();
   const userId = router.query.id as string;
+  const { data: session } = useSession();
 
   return (
-    <nav className="relative mt-7 flex  text-center capitalize text-neutral-600 dark:text-neutral-400">
+    <nav className="relative mt-7 flex text-center capitalize text-neutral-600 dark:text-neutral-400">
       <Link
         aria-current={router.query.tab === "posts"}
         href={`/users/${userId}?tab=posts`}
-        className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
+        className="flex-1 rounded-md border-black/10 py-1 transition-colors duration-300 aria-[current=true]:border aria-[current=true]:bg-black/5 aria-[current=true]:text-slate-900 dark:border-white/10 aria-[current=true]:dark:bg-white/5 dark:aria-[current=true]:text-slate-100"
       >
         posts
       </Link>
-      <Link
-        aria-current={router.query.tab === "bookmarked"}
-        href={`/users/${userId}?tab=bookmarked`}
-        className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
-      >
-        bookmarked
-      </Link>
+      {session?.user.id === userId && (
+        <Link
+          aria-current={router.query.tab === "bookmarked"}
+          href={`/users/${userId}?tab=bookmarked`}
+          className="flex-1 rounded-md border-black/10 py-1 transition-colors duration-300 aria-[current=true]:border aria-[current=true]:bg-black/5 aria-[current=true]:text-slate-900 dark:border-white/10 aria-[current=true]:dark:bg-white/5 dark:aria-[current=true]:text-slate-100"
+        >
+          bookmarked
+        </Link>
+      )}
       <Link
         aria-current={router.query.tab === "liked"}
         href={`/users/${userId}?tab=liked`}
-        className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
+        className="flex-1 rounded-md border-black/10 py-1 transition-colors duration-300 aria-[current=true]:border aria-[current=true]:bg-black/5 aria-[current=true]:text-slate-900 dark:border-white/10 aria-[current=true]:dark:bg-white/5 dark:aria-[current=true]:text-slate-100"
       >
         liked
       </Link>
-
-      <div
-        className="absolute bottom-0 left-0 top-0 -z-10 w-[calc(100%/3)] rounded-md border border-black/10 bg-black/5 duration-300 dark:border-white/10 dark:bg-white/5"
-        style={{
-          translate: `${
-            router.query.tab === "posts"
-              ? 0
-              : router.query.tab === "bookmarked"
-              ? 100
-              : router.query.tab === "liked"
-              ? 200
-              : 0
-          }% 0`,
-        }}
-      />
     </nav>
   );
 };
@@ -143,6 +132,7 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     </>
   );
 };
+//post.likes.find((like) => like.userId === props.id)
 
 export default UserPage;
 
