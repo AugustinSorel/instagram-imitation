@@ -3,19 +3,10 @@ import { z } from "zod";
 
 export const UserRouter = createTRPCRouter({
   byId: publicProcedure
-    .input(
-      z.object({
-        id: z.string().cuid(),
-      })
-    )
+    .input(z.object({ id: z.string().cuid() }))
     .query(async ({ input, ctx }) => {
       return ctx.prisma.user.findUnique({
-        where: {
-          id: input.id,
-        },
-        include: {
-          posts: true,
-        },
+        where: { id: input.id },
       });
     }),
 

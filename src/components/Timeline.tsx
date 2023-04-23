@@ -1,5 +1,5 @@
 import type { UseTRPCInfiniteQueryResult } from "@trpc/react-query/shared";
-import { useCallback, useEffect, useState } from "react";
+import { UIEvent, useCallback, useEffect, useState } from "react";
 import type { PropsWithChildren, FormEvent, ChangeEvent } from "react";
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
@@ -634,6 +634,7 @@ const CommentButton = ({ post }: PostProps) => {
     </>
   );
 };
+
 type PostProps = {
   post: RouterOutputs["post"]["all"]["posts"][number];
 };
@@ -851,6 +852,7 @@ export const Timeline = ({ infiniteQuery }: Props) => {
       nextDiv.removeEventListener("scroll", onScroll);
     };
   }, [onScroll]);
+
   if (infiniteQuery.status !== "success") {
     return (
       <MainContainer>
