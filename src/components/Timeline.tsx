@@ -810,6 +810,24 @@ const Post = ({ post }: PostProps) => {
     </div>
   );
 };
+
+const NoPostPanel = () => {
+  return (
+    <MainContainer>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        className="w-32 fill-black/50 dark:fill-white/50"
+      >
+        <path d="M22 7v12h-20v-12h20zm2-2h-24v16h24v-16zm-15 6h-5v-2h5v2zm-4-7h-3v-1h3v1zm11 7c1.103 0 2 .897 2 2s-.897 2-2 2-2-.897-2-2 .897-2 2-2zm0-2c-2.209 0-4 1.791-4 4s1.791 4 4 4 4-1.791 4-4-1.791-4-4-4z" />
+      </svg>
+      <p className="text-center text-xl text-black/50 dark:text-white/50">
+        no posts
+      </p>
+    </MainContainer>
+  );
+};
+
 const MainContainer = ({ children }: PropsWithChildren) => {
   return (
     <main className="mx-auto flex flex-col items-center justify-center gap-5 py-5">
@@ -874,6 +892,10 @@ export const Timeline = ({ select }: Props) => {
         <ListOfPostSkeleton />
       </MainContainer>
     );
+  }
+
+  if (postsInfiniteQuery.data.pages.length < 1) {
+    return <NoPostPanel />;
   }
 
   return (
