@@ -11,16 +11,44 @@ import { useRouter } from "next/router";
 import SuperJSON from "superjson";
 import { Avatar } from "~/components/Avatar";
 import { Timeline } from "~/components/Timeline";
+import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 
-type UserDetailsProps = {
+const FollowButton = ({ user }: UserProps) => {
+  const { data: session } = useSession();
+  const addToast = useToaster((state) => state.addToast);
+  const followMutation = api.user.follow.useMutation();
+  const unfollowMutation = api.user.unfollow.useMutation();
+
+  const isFollowing = user.followedBy.find(
+    (follower) => follower.followerId === session?.user.id
+  );
+
+  const clickHandler = () => {
+    if (!session) {
+      addToast("Please sign in");
+      return;
+    }
+  };
+
+  return (
+    <button
+      onClick={clickHandler}
+      className="ml-auto rounded-md border border-white/10 bg-brand-gradient bg-origin-border px-10 py-1 font-medium capitalize text-white opacity-75 duration-300 hover:opacity-100"
+    >
+      {isFollowing ? "unfollow" : "follow"}
+    </button>
+  );
+};
+
+type UserProps = {
   user: NonNullable<RouterOutputs["user"]["byId"]>;
 };
 
-const UserDetails = ({ user }: UserDetailsProps) => {
+const UserDetails = ({ user }: UserProps) => {
   return (
     <div className="flex items-center">
       <Avatar
@@ -33,9 +61,7 @@ const UserDetails = ({ user }: UserDetailsProps) => {
 
       <h2 className="ml-2 truncate font-medium capitalize">{user.name}</h2>
 
-      <button className="ml-auto rounded-md border border-white/10 bg-brand-gradient bg-origin-border px-10 py-1 font-medium capitalize text-white opacity-75 duration-300 hover:opacity-100">
-        follow
-      </button>
+      <FollowButton user={user} />
     </div>
   );
 };
