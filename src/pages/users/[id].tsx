@@ -15,7 +15,11 @@ import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 
-const UserDetails = ({ user }: { user: RouterOutputs["user"]["byId"] }) => {
+type UserDetailsProps = {
+  user: NonNullable<RouterOutputs["user"]["byId"]>;
+};
+
+const UserDetails = ({ user }: UserDetailsProps) => {
   return (
     <div className="flex items-center">
       <Avatar
@@ -53,25 +57,27 @@ const UserStats = () => {
 
 const Tabs = () => {
   const router = useRouter();
+  const userId = router.query.id as string;
+
   return (
     <nav className="relative mt-7 flex  text-center capitalize text-neutral-600 dark:text-neutral-400">
       <Link
         aria-current={router.query.tab === "posts"}
-        href={`/users/${router.query.id}?tab=posts`}
+        href={`/users/${userId}?tab=posts`}
         className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
       >
         posts
       </Link>
       <Link
         aria-current={router.query.tab === "bookmarked"}
-        href={`/users/${router.query.id}?tab=bookmarked`}
+        href={`/users/${userId}?tab=bookmarked`}
         className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
       >
         bookmarked
       </Link>
       <Link
         aria-current={router.query.tab === "liked"}
-        href={`/users/${router.query.id}?tab=liked`}
+        href={`/users/${userId}?tab=liked`}
         className="flex-1 py-1 duration-300 aria-[current=true]:text-slate-900 dark:aria-[current=true]:text-slate-100"
       >
         liked
@@ -97,13 +103,25 @@ const Tabs = () => {
 
 const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const userQuery = api.user.byId.useQuery({ id: props.id });
-  const userPostsInfiniteQuery = api.user.posts.useInfiniteQuery(
+  const userPostsInfiniteQuery = api.post.all.useInfiniteQuery(
     {
-      id: props.id,
       limit: 5,
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
+      select: (data) => {
+        const filteredData = data.pages
+          .map((page) => ({
+            posts: page.posts.filter((post) => post.userId === props.id),
+            nextCursor: page.nextCursor,
+          }))
+          .filter((page) => page.posts.length > 0);
+
+        return {
+          pages: filteredData,
+          pageParams: data.pageParams,
+        };
+      },
     }
   );
 
@@ -151,6 +169,7 @@ export async function getStaticProps(
   const id = context.params?.id as string;
 
   await helpers.user.byId.prefetch({ id });
+  await helpers.post.all.prefetchInfinite({ limit: 5 });
 
   return {
     props: {
