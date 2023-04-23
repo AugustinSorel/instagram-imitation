@@ -1,9 +1,6 @@
-import type {
-  UseTRPCInfiniteQueryOptions,
-  UseTRPCInfiniteQueryResult,
-} from "@trpc/react-query/shared";
-import { UIEvent, useCallback, useEffect, useState } from "react";
-import type { PropsWithChildren, FormEvent, ChangeEvent } from "react";
+import type { UseTRPCInfiniteQueryOptions } from "@trpc/react-query/shared";
+import { useCallback, useEffect, useState } from "react";
+import type { UIEvent, PropsWithChildren, FormEvent, ChangeEvent } from "react";
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 import { Avatar } from "./Avatar";
@@ -16,7 +13,6 @@ import { BottomSheet } from "./BottomSheet";
 import { v4 as uuidV4 } from "uuid";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useToaster } from "./Toaster";
-import { TRPCClientError, TRPCClientErrorLike } from "@trpc/client";
 
 const SkeletonPost = () => {
   return (
@@ -822,6 +818,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
   );
 };
 
+//FIXME: Tanstack v5 will fix this
 type Props = {
   select?: UseTRPCInfiniteQueryOptions<
     "post.all",
