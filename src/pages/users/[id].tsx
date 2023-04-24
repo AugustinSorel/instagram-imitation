@@ -11,16 +11,106 @@ import { useRouter } from "next/router";
 import SuperJSON from "superjson";
 import { Avatar } from "~/components/Avatar";
 import { Timeline } from "~/components/Timeline";
+import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 
-type UserDetailsProps = {
+const FollowButton = ({ user }: UserProps) => {
+  const { data: session } = useSession();
+  const addToast = useToaster((state) => state.addToast);
+  const utils = api.useContext();
+
+  const isFollowing = user.followedBy.find(
+    (follower) => follower.followerId === session?.user.id
+  );
+
+  const followMutation = api.user.follow.useMutation({
+    onMutate: async () => {
+      await utils.user.byId.cancel({ id: user.id });
+
+      utils.user.byId.setData({ id: user.id }, (prev) => {
+        if (!prev || !session) {
+          return;
+        }
+
+        return {
+          ...prev,
+          followedBy: [
+            ...prev.followedBy,
+            {
+              followerId: session?.user.id,
+              followingId: user.id,
+            },
+          ],
+        };
+      });
+    },
+
+    onSettled: () => {
+      void utils.user.byId.invalidate({ id: user.id });
+    },
+  });
+
+  const unfollowMutation = api.user.unfollow.useMutation({
+    onMutate: async () => {
+      await utils.user.byId.cancel({ id: user.id });
+
+      utils.user.byId.setData({ id: user.id }, (prev) => {
+        if (!prev || !session) {
+          return;
+        }
+
+        return {
+          ...prev,
+          followedBy: prev.followedBy.filter(
+            (follower) =>
+              follower.followingId === session.user.id &&
+              follower.followerId === user.id
+          ),
+        };
+      });
+    },
+
+    onSettled: () => {
+      void utils.user.byId.invalidate({ id: user.id });
+    },
+  });
+
+  const clickHandler = () => {
+    if (!session) {
+      addToast("Please sign in");
+      return;
+    }
+
+    if (isFollowing) {
+      unfollowMutation.mutate({ id: user.id });
+      return;
+    }
+
+    followMutation.mutate({ id: user.id });
+  };
+
+  if (session?.user.id === user.id) {
+    return null;
+  }
+
+  return (
+    <button
+      onClick={clickHandler}
+      className="ml-auto rounded-md border border-white/10 bg-brand-gradient bg-origin-border px-10 py-1 font-medium capitalize text-white opacity-75 duration-300 hover:opacity-100"
+    >
+      {isFollowing ? "unfollow" : "follow"}
+    </button>
+  );
+};
+
+type UserProps = {
   user: NonNullable<RouterOutputs["user"]["byId"]>;
 };
 
-const UserDetails = ({ user }: UserDetailsProps) => {
+const UserDetails = ({ user }: UserProps) => {
   return (
     <div className="flex items-center">
       <Avatar
@@ -33,24 +123,22 @@ const UserDetails = ({ user }: UserDetailsProps) => {
 
       <h2 className="ml-2 truncate font-medium capitalize">{user.name}</h2>
 
-      <button className="ml-auto rounded-md border border-white/10 bg-brand-gradient bg-origin-border px-10 py-1 font-medium capitalize text-white opacity-75 duration-300 hover:opacity-100">
-        follow
-      </button>
+      <FollowButton user={user} />
     </div>
   );
 };
 
-const UserStats = () => {
+const UserStats = ({ user }: UserProps) => {
   return (
     <div className="mt-2 flex justify-between capitalize">
       <p>
-        <strong>5</strong> posts
+        <strong>{user._count.posts}</strong> posts
       </p>
       <p>
-        <strong>200</strong> followers
+        <strong>{user.followedBy.length}</strong> followers
       </p>
       <p>
-        <strong>12</strong> followings
+        <strong>{user.following.length}</strong> followings
       </p>
     </div>
   );
@@ -128,7 +216,7 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
       <div className="sticky top-0 z-10 rounded-b-3xl bg-white/50 px-[calc(50vw-175px)] pb-5 pt-3 backdrop-blur-md dark:bg-black/50 lg:static lg:rounded-none">
         <UserDetails user={userQuery.data} />
 
-        <UserStats />
+        <UserStats user={userQuery.data} />
 
         <Tabs />
       </div>
