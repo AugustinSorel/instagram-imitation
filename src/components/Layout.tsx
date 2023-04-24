@@ -65,6 +65,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const query = api.media.uploadNewPostImageToS3.useMutation();
   const utils = api.useContext();
+  const { data: session } = useSession();
 
   const isFormValid =
     formValues.images.length < 1 ||
@@ -103,8 +104,27 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
       });
     },
 
-    onMutate: () => {
+    onMutate: async () => {
       setFormErrors(defautltFormErrors);
+
+      if (!session) {
+        return;
+      }
+
+      await utils.user.byId.cancel({ id: session.user.id });
+
+      utils.user.byId.setData({ id: session.user.id }, (prev) => {
+        if (!prev) {
+          return;
+        }
+
+        return {
+          ...prev,
+          _count: {
+            posts: prev._count.posts + 1,
+          },
+        };
+      });
     },
 
     onSettled: () => {

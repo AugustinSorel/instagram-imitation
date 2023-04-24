@@ -10,6 +10,11 @@ export const UserRouter = createTRPCRouter({
         include: {
           followedBy: true,
           following: true,
+          _count: {
+            select: {
+              posts: true,
+            },
+          },
         },
       });
     }),

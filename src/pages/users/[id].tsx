@@ -128,17 +128,17 @@ const UserDetails = ({ user }: UserProps) => {
   );
 };
 
-const UserStats = () => {
+const UserStats = ({ user }: UserProps) => {
   return (
     <div className="mt-2 flex justify-between capitalize">
       <p>
-        <strong>5</strong> posts
+        <strong>{user._count.posts}</strong> posts
       </p>
       <p>
-        <strong>200</strong> followers
+        <strong>{user.followedBy.length}</strong> followers
       </p>
       <p>
-        <strong>12</strong> followings
+        <strong>{user.following.length}</strong> followings
       </p>
     </div>
   );
@@ -216,7 +216,7 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
       <div className="sticky top-0 z-10 rounded-b-3xl bg-white/50 px-[calc(50vw-175px)] pb-5 pt-3 backdrop-blur-md dark:bg-black/50 lg:static lg:rounded-none">
         <UserDetails user={userQuery.data} />
 
-        <UserStats />
+        <UserStats user={userQuery.data} />
 
         <Tabs />
       </div>
