@@ -20,19 +20,81 @@ import type { RouterOutputs } from "~/utils/api";
 const FollowButton = ({ user }: UserProps) => {
   const { data: session } = useSession();
   const addToast = useToaster((state) => state.addToast);
-  const followMutation = api.user.follow.useMutation();
-  const unfollowMutation = api.user.unfollow.useMutation();
+  const utils = api.useContext();
 
   const isFollowing = user.followedBy.find(
     (follower) => follower.followerId === session?.user.id
   );
+
+  const followMutation = api.user.follow.useMutation({
+    onMutate: async () => {
+      await utils.user.byId.cancel({ id: user.id });
+
+      utils.user.byId.setData({ id: user.id }, (prev) => {
+        if (!prev || !session) {
+          return;
+        }
+
+        return {
+          ...prev,
+          followedBy: [
+            ...prev.followedBy,
+            {
+              followerId: session?.user.id,
+              followingId: user.id,
+            },
+          ],
+        };
+      });
+    },
+
+    onSettled: () => {
+      void utils.user.byId.invalidate({ id: user.id });
+    },
+  });
+
+  const unfollowMutation = api.user.unfollow.useMutation({
+    onMutate: async () => {
+      await utils.user.byId.cancel({ id: user.id });
+
+      utils.user.byId.setData({ id: user.id }, (prev) => {
+        if (!prev || !session) {
+          return;
+        }
+
+        return {
+          ...prev,
+          followedBy: prev.followedBy.filter(
+            (follower) =>
+              follower.followingId === session.user.id &&
+              follower.followerId === user.id
+          ),
+        };
+      });
+    },
+
+    onSettled: () => {
+      void utils.user.byId.invalidate({ id: user.id });
+    },
+  });
 
   const clickHandler = () => {
     if (!session) {
       addToast("Please sign in");
       return;
     }
+
+    if (isFollowing) {
+      unfollowMutation.mutate({ id: user.id });
+      return;
+    }
+
+    followMutation.mutate({ id: user.id });
   };
+
+  if (session?.user.id === user.id) {
+    return null;
+  }
 
   return (
     <button
