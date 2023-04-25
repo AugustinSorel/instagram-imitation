@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import SuperJSON from "superjson";
 import { Avatar } from "~/components/Avatar";
-import { Timeline } from "~/components/Timeline";
+import { ProfilePageTimeline} from "~/components/Timeline";
 import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
@@ -180,25 +180,10 @@ const Tabs = () => {
 
 const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const userQuery = api.user.byId.useQuery({ id: props.id });
-  const router = useRouter();
 
   if (userQuery.status !== "success" || !userQuery.data) {
     return <>Loading...</>;
   }
-
-  const filterPosts = (post: RouterOutputs["post"]["all"]["posts"][number]) => {
-    const { tab } = router.query;
-
-    if (tab === "liked") {
-      return post.likes.find((like) => like.userId === props.id);
-    }
-
-    if (tab === "bookmarked") {
-      return post.bookmarks.find((like) => like.userId === props.id);
-    }
-
-    return post.userId === props.id;
-  };
 
   return (
     <>
@@ -221,17 +206,7 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <Tabs />
       </div>
 
-      <Timeline
-        select={(data) => ({
-          pages: data.pages
-            .map((page) => ({
-              posts: page.posts.filter(filterPosts),
-              nextCursor: page.nextCursor,
-            }))
-            .filter((page) => page.posts.length > 0),
-          pageParams: data.pageParams,
-        })}
-      />
+      <ProfilePageTimeline />
     </>
   );
 };
@@ -250,7 +225,7 @@ export async function getStaticProps(
   const id = context.params?.id as string;
 
   await helpers.user.byId.prefetch({ id });
-  await helpers.post.all.prefetchInfinite({ limit: 5 });
+  await helpers.user.posts.prefetchInfinite({ limit: 5, id: id });
 
   return {
     props: {

@@ -1,4 +1,3 @@
-import type { UseTRPCInfiniteQueryOptions } from "@trpc/react-query/shared";
 import { useCallback, useEffect, useState } from "react";
 import type { UIEvent, PropsWithChildren, FormEvent, ChangeEvent } from "react";
 import { api } from "~/utils/api";
@@ -13,6 +12,7 @@ import { BottomSheet } from "./BottomSheet";
 import { v4 as uuidV4 } from "uuid";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useToaster } from "./Toaster";
+import { useRouter } from "next/router";
 
 const SkeletonPost = () => {
   return (
@@ -72,15 +72,16 @@ const ListOfCommentSkeletons = () => {
 const LikeButton = ({ post }: PostProps) => {
   const { data: session } = useSession();
   const addToast = useToaster((state) => state.addToast);
+  const utils = api.useContext();
+  const router = useRouter();
+  const authodId = router.query.id as string;
   const hasLiked = post.likes.some(
     (like) => like.postId === post.id && like.userId === session?.user.id
   );
 
-  const utils = api.useContext();
-
   const likeMutation = api.post.like.useMutation({
-    onMutate: async () => {
-      await utils.post.all.cancel();
+    onMutate: async ({ postId }) => {
+      await utils.post.all.cancel({ limit: 5 });
 
       utils.post.all.setInfiniteData({ limit: 5 }, (data) => {
         if (!data || !session) {
@@ -95,7 +96,7 @@ const LikeButton = ({ post }: PostProps) => {
           pages: data.pages.map((page) => ({
             ...page,
             posts: page.posts.map((p) => {
-              if (p.id === post.id) {
+              if (p.id === postId) {
                 return {
                   ...p,
                   likes: [
@@ -105,7 +106,43 @@ const LikeButton = ({ post }: PostProps) => {
                       createdAt: new Date(),
                       updatedAt: new Date(),
                       userId: session.user.id,
-                      postId: post.id,
+                      postId: postId,
+                    },
+                  ],
+                };
+              }
+
+              return p;
+            }),
+          })),
+        };
+      });
+
+      await utils.user.posts.cancel({ limit: 5, id: authodId });
+      utils.user.posts.setInfiniteData({ limit: 5, id: authodId }, (data) => {
+        if (!data || !session) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        return {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            posts: page.posts.map((p) => {
+              if (p.id === postId) {
+                return {
+                  ...p,
+                  likes: [
+                    ...p.likes,
+                    {
+                      id: uuidV4(),
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                      userId: session.user.id,
+                      postId: postId,
                     },
                   ],
                 };
@@ -119,13 +156,14 @@ const LikeButton = ({ post }: PostProps) => {
     },
 
     onSettled: () => {
-      void utils.post.all.invalidate();
+      void utils.post.all.invalidate({ limit: 5 });
+      void utils.user.posts.invalidate({ limit: 5, id: authodId });
     },
   });
 
   const removeLikeMutation = api.post.removeLike.useMutation({
-    onMutate: async () => {
-      await utils.post.all.cancel();
+    onMutate: async ({ postId }) => {
+      await utils.post.all.cancel({ limit: 5 });
 
       utils.post.all.setInfiniteData({ limit: 5 }, (data) => {
         if (!data) {
@@ -144,7 +182,33 @@ const LikeButton = ({ post }: PostProps) => {
                 ...p,
                 likes: p.likes.filter(
                   (like) =>
-                    like.postId !== post.id || like.userId !== session?.user.id
+                    like.postId !== postId || like.userId !== session?.user.id
+                ),
+              };
+            }),
+          })),
+        };
+      });
+
+      await utils.user.posts.cancel({ limit: 5, id: authodId });
+      utils.user.posts.setInfiniteData({ limit: 5, id: authodId }, (data) => {
+        if (!data) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        return {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            posts: page.posts.map((p) => {
+              return {
+                ...p,
+                likes: p.likes.filter(
+                  (like) =>
+                    like.postId !== postId || like.userId !== session?.user.id
                 ),
               };
             }),
@@ -154,7 +218,8 @@ const LikeButton = ({ post }: PostProps) => {
     },
 
     onSettled: () => {
-      void utils.post.all.invalidate();
+      void utils.post.all.invalidate({ limit: 5 });
+      void utils.user.posts.invalidate({ limit: 5, id: authodId });
     },
   });
 
@@ -187,16 +252,17 @@ const LikeButton = ({ post }: PostProps) => {
 
 const BookmarkButton = ({ post }: PostProps) => {
   const { data: session } = useSession();
+  const utils = api.useContext();
   const addToast = useToaster((state) => state.addToast);
+  const router = useRouter();
+  const authodId = router.query.id as string;
   const hasBookmarked = post.bookmarks.some(
     (like) => like.postId === post.id && like.userId === session?.user.id
   );
 
-  const utils = api.useContext();
-
   const bookmarkMutation = api.post.bookmark.useMutation({
-    onMutate: async () => {
-      await utils.post.all.cancel();
+    onMutate: async ({ postId }) => {
+      await utils.post.all.cancel({ limit: 5 });
 
       utils.post.all.setInfiniteData({ limit: 5 }, (data) => {
         if (!data || !session) {
@@ -211,7 +277,7 @@ const BookmarkButton = ({ post }: PostProps) => {
           pages: data.pages.map((page) => ({
             ...page,
             posts: page.posts.map((p) => {
-              if (p.id === post.id) {
+              if (p.id === postId) {
                 return {
                   ...p,
                   bookmarks: [
@@ -221,7 +287,43 @@ const BookmarkButton = ({ post }: PostProps) => {
                       createdAt: new Date(),
                       updatedAt: new Date(),
                       userId: session.user.id,
-                      postId: post.id,
+                      postId: postId,
+                    },
+                  ],
+                };
+              }
+
+              return p;
+            }),
+          })),
+        };
+      });
+
+      await utils.user.posts.cancel({ limit: 5, id: authodId });
+      utils.user.posts.setInfiniteData({ limit: 5, id: authodId }, (data) => {
+        if (!data || !session) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        return {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            posts: page.posts.map((p) => {
+              if (p.id === postId) {
+                return {
+                  ...p,
+                  bookmarks: [
+                    ...p.bookmarks,
+                    {
+                      id: uuidV4(),
+                      createdAt: new Date(),
+                      updatedAt: new Date(),
+                      userId: session.user.id,
+                      postId: postId,
                     },
                   ],
                 };
@@ -235,14 +337,14 @@ const BookmarkButton = ({ post }: PostProps) => {
     },
 
     onSettled: () => {
-      void utils.post.all.invalidate();
+      void utils.post.all.invalidate({ limit: 5 });
+      void utils.user.posts.invalidate({ limit: 5, id: authodId });
     },
   });
 
   const removeBookmarkMutation = api.post.removeBookmark.useMutation({
-    onMutate: async () => {
-      await utils.post.all.cancel();
-
+    onMutate: async ({ postId }) => {
+      await utils.post.all.cancel({ limit: 5 });
       utils.post.all.setInfiniteData({ limit: 5 }, (data) => {
         if (!data) {
           return {
@@ -260,7 +362,34 @@ const BookmarkButton = ({ post }: PostProps) => {
                 ...p,
                 bookmarks: p.bookmarks.filter(
                   (bookmark) =>
-                    bookmark.postId !== post.id ||
+                    bookmark.postId !== postId ||
+                    bookmark.userId !== session?.user.id
+                ),
+              };
+            }),
+          })),
+        };
+      });
+
+      await utils.user.posts.cancel({ limit: 5, id: authodId });
+      utils.user.posts.setInfiniteData({ limit: 5, id: authodId }, (data) => {
+        if (!data) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        return {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            posts: page.posts.map((p) => {
+              return {
+                ...p,
+                bookmarks: p.bookmarks.filter(
+                  (bookmark) =>
+                    bookmark.postId !== postId ||
                     bookmark.userId !== session?.user.id
                 ),
               };
@@ -271,7 +400,8 @@ const BookmarkButton = ({ post }: PostProps) => {
     },
 
     onSettled: () => {
-      void utils.post.all.invalidate();
+      void utils.post.all.invalidate({ limit: 5 });
+      void utils.user.posts.invalidate({ limit: 5, id: authodId });
     },
   });
 
@@ -307,6 +437,8 @@ const NewCommentForm = ({ post }: PostProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const utils = api.useContext();
   const { data: session } = useSession();
+  const router = useRouter();
+  const authodId = router.query.id as string;
 
   const addCommentSchema = z.object({
     content: z
@@ -375,6 +507,34 @@ const NewCommentForm = ({ post }: PostProps) => {
 
       await utils.post.all.cancel({ limit: 5 });
       utils.post.all.setInfiniteData({ limit: 5 }, (data) => {
+        if (!data) {
+          return {
+            pages: [],
+            pageParams: [],
+          };
+        }
+
+        return {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            posts: page.posts.map((p) => {
+              if (p.id === post.id) {
+                return {
+                  ...p,
+                  _count: {
+                    comments: p._count.comments + 1,
+                  },
+                };
+              }
+              return p;
+            }),
+          })),
+        };
+      });
+
+      await utils.user.posts.cancel({ limit: 5, id: authodId });
+      utils.user.posts.setInfiniteData({ limit: 5, id: authodId }, (data) => {
         if (!data) {
           return {
             pages: [],
@@ -836,28 +996,94 @@ const MainContainer = ({ children }: PropsWithChildren) => {
   );
 };
 
-//FIXME: Tanstack v5 will fix this
-type Props = {
-  select?: UseTRPCInfiniteQueryOptions<
-    "post.all",
+export const ProfilePageTimeline = () => {
+  const router = useRouter();
+
+  const filterPosts = (
+    post: RouterOutputs["user"]["posts"]["posts"][number]
+  ) => {
+    const { tab } = router.query;
+
+    if (tab === "liked") {
+      return post.likes.find((like) => like.userId === router.query.id);
+    }
+
+    if (tab === "bookmarked") {
+      return post.bookmarks.find((like) => like.userId === router.query.id);
+    }
+
+    return post.userId === router.query.id;
+  };
+
+  const postsInfiniteQuery = api.user.posts.useInfiniteQuery(
+    { id: router.query.id as string, limit: 5 },
     {
-      limit?: number | null | undefined;
-      cursor?: string | null | undefined;
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      select: (data) => ({
+        pages: data.pages
+          .map((page) => ({
+            posts: page.posts.filter(filterPosts),
+            nextCursor: page.nextCursor,
+          }))
+          .filter((page) => page.posts.length > 0),
+        pageParams: data.pageParams,
+      }),
+    }
+  );
+
+  const onScroll = useCallback(
+    (e: Event) => {
+      const target = e.target as HTMLElement;
+      const bottom =
+        target.scrollHeight - target.clientHeight <= target.scrollTop + 100;
+
+      if (
+        bottom &&
+        postsInfiniteQuery.hasNextPage &&
+        !postsInfiniteQuery.isFetchingNextPage
+      ) {
+        void postsInfiniteQuery.fetchNextPage();
+      }
     },
-    {
-      posts: RouterOutputs["post"]["all"]["posts"];
-      nextCursor: string | undefined;
-    },
-    unknown
-  >["select"];
+    [postsInfiniteQuery]
+  );
+
+  useEffect(() => {
+    const nextDiv = document.getElementById("__next") as HTMLElement;
+    nextDiv.addEventListener("scroll", onScroll);
+    return () => {
+      nextDiv.removeEventListener("scroll", onScroll);
+    };
+  }, [onScroll]);
+
+  if (postsInfiniteQuery.status !== "success") {
+    return (
+      <MainContainer>
+        <ListOfPostSkeleton />
+      </MainContainer>
+    );
+  }
+
+  if (postsInfiniteQuery.data.pages.length < 1) {
+    return <NoPostPanel />;
+  }
+
+  return (
+    <MainContainer>
+      {postsInfiniteQuery.data.pages.map((page) =>
+        page.posts.map((post) => <Post key={post.id} post={post} />)
+      )}
+
+      {postsInfiniteQuery.isFetchingNextPage && <ListOfPostSkeleton />}
+    </MainContainer>
+  );
 };
 
-export const Timeline = ({ select }: Props) => {
+export const HomePageTimeline = () => {
   const postsInfiniteQuery = api.post.all.useInfiniteQuery(
     { limit: 5 },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
-      select: select,
     }
   );
 
