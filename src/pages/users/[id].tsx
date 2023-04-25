@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import SuperJSON from "superjson";
 import { Avatar } from "~/components/Avatar";
-import { ProfilePageTimeline, Timeline } from "~/components/Timeline";
+import { ProfilePageTimeline} from "~/components/Timeline";
 import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
