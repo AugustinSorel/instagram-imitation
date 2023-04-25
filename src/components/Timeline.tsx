@@ -239,8 +239,8 @@ const LikeButton = ({ post }: PostProps) => {
   return (
     <button
       aria-pressed={hasLiked}
-      title="like"
-      name="like"
+      title={hasLiked ? "unlike this post" : "like this post"}
+      name={hasLiked ? "unlike this post" : "like this post"}
       data-number-of-likes={post.likes.length}
       className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-likes)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
       onClick={clickHandler}
@@ -421,8 +421,8 @@ const BookmarkButton = ({ post }: PostProps) => {
   return (
     <button
       aria-pressed={hasBookmarked}
-      title="bookmark this post"
-      name="bookmark this post"
+      title={hasBookmarked ? "unbookmark this post" : "bookmark this post"}
+      name={hasBookmarked ? "unbookmark this post" : "bookmark this post"}
       data-number-of-bookmarked={post.bookmarks.length}
       className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-bookmarked)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-slate-600 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100 dark:aria-[pressed=true]:fill-slate-400"
       onClick={clickHandler}
