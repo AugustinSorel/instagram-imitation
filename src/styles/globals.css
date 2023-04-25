@@ -7,7 +7,7 @@ body {
 }
 
 #__next {
-  @apply max-h-screen overflow-auto;
+  @apply max-h-screen overflow-auto pb-20 lg:pb-0;
 }
 
 #__next::-webkit-scrollbar {

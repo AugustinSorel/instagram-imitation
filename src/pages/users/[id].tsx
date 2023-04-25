@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import SuperJSON from "superjson";
 import { Avatar } from "~/components/Avatar";
-import { ProfilePageTimeline} from "~/components/Timeline";
+import { ProfilePageTimeline } from "~/components/Timeline";
 import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
@@ -144,40 +144,6 @@ const UserStats = ({ user }: UserProps) => {
   );
 };
 
-const Tabs = () => {
-  const router = useRouter();
-  const userId = router.query.id as string;
-  const { data: session } = useSession();
-
-  return (
-    <nav className="relative mt-7 flex text-center capitalize text-neutral-600 dark:text-neutral-400">
-      <Link
-        aria-current={router.query.tab === "posts"}
-        href={`/users/${userId}?tab=posts`}
-        className="flex-1 rounded-md border-black/10 py-1 transition-colors duration-300 aria-[current=true]:border aria-[current=true]:bg-black/5 aria-[current=true]:text-slate-900 dark:border-white/10 aria-[current=true]:dark:bg-white/5 dark:aria-[current=true]:text-slate-100"
-      >
-        posts
-      </Link>
-      {session?.user.id === userId && (
-        <Link
-          aria-current={router.query.tab === "bookmarked"}
-          href={`/users/${userId}?tab=bookmarked`}
-          className="flex-1 rounded-md border-black/10 py-1 transition-colors duration-300 aria-[current=true]:border aria-[current=true]:bg-black/5 aria-[current=true]:text-slate-900 dark:border-white/10 aria-[current=true]:dark:bg-white/5 dark:aria-[current=true]:text-slate-100"
-        >
-          bookmarked
-        </Link>
-      )}
-      <Link
-        aria-current={router.query.tab === "liked"}
-        href={`/users/${userId}?tab=liked`}
-        className="flex-1 rounded-md border-black/10 py-1 transition-colors duration-300 aria-[current=true]:border aria-[current=true]:bg-black/5 aria-[current=true]:text-slate-900 dark:border-white/10 aria-[current=true]:dark:bg-white/5 dark:aria-[current=true]:text-slate-100"
-      >
-        liked
-      </Link>
-    </nav>
-  );
-};
-
 const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const userQuery = api.user.byId.useQuery({ id: props.id });
 
@@ -202,8 +168,6 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <UserDetails user={userQuery.data} />
 
         <UserStats user={userQuery.data} />
-
-        <Tabs />
       </div>
 
       <ProfilePageTimeline />

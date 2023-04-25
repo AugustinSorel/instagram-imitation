@@ -999,35 +999,10 @@ const MainContainer = ({ children }: PropsWithChildren) => {
 export const ProfilePageTimeline = () => {
   const router = useRouter();
 
-  const filterPosts = (
-    post: RouterOutputs["user"]["posts"]["posts"][number]
-  ) => {
-    const { tab } = router.query;
-
-    if (tab === "liked") {
-      return post.likes.find((like) => like.userId === router.query.id);
-    }
-
-    if (tab === "bookmarked") {
-      return post.bookmarks.find((like) => like.userId === router.query.id);
-    }
-
-    return post.userId === router.query.id;
-  };
-
   const postsInfiniteQuery = api.user.posts.useInfiniteQuery(
     { id: router.query.id as string, limit: 5 },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
-      select: (data) => ({
-        pages: data.pages
-          .map((page) => ({
-            posts: page.posts.filter(filterPosts),
-            nextCursor: page.nextCursor,
-          }))
-          .filter((page) => page.posts.length > 0),
-        pageParams: data.pageParams,
-      }),
     }
   );
 
