@@ -1031,6 +1031,11 @@ export const ProfilePageTimeline = () => {
     };
   }, [onScroll]);
 
+  useEffect(() => {
+    const nextDiv = document.getElementById("__next") as HTMLElement;
+    nextDiv.scrollTo({ top: 0 });
+  }, []);
+
   if (postsInfiniteQuery.status !== "success") {
     return (
       <MainContainer>
@@ -1086,6 +1091,11 @@ export const HomePageTimeline = () => {
       nextDiv.removeEventListener("scroll", onScroll);
     };
   }, [onScroll]);
+
+  useEffect(() => {
+    const nextDiv = document.getElementById("__next") as HTMLElement;
+    nextDiv.scrollTo({ top: 0 });
+  }, []);
 
   if (postsInfiniteQuery.status !== "success") {
     return (
