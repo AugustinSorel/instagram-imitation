@@ -1,7 +1,7 @@
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import Head from "next/head";
 import superjson from "superjson";
-import { Timeline } from "~/components/Timeline";
+import { HomePageTimeline } from "~/components/Timeline";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 
@@ -17,7 +17,7 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Timeline />
+      <HomePageTimeline />
     </>
   );
 };
