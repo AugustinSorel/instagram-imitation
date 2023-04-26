@@ -554,7 +554,7 @@ const Comment = ({ comment }: CommentProps) => {
 
   return (
     <li
-      className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 p-2"
+      className="flex max-w-full flex-wrap items-center gap-2 p-2"
       key={comment.id}
     >
       <Avatar
@@ -570,7 +570,7 @@ const Comment = ({ comment }: CommentProps) => {
       <p className="text-sm italic text-neutral-500">
         {timeSince(comment.createdAt)}
       </p>
-      <p className="col-span-full">{comment.content}</p>
+      <p className="col-span-full line-clamp-5 basis-full">{comment.content}</p>
     </li>
   );
 };
@@ -684,7 +684,7 @@ const CommentButton = ({ post }: PostProps) => {
             clickHandler: triggerCloseAnimation,
           }}
         >
-          <header className="flex items-center gap-5 p-2">
+          <header className="flex flex-wrap items-center gap-5 p-2">
             <Avatar
               alt={`${post.user.name ?? ""} avatar`}
               src={post.user.image ?? ""}
@@ -695,6 +695,8 @@ const CommentButton = ({ post }: PostProps) => {
             >
               {post.user.name}
             </Link>
+
+            <p className="line-clamp-5 basis-full">{post.description}</p>
           </header>
 
           <hr className="my-5 border-black/20 dark:border-white/20" />
