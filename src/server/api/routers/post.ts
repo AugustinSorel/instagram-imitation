@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 export const postRouter = createTRPCRouter({
   newPost: protectedProcedure
