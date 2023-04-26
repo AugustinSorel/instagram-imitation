@@ -3,18 +3,11 @@ import { Grand_Hotel } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import {
-  useRef,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-  type PropsWithChildren,
-  useEffect,
-  useCallback,
-} from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
+import type { ChangeEvent, FormEvent, PropsWithChildren, UIEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
-import { api } from "~/utils/api";
+import { RouterOutputs, api } from "~/utils/api";
 import Backdrop from "./Backdrop";
 import { LoadingSpinner } from "./LoadingSpinner";
 import Modal from "./Modal";
@@ -551,18 +544,206 @@ const MenuContent = () => {
   );
 };
 
-const QuickSearchButton = () => {
+const ListOfUsersSkeleton = () => {
   return (
-    <button className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-black/5 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:text-slate-300 dark:hover:bg-white/10">
-      <SvgIcon svgName="magnifier" />
-      quick search...
-      <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
-        <abbr className="no-underline" title="Control">
-          ctrl
-        </abbr>{" "}
-        k
-      </kbd>
-    </button>
+    <>
+      {[...Array<unknown>(10)].map((_, i) => (
+        <div
+          key={i}
+          className="relative flex items-center gap-2 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-50deg] after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10"
+        >
+          <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
+          <div className="h-2 w-24 rounded-full bg-black/10 dark:bg-white/10" />
+        </div>
+      ))}
+    </>
+  );
+};
+
+type ListOfUserProps = {
+  users?: RouterOutputs["user"]["all"]["all"];
+};
+
+const ListOfUser = ({ users }: ListOfUserProps) => {
+  const { data: session } = useSession();
+
+  if (!users) {
+    return <ListOfUsersSkeleton />;
+  }
+
+  if (users.length < 1) {
+    return (
+      <>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          className="mx-auto w-32 fill-black/50 dark:fill-white/50"
+        >
+          <path d="M12 2c3.032 0 5.5 2.467 5.5 5.5 0 1.458-.483 3.196-3.248 5.59 4.111 1.961 6.602 5.253 7.482 8.909h-19.486c.955-4.188 4.005-7.399 7.519-8.889-1.601-1.287-3.267-3.323-3.267-5.61 0-3.033 2.468-5.5 5.5-5.5zm0-2c-4.142 0-7.5 3.357-7.5 7.5 0 2.012.797 3.834 2.086 5.182-5.03 3.009-6.586 8.501-6.586 11.318h24c0-2.791-1.657-8.28-6.59-11.314 1.292-1.348 2.09-3.172 2.09-5.186 0-4.143-3.358-7.5-7.5-7.5z" />
+        </svg>
+        <p className="text-center text-xl text-black/50 dark:text-white/50">
+          no user
+        </p>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {users.map((user) => (
+        <li key={user.id} className="flex items-center gap-2 p-2">
+          <Avatar src={user.image ?? ""} alt="image" />
+          <Link
+            href={`/users/${"nice"}?tab=posts`}
+            className="truncate capitalize hover:underline"
+          >
+            {user.name}
+          </Link>
+          {user.followedBy.find(
+            (follower) => follower.followerId === session?.user.id
+          ) && (
+            <p className="ml-auto capitalize italic text-neutral-500">
+              • following
+            </p>
+          )}
+        </li>
+      ))}
+    </>
+  );
+};
+
+const QuickSearchContent = () => {
+  const [name, setName] = useState("");
+  const allUsersInfiniteQuery = api.user.all.useInfiniteQuery(
+    { name, limit: 10 },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      keepPreviousData: true,
+    }
+  );
+
+  const scrollHandler = (e: UIEvent) => {
+    const target = e.target as HTMLElement;
+    const bottom =
+      target.scrollHeight - target.clientHeight <= target.scrollTop + 100;
+
+    if (
+      bottom &&
+      allUsersInfiniteQuery.hasNextPage &&
+      !allUsersInfiniteQuery.isFetchingNextPage
+    ) {
+      void allUsersInfiniteQuery.fetchNextPage();
+    }
+  };
+
+  return (
+    <>
+      <div className="flex gap-5 fill-neutral-500">
+        <SvgIcon svgName="magnifier" />
+
+        <input
+          autoFocus
+          placeholder="Enter a name"
+          className="bg-transparent outline-none placeholder:text-neutral-500"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+
+        <kbd className="ml-auto font-sans text-sm capitalize text-neutral-500">
+          <abbr className="no-underline" title="Escape">
+            esc
+          </abbr>
+        </kbd>
+      </div>
+
+      <hr className="my-5 border-black/20 dark:border-white/20" />
+
+      <ul
+        className="grow space-y-3 overflow-auto pr-5"
+        onScroll={scrollHandler}
+      >
+        <ListOfUser
+          users={allUsersInfiniteQuery.data?.pages
+            .map((page) => page.all)
+            .flatMap((z) => z)}
+        />
+        {allUsersInfiniteQuery.isFetchingNextPage && <ListOfUsersSkeleton />}
+      </ul>
+    </>
+  );
+};
+
+const QuickSearchButton = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const toggleQuickSearch = useCallback(() => {
+    if (isOpen) {
+      triggerCloseAnimation();
+      return;
+    }
+
+    openQuickSearch();
+  }, [isOpen]);
+
+  const openQuickSearch = () => {
+    setIsOpen(() => true);
+  };
+
+  const triggerCloseAnimation = () => {
+    setIsClosing(() => true);
+  };
+
+  const animationEndHandler = () => {
+    if (isClosing) {
+      setIsClosing(() => false);
+      setIsOpen(() => false);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === "k") {
+        e.preventDefault();
+        toggleQuickSearch();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [toggleQuickSearch]);
+
+  return (
+    <>
+      <button
+        onClick={openQuickSearch}
+        className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-black/5 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:text-slate-300 dark:hover:bg-white/10"
+      >
+        <SvgIcon svgName="magnifier" />
+        quick search...
+        <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
+          <abbr className="no-underline" title="Control">
+            ctrl
+          </abbr>{" "}
+          k
+        </kbd>
+      </button>
+
+      {isOpen && (
+        <Modal
+          backdropProps={{
+            isExpanded: !isClosing,
+            clickHandler: triggerCloseAnimation,
+            animationEndHandler: animationEndHandler,
+          }}
+        >
+          <QuickSearchContent />
+        </Modal>
+      )}
+    </>
   );
 };
 
