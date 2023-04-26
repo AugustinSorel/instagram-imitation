@@ -1,9 +1,18 @@
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import Head from "next/head";
+import type { PropsWithChildren } from "react";
 import superjson from "superjson";
-import { HomePageTimeline } from "~/components/Timeline";
+import { Timeline, TimelineContext } from "~/components/Timeline";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
+
+export const TimelineProvider = ({ children }: PropsWithChildren) => {
+  return (
+    <TimelineContext.Provider value={{ limit: 5 }}>
+      {children}
+    </TimelineContext.Provider>
+  );
+};
 
 const Home = () => {
   return (
@@ -17,7 +26,9 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <HomePageTimeline />
+      <TimelineProvider>
+        <Timeline />
+      </TimelineProvider>
     </>
   );
 };

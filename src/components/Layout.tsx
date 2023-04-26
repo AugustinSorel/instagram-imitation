@@ -129,7 +129,6 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
 
     onSettled: () => {
       void utils.post.all.invalidate();
-      void utils.user.posts.invalidate();
     },
   });
 
