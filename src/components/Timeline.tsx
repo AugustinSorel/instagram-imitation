@@ -439,6 +439,8 @@ const NewCommentForm = ({ post }: PostProps) => {
                     emailVerified: new Date(),
                     image: session.user.image ?? "",
                     name: session.user.name ?? "",
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
                   },
                 },
                 ...page.comments,
