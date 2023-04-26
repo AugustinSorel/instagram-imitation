@@ -465,6 +465,26 @@ const SignInWithGithub = () => {
   );
 };
 
+const SearchButton = () => {
+  const openSearchModal = useSearchModal((state) => state.open);
+  const closeMenu = useMenu((state) => state.close);
+
+  const clickHandler = () => {
+    openSearchModal();
+    closeMenu();
+  };
+
+  return (
+    <button
+      onClick={clickHandler}
+      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
+    >
+      <SvgIcon svgName="magnifier" />
+      search
+    </button>
+  );
+};
+
 const MenuContent = () => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -483,10 +503,7 @@ const MenuContent = () => {
         home
       </Link>
 
-      <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10">
-        <SvgIcon svgName="magnifier" />
-        search
-      </button>
+      <SearchButton />
 
       <ThemeButton />
 
@@ -650,7 +667,7 @@ const QuickSearchContent = () => {
           onChange={(e) => setName(e.target.value)}
         />
 
-        <kbd className="ml-auto font-sans text-sm capitalize text-neutral-500">
+        <kbd className="ml-auto mr-10 font-sans text-sm capitalize text-neutral-500 lg:mr-0">
           <abbr className="no-underline" title="Escape">
             esc
           </abbr>
@@ -674,9 +691,21 @@ const QuickSearchContent = () => {
   );
 };
 
+const useSearchModal = create<UseMenu>((set) => ({
+  isOpen: false,
+  open: () => set(() => ({ isOpen: true })),
+  close: () => set(() => ({ isOpen: false })),
+}));
+
 const QuickSearchButton = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const isOpen = useSearchModal((state) => state.isOpen);
+  const close = useSearchModal((state) => state.close);
+  const open = useSearchModal((state) => state.open);
   const [isClosing, setIsClosing] = useState(false);
+
+  const openQuickSearch = useCallback(() => {
+    open();
+  }, [open]);
 
   const toggleQuickSearch = useCallback(() => {
     if (isOpen) {
@@ -685,11 +714,7 @@ const QuickSearchButton = () => {
     }
 
     openQuickSearch();
-  }, [isOpen]);
-
-  const openQuickSearch = () => {
-    setIsOpen(() => true);
-  };
+  }, [isOpen, openQuickSearch]);
 
   const triggerCloseAnimation = () => {
     setIsClosing(() => true);
@@ -698,7 +723,7 @@ const QuickSearchButton = () => {
   const animationEndHandler = () => {
     if (isClosing) {
       setIsClosing(() => false);
-      setIsOpen(() => false);
+      close();
     }
   };
 
