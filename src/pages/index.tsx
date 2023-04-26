@@ -1,10 +1,7 @@
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import Head from "next/head";
 import superjson from "superjson";
-import {
-  HomePageTimeline,
-  HomePageTimelineProvider,
-} from "~/components/Timeline";
+import { Timeline, HomePageTimelineProvider } from "~/components/Timeline";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 
@@ -21,7 +18,7 @@ const Home = () => {
       </Head>
 
       <HomePageTimelineProvider>
-        <HomePageTimeline />
+        <Timeline />
       </HomePageTimelineProvider>
     </>
   );

@@ -10,10 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import SuperJSON from "superjson";
 import { Avatar } from "~/components/Avatar";
-import {
-  HomePageTimeline,
-  ProfilePageTimelineProvider,
-} from "~/components/Timeline";
+import { Timeline, ProfilePageTimelineProvider } from "~/components/Timeline";
 import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
@@ -209,7 +206,7 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
       </div>
 
       <ProfilePageTimelineProvider>
-        <HomePageTimeline />
+        <Timeline />
       </ProfilePageTimelineProvider>
     </>
   );

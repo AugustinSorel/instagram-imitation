@@ -905,7 +905,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
   );
 };
 
-export const HomePageTimeline = () => {
+export const Timeline = () => {
   const timeline = useTimeline();
   const postsInfiniteQuery = api.post.all.useInfiniteQuery(timeline, {
     getNextPageParam: (lastPage) => lastPage.nextCursor,
