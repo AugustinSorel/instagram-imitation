@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { Prisma } from "@prisma/client";
 
 export const postRouter = createTRPCRouter({
   newPost: protectedProcedure
@@ -30,6 +31,7 @@ export const postRouter = createTRPCRouter({
   all: publicProcedure
     .input(
       z.object({
+        where: z.custom<Prisma.PostWhereInput>().optional(),
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(),
       })
@@ -40,6 +42,7 @@ export const postRouter = createTRPCRouter({
 
       const posts = await ctx.prisma.post.findMany({
         take: limit + 1,
+        where: input.where,
         include: {
           user: true,
           likes: true,
