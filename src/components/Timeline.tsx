@@ -952,7 +952,7 @@ export const Timeline = () => {
     );
   }
 
-  if (postsInfiniteQuery.data.pages.length < 1) {
+  if ((postsInfiniteQuery.data.pages[0] ?? { posts: [] }).posts.length < 1) {
     return <NoPostPanel />;
   }
 
