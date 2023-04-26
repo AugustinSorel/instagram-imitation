@@ -170,6 +170,35 @@ const LikeButton = ({ post }: PostProps) => {
           })),
         };
       });
+
+      utils.post.all.setInfiniteData(
+        {
+          limit: timeline.limit,
+          where: {
+            likes: {
+              some: {
+                userId: session?.user.id,
+              },
+            },
+          },
+        },
+        (data) => {
+          if (!data || !session) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+
+          return {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              posts: page.posts.filter((p) => p.id !== postId),
+            })),
+          };
+        }
+      );
     },
 
     onSettled: () => {
@@ -285,6 +314,35 @@ const BookmarkButton = ({ post }: PostProps) => {
           })),
         };
       });
+
+      utils.post.all.setInfiniteData(
+        {
+          limit: timeline.limit,
+          where: {
+            bookmarks: {
+              some: {
+                userId: session?.user.id,
+              },
+            },
+          },
+        },
+        (data) => {
+          if (!data || !session) {
+            return {
+              pages: [],
+              pageParams: [],
+            };
+          }
+
+          return {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              posts: page.posts.filter((p) => p.id !== postId),
+            })),
+          };
+        }
+      );
     },
 
     onSettled: () => {
