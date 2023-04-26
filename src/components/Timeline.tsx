@@ -382,6 +382,7 @@ const NewCommentForm = ({ post }: PostProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const utils = api.useContext();
   const { data: session } = useSession();
+  const addToast = useToaster((state) => state.addToast);
 
   const addCommentSchema = z.object({
     content: z
@@ -486,6 +487,9 @@ const NewCommentForm = ({ post }: PostProps) => {
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault();
+    if (!session) {
+      return addToast("Please sign in");
+    }
 
     try {
       addCommentSchema.parse({ content: comment });
