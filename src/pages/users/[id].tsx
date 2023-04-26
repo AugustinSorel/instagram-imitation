@@ -43,6 +43,8 @@ const FollowButton = ({ user }: UserProps) => {
             {
               followerId: session?.user.id,
               followingId: user.id,
+              createdAt: new Date(),
+              updatedAt: new Date(),
             },
           ],
         };
