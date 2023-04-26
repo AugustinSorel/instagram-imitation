@@ -6,8 +6,8 @@ import {
   useState,
 } from "react";
 import type { UIEvent, PropsWithChildren, FormEvent, ChangeEvent } from "react";
-import { RouterInputs, api } from "~/utils/api";
-import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
+import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import { Avatar } from "./Avatar";
 import Link from "next/link";
 import { SvgIcon } from "./SvgIcon";
@@ -18,62 +18,10 @@ import { BottomSheet } from "./BottomSheet";
 import { v4 as uuidV4 } from "uuid";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useToaster } from "./Toaster";
-import { useRouter } from "next/router";
 
-const TimelineContext = createContext<RouterInputs["post"]["all"] | undefined>(
-  undefined
-);
-
-export const HomePageTimelineProvider = ({ children }: PropsWithChildren) => {
-  return (
-    <TimelineContext.Provider value={{ limit: 5 }}>
-      {children}
-    </TimelineContext.Provider>
-  );
-};
-
-export const ProfilePageTimelineProvider = ({
-  children,
-}: PropsWithChildren) => {
-  const router = useRouter();
-  const userId = router.query.id as string;
-  const { tab } = router.query;
-
-  return (
-    <TimelineContext.Provider
-      value={{
-        limit: 5,
-        where: (() => {
-          if (tab === "liked") {
-            return {
-              likes: {
-                some: {
-                  userId: userId,
-                },
-              },
-            };
-          }
-
-          if (tab === "bookmarked") {
-            return {
-              bookmarks: {
-                some: {
-                  userId: userId,
-                },
-              },
-            };
-          }
-
-          return {
-            userId: userId,
-          };
-        })(),
-      }}
-    >
-      {children}
-    </TimelineContext.Provider>
-  );
-};
+export const TimelineContext = createContext<
+  RouterInputs["post"]["all"] | undefined
+>(undefined);
 
 const useTimeline = () => {
   const context = useContext(TimelineContext);

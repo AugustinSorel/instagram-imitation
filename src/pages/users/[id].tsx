@@ -8,9 +8,10 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import type { PropsWithChildren } from "react";
 import SuperJSON from "superjson";
 import { Avatar } from "~/components/Avatar";
-import { Timeline, ProfilePageTimelineProvider } from "~/components/Timeline";
+import { Timeline, TimelineContext } from "~/components/Timeline";
 import { useToaster } from "~/components/Toaster";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
@@ -177,6 +178,46 @@ const UserStats = ({ user }: UserProps) => {
   );
 };
 
+const TimelineProvider = ({ children }: PropsWithChildren) => {
+  const router = useRouter();
+  const userId = router.query.id as string;
+  const { tab } = router.query;
+
+  return (
+    <TimelineContext.Provider
+      value={{
+        limit: 5,
+        where: (() => {
+          if (tab === "liked") {
+            return {
+              likes: {
+                some: {
+                  userId: userId,
+                },
+              },
+            };
+          }
+
+          if (tab === "bookmarked") {
+            return {
+              bookmarks: {
+                some: {
+                  userId: userId,
+                },
+              },
+            };
+          }
+
+          return {
+            userId: userId,
+          };
+        })(),
+      }}
+    >
+      {children}
+    </TimelineContext.Provider>
+  );
+};
 const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const userQuery = api.user.byId.useQuery({ id: props.id });
 
@@ -205,9 +246,9 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <Tabs />
       </div>
 
-      <ProfilePageTimelineProvider>
+      <TimelineProvider>
         <Timeline />
-      </ProfilePageTimelineProvider>
+      </TimelineProvider>
     </>
   );
 };
