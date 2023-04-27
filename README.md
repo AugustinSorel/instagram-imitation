@@ -29,6 +29,9 @@ live website: https://instagram-imitation.vercel.app
 ### Search
 ![search friends](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/search.png)
 
+### New Post
+![new post](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_users_clgyy4rof0002l80873j81rvr_tab%3Dliked.png)
+
 ## Features
 
 - **Authentication**: Users can sign up and log in to the app using their Google account or Github account.
