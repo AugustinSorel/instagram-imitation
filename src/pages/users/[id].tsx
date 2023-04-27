@@ -240,7 +240,7 @@ const UserPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="sticky top-0 z-10 rounded-b-3xl bg-white/50 px-[calc(50vw-175px)] pb-5 backdrop-blur-md dark:bg-black/50 lg:static lg:rounded-none">
+      <div className="sticky top-0 z-10 rounded-b-3xl bg-white/50 px-[calc(50vw-175px)] pb-5 pt-5 backdrop-blur-md dark:bg-black/50 lg:static lg:rounded-none lg:pt-0">
         <UserDetails user={userQuery.data} />
 
         <UserStats user={userQuery.data} />
