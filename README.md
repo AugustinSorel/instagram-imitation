@@ -32,6 +32,9 @@ live website: https://instagram-imitation.vercel.app
 ### New Post
 ![new post](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_users_clgyy4rof0002l80873j81rvr_tab%3Dliked.png)
 
+### Light theme
+![light theme](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_users_clgyy4rof0002l80873j81rvr_tab%3Dliked%20(1).png)
+
 ## Features
 
 - **Authentication**: Users can sign up and log in to the app using their Google account or Github account.
@@ -40,6 +43,7 @@ live website: https://instagram-imitation.vercel.app
 - **Search**: Users can search for other users by username or name.
 - **Follow**: Users can follow other people.
 - **Profile page**: Users can view other people posts and liked posts3.
+- **Dark theme**: Users can select their favorite theme.
 
 ## Tech Stack
 
