@@ -640,7 +640,7 @@ const ListOfUser = ({ users }: ListOfUserProps) => {
         <li key={user.id} className="flex items-center gap-2 p-2">
           <Avatar src={user.image ?? ""} alt="image" />
           <Link
-            href={`/users/${"nice"}?tab=posts`}
+            href={`/users/${user.id}?tab=posts`}
             className="truncate capitalize hover:underline"
           >
             {user.name}
