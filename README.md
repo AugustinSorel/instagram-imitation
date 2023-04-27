@@ -5,6 +5,7 @@ This is a fully functional Instagram imitation app built using the t3 stack (typ
 ## Demo
 
 live website: https://instagram-imitation.vercel.app
+youtube viedo: https://youtu.be/aQSlwkD4e4o
 
 ## Images
 
