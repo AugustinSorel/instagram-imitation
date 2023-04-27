@@ -885,7 +885,7 @@ const Post = ({ post }: PostProps) => {
               height={500}
               width={350}
               quality={100}
-              className="pointer-events-none h-post w-post select-none object-cover"
+              className="pointer-events-none h-post w-post min-w-[350px] select-none object-cover"
             />
           </li>
         ))}
