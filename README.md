@@ -39,6 +39,7 @@ This is a fully functional Instagram imitation app built using the t3 stack (typ
 ## Features
 
 - **Authentication**: Users can sign up and log in to the app using their Google account or Github account.
+- **Infinite scroll**: only the first 5 posts are being fetch from the db, more posts will be fetched when scrolled down.
 - **Post creation**: Users can upload up to 5 photos and add captions and location.
 - **Feed**: Users can see posts from users they follow and can like, bookmark and comment on those posts.
 - **Search**: Users can search for other users by username or name.
