@@ -1,28 +1,52 @@
-# Create T3 App
+# Instagram Imitation
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This is a fully functional Instagram imitation app built using the t3 stack (typescript and Nextjs). The app allows users to create accounts, post photos, follow other users, like, bookmark, comment on posts, and explore content from other users. The hosting for this project is on Vercel, while the database and images are stored respectively on AWS RDS and AWS S3.
 
-## What's next? How do I make an app with this?
+## Demo
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+live website: https://instagram-imitation.vercel.app
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Images
+
+### Home Page
+![home page](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_.png)
+
+### like and bookmark
+![home page image](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_%20(1).png)
+
+### Comment
+![comments image](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_%20(2).png)
+
+### Menu
+![menu image](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_%20(3).png)
+
+### Profile Page Posts feed
+![profile page posts feed](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_%20(4).png)
+
+### Profile Page Likes feed
+![profile page likes feed](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_%20(5).png)
+
+### Search
+![search friends](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/search.png)
+
+## Features
+
+- **Authentication**: Users can sign up and log in to the app using their Google account or Github account.
+- **Post creation**: Users can upload up to 5 photos and add captions and location.
+- **Feed**: Users can see posts from users they follow and can like, bookmark and comment on those posts.
+- **Search**: Users can search for other users by username or name.
+- **Follow**: Users can follow other people.
+- **Profile page**: Users can view other people posts and liked posts3.
+
+## Tech Stack
 
 - [Next.js](https://nextjs.org)
+- [Typescript](https://www.typescriptlang.org/docs/)
 - [NextAuth.js](https://next-auth.js.org)
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
-
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- [Postgres](https://www.postgresql.org/docs/)
+- [AWS S3](https://docs.aws.amazon.com/s3/index.html)
+- [Zod](https://zod.dev/)
+- [Tanstack Query](https://tanstack.com/query/v4/docs/react/overview)
