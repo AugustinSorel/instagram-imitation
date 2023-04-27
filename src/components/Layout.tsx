@@ -386,8 +386,29 @@ const ThemeButton = () => {
 };
 
 const DeleteAccountButton = () => {
+  const closeMenu = useMenu((state) => state.close);
+  const addToast = useToaster((state) => state.addToast);
+
+  const removeMutation = api.user.remove.useMutation({
+    onSuccess: async () => {
+      await signOut({ redirect: false });
+      closeMenu();
+    },
+
+    onError: () => {
+      addToast("something went wrong");
+    },
+  });
+
+  const clickHandler = () => {
+    removeMutation.mutate();
+  };
+
   return (
-    <button className="flex items-center gap-2 rounded-md p-2 text-left capitalize text-red-400 outline-none duration-300 hover:bg-red-400/30">
+    <button
+      onClick={clickHandler}
+      className="flex items-center gap-2 rounded-md p-2 text-left capitalize text-red-400 outline-none duration-300 hover:bg-red-400/30"
+    >
       <SvgIcon svgName="trash" />
       delete my account
     </button>
@@ -395,10 +416,17 @@ const DeleteAccountButton = () => {
 };
 
 const SignOutButton = () => {
+  const closeMenu = useMenu((state) => state.close);
+
+  const clickHandler = async () => {
+    await signOut({ redirect: false });
+    closeMenu();
+  };
+
   return (
     <button
       className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
-      onClick={() => void signOut()}
+      onClick={() => void clickHandler()}
     >
       <SvgIcon svgName="logout" />
       signout
