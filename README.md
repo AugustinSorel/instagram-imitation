@@ -10,31 +10,31 @@ This is a fully functional Instagram imitation app built using the t3 stack (typ
 ## Images
 
 ### Home Page
-![home page](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_.png)
+![instagram-imitation vercel app_](https://user-images.githubusercontent.com/48162609/235127136-ffd2885c-210f-4e5c-9600-90d057ca764f.png)
 
 ### like and bookmark
-![home page image](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_%20(1).png)
+![instagram-imitation vercel app_ (1)](https://user-images.githubusercontent.com/48162609/235127385-19d326de-5c1d-44d8-bac8-4ada3c80ba8c.png)
 
 ### Comment
-![comments image](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_%20(2).png)
+![instagram-imitation vercel app_ (2)](https://user-images.githubusercontent.com/48162609/235127719-42b704d2-f0be-477e-8a5c-0499a05a01bd.png)
 
 ### Menu
-![menu image](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_%20(3).png)
+![instagram-imitation vercel app_ (3)](https://user-images.githubusercontent.com/48162609/235127824-ae6c1b76-c218-48c2-b002-cdf15fb78fab.png)
 
 ### Profile Page Posts feed
-![profile page posts feed](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_%20(4).png)
+![instagram-imitation vercel app_ (4)](https://user-images.githubusercontent.com/48162609/235127922-ecd62499-2649-4435-9f31-4f5194a0a167.png)
 
 ### Profile Page Likes feed
-![profile page likes feed](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_%20(5).png)
+![instagram-imitation vercel app_ (5)](https://user-images.githubusercontent.com/48162609/235127987-e6164886-08c2-4e02-a4ae-77f018ea9f41.png)
 
 ### Search
-![search friends](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/search.png)
+![search](https://user-images.githubusercontent.com/48162609/235128037-212f3e56-d6b5-4b3b-8cb7-eb0fe75f2a87.png)
 
 ### New Post
-![new post](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_users_clgyy4rof0002l80873j81rvr_tab%3Dliked.png)
+![new post](https://user-images.githubusercontent.com/48162609/235128056-e04b2507-4eb3-4cce-9aa8-abd17fb8cb1e.png)
 
 ### Light theme
-![light theme](https://github.com/AugustinSorel/instagram-imitation/blob/main/images/instagram-imitation.vercel.app_users_clgyy4rof0002l80873j81rvr_tab%3Dliked%20(1).png)
+![light theme](https://user-images.githubusercontent.com/48162609/235128147-bc28f083-3e27-4fb8-90dc-6fd8c1719717.png)
 
 ## Features
 
