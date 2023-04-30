@@ -730,6 +730,7 @@ const QuickSearchButton = () => {
   const close = useSearchModal((state) => state.close);
   const open = useSearchModal((state) => state.open);
   const [isClosing, setIsClosing] = useState(false);
+  const router = useRouter();
 
   const openQuickSearch = useCallback(() => {
     open();
@@ -769,6 +770,14 @@ const QuickSearchButton = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [toggleQuickSearch]);
+
+  useEffect(() => {
+    const handleRouteChange = () => triggerCloseAnimation();
+
+    router.events.on("routeChangeStart", handleRouteChange);
+
+    return () => router.events.off("routeChangeStart", handleRouteChange);
+  }, [router.events, triggerCloseAnimation]);
 
   return (
     <>
