@@ -733,8 +733,12 @@ const QuickSearchButton = () => {
   const router = useRouter();
 
   const triggerCloseAnimation = useCallback(() => {
+    if (!isOpen) {
+      return;
+    }
+
     setIsClosing(() => true);
-  }, []);
+  }, [isOpen]);
 
   const openQuickSearch = useCallback(() => {
     open();
