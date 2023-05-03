@@ -8,7 +8,6 @@ import {
 import type { UIEvent, PropsWithChildren, FormEvent, ChangeEvent } from "react";
 import { api } from "~/utils/api";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
-import { Avatar } from "./Avatar";
 import Link from "next/link";
 import { SvgIcon } from "./SvgIcon";
 import Image from "next/image";
@@ -19,6 +18,7 @@ import { v4 as uuidV4 } from "uuid";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useToaster } from "./Toaster";
 import { Button } from "./ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export const TimelineContext = createContext<
   RouterInputs["post"]["all"] | undefined
@@ -62,7 +62,7 @@ const ListOfPostSkeleton = () => {
         <SkeletonPost key={i} />
       ))}
     </>
-  );
+  )
 };
 
 const SkeletonComment = () => {
@@ -564,10 +564,13 @@ const Comment = ({ comment }: CommentProps) => {
       className="flex max-w-full flex-wrap items-center gap-2 p-2"
       key={comment.id}
     >
-      <Avatar
-        src={comment.user.image ?? ""}
-        alt={`${comment.user.image ?? ""} profile picture`}
-      />
+      <Avatar>
+        <AvatarFallback>CN</AvatarFallback>
+        <AvatarImage
+          src={comment.user.image ?? ""}
+          alt={`${comment.user.name ?? ""}'s avatar`}
+        />
+      </Avatar>
       <Link
         href={`/users/${comment.user.id}?tab=posts`}
         className="text-lg hover:underline"
@@ -692,10 +695,14 @@ const CommentButton = ({ post }: PostProps) => {
           }}
         >
           <header className="flex flex-wrap items-center gap-5 p-2">
-            <Avatar
-              alt={`${post.user.name ?? ""} avatar`}
-              src={post.user.image ?? ""}
-            />
+            <Avatar>
+              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage
+                src={post.user.image ?? ""}
+                alt={`${post.user.name ?? ""}'s avatar`}
+              />
+            </Avatar>
+
             <Link
               href={`/users/${post.user.name ?? ""}`}
               className="text-2xl capitalize hover:underline"
@@ -797,13 +804,10 @@ const Post = ({ post }: PostProps) => {
     <div className="group relative isolate flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 p-2 shadow-xl duration-300 hover:shadow-2xl dark:border-white/10">
       <header className="flex items-center justify-between">
         <div className="grid w-32 grid-cols-[auto_1fr] gap-x-1 rounded-full border border-black/10 bg-white/50 p-1 backdrop-blur-md dark:bg-black/50">
-          <Avatar
-            alt="avatar"
-            width={28}
-            height={28}
-            src={post.user.image ?? ""}
-            className="row-span-2 w-7"
-          />
+          <Avatar className="row-span-2" size="sm">
+            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage src={post.user.image ?? ""} />
+          </Avatar>
           <Link
             href={`/users/${post.userId}?tab=posts`}
             className="self-end truncate text-[0.7rem] font-medium capitalize leading-3 hover:underline"

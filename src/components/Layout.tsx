@@ -12,12 +12,12 @@ import type { RouterOutputs } from "~/utils/api";
 import Backdrop from "./Backdrop";
 import { LoadingSpinner } from "./LoadingSpinner";
 import Modal from "./Modal";
-import { Avatar } from "./Avatar";
 import { SvgIcon } from "./SvgIcon";
 import { Toaster, useToaster } from "./Toaster";
 import { create } from "zustand";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export const newPostSchema = z.object({
   location: z
@@ -632,7 +632,13 @@ const ListOfUser = ({ users }: ListOfUserProps) => {
     <>
       {users.map((user) => (
         <li key={user.id} className="flex items-center gap-2 p-2">
-          <Avatar src={user.image ?? ""} alt="image" />
+          <Avatar>
+            <AvatarImage
+              src="https://github.com/shadcn.png"
+              alt="profile picture"
+            />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
           <Link
             href={`/users/${user.id}?tab=posts`}
             className="truncate capitalize hover:underline"
@@ -889,16 +895,16 @@ const AvatarMenu = () => {
   const openMenu = useMenu((state) => state.open);
 
   return (
-    <Avatar
-      src={session?.user?.image ?? ""}
-      role="button"
-      title="Open Menu"
-      height={100}
-      width={100}
-      onClick={openMenu}
-      alt="user profile picture"
-      className="aspect-square w-9"
-    />
+    <Avatar>
+      <AvatarImage
+        src={session?.user.image ?? ""}
+        role="button"
+        title="Open Menu"
+        onClick={openMenu}
+        alt="user profile picture"
+      />
+      <AvatarFallback>CN</AvatarFallback>
+    </Avatar>
   );
 };
 

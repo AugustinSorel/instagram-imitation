@@ -10,9 +10,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import type { PropsWithChildren } from "react";
 import SuperJSON from "superjson";
-import { Avatar } from "~/components/Avatar";
 import { Timeline, TimelineContext } from "~/components/Timeline";
 import { useToaster } from "~/components/Toaster";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
@@ -114,13 +114,13 @@ type UserProps = {
 const UserDetails = ({ user }: UserProps) => {
   return (
     <div className="flex items-center">
-      <Avatar
-        src={user.image ?? ""}
-        height={56}
-        width={56}
-        priority
-        alt={`${user.name ?? ""}'s profile picture`}
-      />
+      <Avatar size="lg">
+        <AvatarImage
+          src={user.image ?? ""}
+          alt={`${user.name ?? ""}'s profile picture`}
+        />
+        <AvatarFallback>CN</AvatarFallback>
+      </Avatar>
 
       <h2 className="ml-2 truncate font-medium capitalize">{user.name}</h2>
 

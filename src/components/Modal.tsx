@@ -17,7 +17,7 @@ const Modal = ({ backdropProps, children }: Props) => {
         <Button
           title="Close Modal"
           className="absolute right-3 top-3 lg:hidden"
-          size='square'
+          size="square"
           onClick={backdropProps.clickHandler}
         >
           <SvgIcon svgName="close" />
