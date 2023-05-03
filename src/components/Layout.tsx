@@ -17,6 +17,7 @@ import { SvgIcon } from "./SvgIcon";
 import { Toaster, useToaster } from "./Toaster";
 import { create } from "zustand";
 import { useTheme } from "next-themes";
+import { Button } from "./ui/button";
 
 export const newPostSchema = z.object({
   location: z
@@ -239,15 +240,16 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
                   className="aspect-square min-w-[49px] rounded-md"
                   src={image.src}
                 />
-                <button
+                <Button
                   name="remove-image"
                   title="remove image"
                   type="button"
-                  className="absolute right-1 top-0 flex aspect-square w-6 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border border-black/30 bg-white/20 p-0.5 backdrop-blur-sm"
+                  className="absolute right-1 top-0 flex w-6 -translate-y-1/2 translate-x-1/2 rounded-full"
                   onClick={() => removeImage(image.id)}
+                  size="square"
                 >
                   <SvgIcon svgName="close" />
-                </button>
+                </Button>
               </div>
             ))}
           </div>
@@ -284,13 +286,13 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
           />
         </div>
 
-        <button
+        <Button
           type="button"
-          className="w-full rounded-md border border-black/10 bg-black/5 p-2 text-sm capitalize duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 lg:hidden"
+          className="w-full lg:hidden"
           onClick={() => inputRef.current?.click()}
         >
           browse
-        </button>
+        </Button>
 
         {formErrors.images && (
           <p className="text-center text-sm font-normal text-red-500">
@@ -299,19 +301,19 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
         )}
       </div>
 
-      <button
+      <Button
         disabled={isFormValid}
-        className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center rounded-md border border-black/10 bg-black/5 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-black/10 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+        className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center"
       >
         {isLoading && <LoadingSpinner />}
 
         <span className="col-start-2">upload</span>
-      </button>
+      </Button>
     </form>
   );
 };
 
-const NewPostButton = ({ className = "" }: { className?: string }) => {
+const NewPostButton = ({ isMobile = false }: { isMobile?: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const { data: session } = useSession();
@@ -339,13 +341,15 @@ const NewPostButton = ({ className = "" }: { className?: string }) => {
 
   return (
     <>
-      <button
+      <Button
+        size={"square"}
         title="New Post"
-        className={`relative flex aspect-square h-9 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-black/5 bg-origin-border fill-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:hover:bg-white/10 ${className}`}
         onClick={showNewPostModal}
+        variant={isMobile ? "action" : "default"}
+        className={isMobile ? "col-start-2" : ""}
       >
         <SvgIcon svgName="plus" />
-      </button>
+      </Button>
 
       {isOpen && (
         <Modal
@@ -366,8 +370,8 @@ const ThemeButton = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <button
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
+    <Button
+      variant="ghost"
       onClick={() => (theme == "dark" ? setTheme("light") : setTheme("dark"))}
     >
       {theme === "light" ? (
@@ -381,7 +385,7 @@ const ThemeButton = () => {
           lightmode
         </>
       )}
-    </button>
+    </Button>
   );
 };
 
@@ -405,13 +409,14 @@ const DeleteAccountButton = () => {
   };
 
   return (
-    <button
+    <Button
       onClick={clickHandler}
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize text-red-400 outline-none duration-300 hover:bg-red-400/30"
+      variant="ghost"
+      className="fill-current text-red-400 hover:bg-red-400/30"
     >
       <SvgIcon svgName="trash" />
       delete my account
-    </button>
+    </Button>
   );
 };
 
@@ -424,13 +429,10 @@ const SignOutButton = () => {
   };
 
   return (
-    <button
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
-      onClick={() => void clickHandler()}
-    >
+    <Button variant="ghost" onClick={() => void clickHandler()}>
       <SvgIcon svgName="logout" />
       signout
-    </button>
+    </Button>
   );
 };
 
@@ -440,10 +442,7 @@ const SignInWithGoogle = () => {
   };
 
   return (
-    <button
-      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
-      onClick={googleSignin}
-    >
+    <Button variant="ghost" onClick={googleSignin}>
       <svg
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
@@ -467,7 +466,7 @@ const SignInWithGoogle = () => {
         />
       </svg>
       sign in with Google
-    </button>
+    </Button>
   );
 };
 
@@ -477,10 +476,7 @@ const SignInWithGithub = () => {
   };
 
   return (
-    <button
-      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
-      onClick={githubSignin}
-    >
+    <Button variant="ghost" onClick={githubSignin}>
       <svg
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
@@ -489,7 +485,7 @@ const SignInWithGithub = () => {
         <path d="M8.00564 0C3.57819 0 -0.000976562 3.66665 -0.000976562 8.2028C-0.000976562 11.8288 2.29232 14.8981 5.47373 15.9844C5.87148 16.0661 6.01718 15.8079 6.01718 15.5908C6.01718 15.4006 6.00407 14.7488 6.00407 14.0696C3.77682 14.5586 3.31302 13.0918 3.31302 13.0918C2.95508 12.1411 2.42474 11.8968 2.42474 11.8968C1.69576 11.3943 2.47784 11.3943 2.47784 11.3943C3.28647 11.4486 3.71078 12.2363 3.71078 12.2363C4.42648 13.4856 5.57976 13.1326 6.04373 12.9153C6.10994 12.3856 6.32218 12.0189 6.54753 11.8153C4.77114 11.6251 2.90215 10.919 2.90215 7.76813C2.90215 6.8718 3.22009 6.13847 3.72389 5.56814C3.6444 5.36448 3.36595 4.52231 3.80354 3.39515C3.80354 3.39515 4.47958 3.17782 6.00391 4.23715C6.65653 4.05759 7.32956 3.96625 8.00564 3.96548C8.68168 3.96548 9.37084 4.06065 10.0072 4.23715C11.5317 3.17782 12.2078 3.39515 12.2078 3.39515C12.6453 4.52231 12.3667 5.36448 12.2872 5.56814C12.8043 6.13847 13.1091 6.8718 13.1091 7.76813C13.1091 10.919 11.2402 11.6115 9.45049 11.8153C9.74221 12.0733 9.99394 12.5621 9.99394 13.3363C9.99394 14.4363 9.98083 15.3191 9.98083 15.5906C9.98083 15.8079 10.1267 16.0661 10.5243 15.9846C13.7057 14.8979 15.999 11.8288 15.999 8.2028C16.0121 3.66665 12.4198 0 8.00564 0Z" />
       </svg>
       sign in with Github
-    </button>
+    </Button>
   );
 };
 
@@ -503,13 +499,10 @@ const SearchButton = () => {
   };
 
   return (
-    <button
-      onClick={clickHandler}
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
-    >
+    <Button onClick={clickHandler} variant="ghost">
       <SvgIcon svgName="magnifier" />
       search
-    </button>
+    </Button>
   );
 };
 
@@ -522,14 +515,12 @@ const MenuContent = () => {
       className="m-auto flex flex-col gap-1 fill-current capitalize text-slate-100"
       onClick={(e) => e.stopPropagation()}
     >
-      <Link
-        aria-current={router.asPath === "/"}
-        href="/"
-        className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
-      >
-        <SvgIcon svgName="house" />
-        home
-      </Link>
+      <Button asChild variant="ghost">
+        <Link aria-current={router.asPath === "/"} href="/">
+          <SvgIcon svgName="house" />
+          home
+        </Link>
+      </Button>
 
       <SearchButton />
 
@@ -537,37 +528,40 @@ const MenuContent = () => {
 
       {session && (
         <>
-          <Link
-            aria-current={router.asPath === `/users/${session?.user?.id}`}
-            href={`/users/${session?.user?.id ?? ""}`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
-          >
-            <SvgIcon svgName="user" />
-            profile
-          </Link>
+          <Button asChild variant="ghost">
+            <Link
+              aria-current={router.asPath === `/users/${session?.user?.id}`}
+              href={`/users/${session?.user?.id ?? ""}`}
+            >
+              <SvgIcon svgName="user" />
+              profile
+            </Link>
+          </Button>
 
-          <Link
-            aria-current={
-              router.asPath ===
-              `/users/${session?.user?.id ?? ""}?tab=bookmarked`
-            }
-            href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
-          >
-            <SvgIcon svgName="bookmark" />
-            bookmarked
-          </Link>
+          <Button asChild variant="ghost">
+            <Link
+              aria-current={
+                router.asPath ===
+                `/users/${session?.user?.id ?? ""}?tab=bookmarked`
+              }
+              href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
+            >
+              <SvgIcon svgName="bookmark" />
+              bookmarked
+            </Link>
+          </Button>
 
-          <Link
-            aria-current={
-              router.asPath === `/users/${session?.user?.id ?? ""}?tab=liked`
-            }
-            href={`/users/${session?.user?.id ?? ""}?tab=liked`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
-          >
-            <SvgIcon svgName="heart" />
-            liked
-          </Link>
+          <Button asChild variant="ghost">
+            <Link
+              aria-current={
+                router.asPath === `/users/${session?.user?.id ?? ""}?tab=liked`
+              }
+              href={`/users/${session?.user?.id ?? ""}?tab=liked`}
+            >
+              <SvgIcon svgName="heart" />
+              liked
+            </Link>
+          </Button>
         </>
       )}
 
@@ -596,7 +590,7 @@ const ListOfUsersSkeleton = () => {
       {[...Array<unknown>(10)].map((_, i) => (
         <div
           key={i}
-          className="relative flex items-center gap-2 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-50deg] after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10"
+          className="after:animate-comment-skeleton relative flex items-center gap-2 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-50deg] after:bg-black/10 after:blur-xl dark:after:bg-white/10"
         >
           <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
           <div className="h-2 w-24 rounded-full bg-black/10 dark:bg-white/10" />
@@ -785,9 +779,9 @@ const QuickSearchButton = () => {
 
   return (
     <>
-      <button
+      <Button
         onClick={openQuickSearch}
-        className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-black/5 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:text-slate-300 dark:hover:bg-white/10"
+        className="flex w-post items-center gap-2"
       >
         <SvgIcon svgName="magnifier" />
         quick search...
@@ -797,7 +791,7 @@ const QuickSearchButton = () => {
           </abbr>{" "}
           k
         </kbd>
-      </button>
+      </Button>
 
       {isOpen && (
         <Modal
@@ -874,13 +868,9 @@ const MenuButton = () => {
   const openMenu = useMenu((state) => state.open);
 
   return (
-    <button
-      title="Open Menu"
-      className="flex aspect-square items-center justify-center rounded-md border border-black/10 bg-black/5 fill-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:hover:bg-white/10"
-      onClick={openMenu}
-    >
+    <Button size="square" title="Open Menu" onClick={openMenu}>
       <SvgIcon svgName="menu" />
-    </button>
+    </Button>
   );
 };
 
@@ -888,12 +878,9 @@ const SignInButton = () => {
   const openMenu = useMenu((state) => state.open);
 
   return (
-    <button
-      onClick={openMenu}
-      className="h-9 rounded-md border border-black/10 bg-brand-gradient bg-origin-border px-5 text-sm font-bold capitalize text-white opacity-75 backdrop-blur-sm duration-300 hover:opacity-100"
-    >
+    <Button onClick={openMenu} variant="action">
       signin
-    </button>
+    </Button>
   );
 };
 
@@ -902,18 +889,16 @@ const AvatarMenu = () => {
   const openMenu = useMenu((state) => state.open);
 
   return (
-    <button
-      className="flex aspect-square w-9 items-center justify-center"
+    <Avatar
+      src={session?.user?.image ?? ""}
+      role="button"
       title="Open Menu"
+      height={100}
+      width={100}
       onClick={openMenu}
-    >
-      <Avatar
-        src={session?.user?.image ?? ""}
-        height={100}
-        width={100}
-        alt="user profile picture"
-      />
-    </button>
+      alt="user profile picture"
+      className="aspect-square w-9"
+    />
   );
 };
 
@@ -956,7 +941,7 @@ const DesktopHeader = () => {
 const MobileHeader = () => {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-white/50 p-5 backdrop-blur-md dark:bg-black/50 lg:hidden">
-      <NewPostButton className="col-start-2 bg-brand-gradient fill-white opacity-75 hover:opacity-100" />
+      <NewPostButton isMobile />
       <MenuButton />
     </div>
   );

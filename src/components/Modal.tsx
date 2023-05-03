@@ -1,6 +1,7 @@
 import type { PropsWithChildren, ComponentProps } from "react";
 import Backdrop from "./Backdrop";
 import { SvgIcon } from "./SvgIcon";
+import { Button } from "./ui/button";
 
 type Props = {
   backdropProps: ComponentProps<typeof Backdrop>;
@@ -13,13 +14,14 @@ const Modal = ({ backdropProps, children }: Props) => {
         className="relative m-auto flex h-full w-full flex-col overflow-auto bg-white/70 p-5 dark:bg-black/70 dark:fill-slate-300 dark:text-slate-300 lg:h-auto lg:max-h-[90%] lg:w-auto lg:max-w-[75%] lg:rounded-md "
         onClick={(e) => e.stopPropagation()}
       >
-        <button
+        <Button
           title="Close Modal"
-          className="absolute right-3 top-3 flex aspect-square h-8 items-center justify-center rounded-md border border-black/10 bg-black/5 fill-slate-600 p-1 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-current dark:hover:bg-white/10 lg:hidden"
+          className="absolute right-3 top-3 lg:hidden"
+          size='square'
           onClick={backdropProps.clickHandler}
         >
           <SvgIcon svgName="close" />
-        </button>
+        </Button>
         {children}
       </div>
     </Backdrop>
