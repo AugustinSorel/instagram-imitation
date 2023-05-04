@@ -13,12 +13,19 @@ import { SvgIcon } from "./SvgIcon";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { z, ZodError } from "zod";
-import { BottomSheet } from "./BottomSheet";
 import { v4 as uuidV4 } from "uuid";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useToaster } from "./Toaster";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from "./ui/dialog";
 
 export const TimelineContext = createContext<
   RouterInputs["post"]["all"] | undefined
@@ -62,7 +69,7 @@ const ListOfPostSkeleton = () => {
         <SkeletonPost key={i} />
       ))}
     </>
-  )
+  );
 };
 
 const SkeletonComment = () => {
@@ -504,7 +511,7 @@ const NewCommentForm = ({ post }: PostProps) => {
 
   return (
     <form
-      className="grid grid-cols-[1fr_auto] items-center gap-x-5"
+      className="grid w-full grid-cols-[1fr_auto] items-center gap-x-5"
       onSubmit={submitHandler}
     >
       <input
@@ -656,73 +663,51 @@ const ListOfComments = ({ post }: PostProps) => {
 };
 
 const CommentButton = ({ post }: PostProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-
-  const showComments = () => {
-    setIsOpen(() => true);
-  };
-
-  const triggerCloseAnimation = () => {
-    setIsClosing(() => true);
-  };
-
-  const animationEndHandler = () => {
-    if (isClosing) {
-      setIsClosing(() => false);
-      setIsOpen(() => false);
-    }
-  };
-
   return (
-    <>
-      <button
-        title="view comments"
-        name="view comments"
-        data-number-of-comments={post._count.comments}
-        className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-comments)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
-        onClick={showComments}
-      >
-        <SvgIcon svgName="speech" />
-      </button>
-
-      {isOpen && (
-        <BottomSheet
-          backdropProps={{
-            isExpanded: !isClosing,
-            animationEndHandler: animationEndHandler,
-            clickHandler: triggerCloseAnimation,
-          }}
+    <Dialog>
+      <DialogTrigger asChild>
+        <button
+          title="view comments"
+          name="view comments"
+          data-number-of-comments={post._count.comments}
+          className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-comments)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
         >
-          <header className="flex flex-wrap items-center gap-5 p-2">
-            <Avatar>
-              <AvatarFallback>CN</AvatarFallback>
-              <AvatarImage
-                src={post.user.image ?? ""}
-                alt={`${post.user.name ?? ""}'s avatar`}
-              />
-            </Avatar>
+          <SvgIcon svgName="speech" />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="bottom-0 flex h-4/5 w-full flex-col sm:w-4/5 sm:max-w-full">
+        <DialogHeader className="flex flex-row flex-wrap items-center gap-5 p-2">
+          <Avatar>
+            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage
+              src={post.user.image ?? ""}
+              alt={`${post.user.name ?? ""}'s avatar`}
+            />
+          </Avatar>
 
-            <Link
-              href={`/users/${post.user.name ?? ""}`}
-              className="text-2xl capitalize hover:underline"
-            >
-              {post.user.name}
-            </Link>
+          <Link
+            href={`/users/${post.user.name ?? ""}`}
+            className="text-2xl capitalize hover:underline"
+          >
+            {post.user.name}
+          </Link>
 
-            <p className="line-clamp-5 basis-full">{post.description}</p>
-          </header>
+          <DialogDescription className="basis-full">
+            {post.description}
+          </DialogDescription>
+        </DialogHeader>
 
-          <hr className="my-5 border-black/20 dark:border-white/20" />
+        <hr className="border-black/20 dark:border-white/20" />
 
-          <ListOfComments post={post} />
+        <ListOfComments post={post} />
 
-          <hr className="my-5 border-black/20 dark:border-white/20" />
+        <hr className="border-black/20 dark:border-white/20" />
 
+        <DialogFooter>
           <NewCommentForm post={post} />
-        </BottomSheet>
-      )}
-    </>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

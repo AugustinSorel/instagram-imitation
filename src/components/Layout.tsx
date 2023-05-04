@@ -3,21 +3,27 @@ import { Grand_Hotel } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect } from "react";
 import type { ChangeEvent, FormEvent, PropsWithChildren, UIEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
-import Backdrop from "./Backdrop";
 import { LoadingSpinner } from "./LoadingSpinner";
-import Modal from "./Modal";
 import { SvgIcon } from "./SvgIcon";
 import { Toaster, useToaster } from "./Toaster";
 import { create } from "zustand";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Background } from "./ui/background";
 
 export const newPostSchema = z.object({
   location: z
@@ -189,8 +195,6 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
       onSubmit={(e) => void submitHandler(e)}
       className="flex h-full flex-col gap-5"
     >
-      <h2 className="mb-auto text-center text-xl capitalize">new post</h2>
-
       <label className="flex flex-col gap-1 capitalize">
         location:{" "}
         <input
@@ -315,54 +319,43 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
 
 const NewPostButton = ({ isMobile = false }: { isMobile?: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const { data: session } = useSession();
   const addToast = useToaster((state) => state.addToast);
 
-  const showNewPostModal = () => {
+  const openChangeHandler = () => {
     if (!session) {
       addToast("please sign in");
       return;
     }
 
-    setIsOpen(() => true);
+    setIsOpen((prev) => !prev);
   };
 
-  const triggerCloseAnimation = () => {
-    setIsClosing(() => true);
-  };
-
-  const animationEndHandler = () => {
-    if (isClosing) {
-      setIsClosing(() => false);
-      setIsOpen(() => false);
-    }
+  const closeMenuHandler = () => {
+    setIsOpen(() => false);
   };
 
   return (
-    <>
-      <Button
-        size={"square"}
-        title="New Post"
-        onClick={showNewPostModal}
-        variant={isMobile ? "action" : "default"}
-        className={isMobile ? "col-start-2" : ""}
-      >
-        <SvgIcon svgName="plus" />
-      </Button>
-
-      {isOpen && (
-        <Modal
-          backdropProps={{
-            isExpanded: !isClosing,
-            animationEndHandler: animationEndHandler,
-            clickHandler: triggerCloseAnimation,
-          }}
+    <Dialog open={isOpen} onOpenChange={openChangeHandler}>
+      <DialogTrigger asChild>
+        <Button
+          size={"square"}
+          title="New Post"
+          variant={isMobile ? "action" : "default"}
+          className={isMobile ? "col-start-2" : ""}
         >
-          <NewPostForm successHandler={triggerCloseAnimation} />
-        </Modal>
-      )}
-    </>
+          <SvgIcon svgName="plus" />
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>New Post</DialogTitle>
+        </DialogHeader>
+
+        <NewPostForm successHandler={closeMenuHandler} />
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -390,13 +383,11 @@ const ThemeButton = () => {
 };
 
 const DeleteAccountButton = () => {
-  const closeMenu = useMenu((state) => state.close);
   const addToast = useToaster((state) => state.addToast);
 
   const removeMutation = api.user.remove.useMutation({
     onSuccess: async () => {
       await signOut({ redirect: false });
-      closeMenu();
     },
 
     onError: () => {
@@ -412,7 +403,7 @@ const DeleteAccountButton = () => {
     <Button
       onClick={clickHandler}
       variant="ghost"
-      className="fill-current text-red-400 hover:bg-red-400/30"
+      className="fill-current text-destructive hover:bg-destructive/20"
     >
       <SvgIcon svgName="trash" />
       delete my account
@@ -421,11 +412,8 @@ const DeleteAccountButton = () => {
 };
 
 const SignOutButton = () => {
-  const closeMenu = useMenu((state) => state.close);
-
   const clickHandler = async () => {
     await signOut({ redirect: false });
-    closeMenu();
   };
 
   return (
@@ -491,11 +479,9 @@ const SignInWithGithub = () => {
 
 const SearchButton = () => {
   const openSearchModal = useSearchModal((state) => state.open);
-  const closeMenu = useMenu((state) => state.close);
 
   const clickHandler = () => {
     openSearchModal();
-    closeMenu();
   };
 
   return (
@@ -512,7 +498,7 @@ const MenuContent = () => {
 
   return (
     <nav
-      className="m-auto flex flex-col gap-1 fill-current capitalize text-slate-100"
+      className="flex flex-col gap-1 fill-current pt-2 capitalize text-slate-100"
       onClick={(e) => e.stopPropagation()}
     >
       <Button asChild variant="ghost">
@@ -530,8 +516,10 @@ const MenuContent = () => {
         <>
           <Button asChild variant="ghost">
             <Link
-              aria-current={router.asPath === `/users/${session?.user?.id}`}
-              href={`/users/${session?.user?.id ?? ""}`}
+              aria-current={
+                router.asPath === `/users/${session?.user?.id}?tab=posts`
+              }
+              href={`/users/${session?.user?.id ?? ""}?tab=posts`}
             >
               <SvgIcon svgName="user" />
               profile
@@ -633,10 +621,7 @@ const ListOfUser = ({ users }: ListOfUserProps) => {
       {users.map((user) => (
         <li key={user.id} className="flex items-center gap-2 p-2">
           <Avatar>
-            <AvatarImage
-              src="https://github.com/shadcn.png"
-              alt="profile picture"
-            />
+            <AvatarImage src={user.image ?? ""} alt="profile picture" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <Link
@@ -729,42 +714,13 @@ const QuickSearchButton = () => {
   const isOpen = useSearchModal((state) => state.isOpen);
   const close = useSearchModal((state) => state.close);
   const open = useSearchModal((state) => state.open);
-  const [isClosing, setIsClosing] = useState(false);
   const router = useRouter();
-
-  const triggerCloseAnimation = useCallback(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    setIsClosing(() => true);
-  }, [isOpen]);
-
-  const openQuickSearch = useCallback(() => {
-    open();
-  }, [open]);
-
-  const toggleQuickSearch = useCallback(() => {
-    if (isOpen) {
-      triggerCloseAnimation();
-      return;
-    }
-
-    openQuickSearch();
-  }, [isOpen, openQuickSearch, triggerCloseAnimation]);
-
-  const animationEndHandler = () => {
-    if (isClosing) {
-      setIsClosing(() => false);
-      close();
-    }
-  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.key === "k") {
         e.preventDefault();
-        toggleQuickSearch();
+        close();
       }
     };
 
@@ -773,22 +729,27 @@ const QuickSearchButton = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [toggleQuickSearch]);
+  }, []);
 
   useEffect(() => {
-    const handleRouteChange = () => triggerCloseAnimation();
+    const handleRouteChange = () => close();
 
     router.events.on("routeChangeStart", handleRouteChange);
 
     return () => router.events.off("routeChangeStart", handleRouteChange);
-  }, [router.events, triggerCloseAnimation]);
+  }, [router.events]);
+
+  const onOpenChange = () => {
+    if (isOpen) {
+      return close();
+    }
+
+    open();
+  };
 
   return (
     <>
-      <Button
-        onClick={openQuickSearch}
-        className="flex w-post items-center gap-2"
-      >
+      <Button onClick={open} className="flex w-post items-center gap-2">
         <SvgIcon svgName="magnifier" />
         quick search...
         <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
@@ -800,15 +761,11 @@ const QuickSearchButton = () => {
       </Button>
 
       {isOpen && (
-        <Modal
-          backdropProps={{
-            isExpanded: !isClosing,
-            clickHandler: triggerCloseAnimation,
-            animationEndHandler: animationEndHandler,
-          }}
-        >
-          <QuickSearchContent />
-        </Modal>
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+          <DialogContent>
+            <QuickSearchContent />
+          </DialogContent>
+        </Dialog>
       )}
     </>
   );
@@ -820,71 +777,35 @@ type UseMenu = {
   close: () => void;
 };
 
-const useMenu = create<UseMenu>((set) => ({
-  isOpen: false,
-  open: () => set(() => ({ isOpen: true })),
-  close: () => set(() => ({ isOpen: false })),
-}));
-
-const Menu = () => {
-  const [isClosing, setIsClosing] = useState(false);
-  const isOpen = useMenu((state) => state.isOpen);
-  const close = useMenu((state) => state.close);
+const MenuButton = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
-  const animationEndHandler = () => {
-    if (isClosing) {
-      close();
-      setIsClosing(() => false);
-    }
-  };
-
-  const triggerClosingAnimation = useCallback(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    setIsClosing(() => true);
-  }, [isOpen]);
-
   useEffect(() => {
-    const handleRouteChange = () => triggerClosingAnimation();
+    const handleRouteChange = () => setIsOpen(() => false);
 
     router.events.on("routeChangeStart", handleRouteChange);
 
     return () => router.events.off("routeChangeStart", handleRouteChange);
-  }, [router.events, triggerClosingAnimation]);
-
-  if (!isOpen) {
-    return null;
-  }
+  }, [router.events, setIsOpen]);
 
   return (
-    <Backdrop
-      clickHandler={triggerClosingAnimation}
-      animationEndHandler={animationEndHandler}
-      isExpanded={!isClosing}
-    >
-      <MenuContent />
-    </Backdrop>
-  );
-};
-
-const MenuButton = () => {
-  const openMenu = useMenu((state) => state.open);
-
-  return (
-    <Button size="square" title="Open Menu" onClick={openMenu}>
-      <SvgIcon svgName="menu" />
-    </Button>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button size="square" title="Open Menu">
+          <SvgIcon svgName="menu" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <MenuContent />
+      </DialogContent>
+    </Dialog>
   );
 };
 
 const SignInButton = () => {
-  const openMenu = useMenu((state) => state.open);
-
   return (
-    <Button onClick={openMenu} variant="action">
+    <Button onClick={() => null} variant="action">
       signin
     </Button>
   );
@@ -892,7 +813,6 @@ const SignInButton = () => {
 
 const AvatarMenu = () => {
   const { data: session } = useSession();
-  const openMenu = useMenu((state) => state.open);
 
   return (
     <Avatar>
@@ -900,7 +820,7 @@ const AvatarMenu = () => {
         src={session?.user.image ?? ""}
         role="button"
         title="Open Menu"
-        onClick={openMenu}
+        onClick={() => null}
         alt="user profile picture"
       />
       <AvatarFallback>CN</AvatarFallback>
@@ -953,119 +873,6 @@ const MobileHeader = () => {
   );
 };
 
-const Background = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 1600 1080"
-      className="fixed inset-0 -z-50 h-full w-full"
-      preserveAspectRatio="none"
-    >
-      <defs>
-        <filter
-          id="noise"
-          x="0"
-          y="0"
-          width="100%"
-          height="100%"
-          filterUnits="objectBoundingBox"
-          primitiveUnits="userSpaceOnUse"
-          colorInterpolationFilters="sRGB"
-        >
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.6"
-            numOctaves="4"
-            seed="15"
-            stitchTiles="stitch"
-            x="0%"
-            y="0%"
-            width="100%"
-            height="100%"
-            result="turbulence"
-          ></feTurbulence>
-          <feSpecularLighting
-            surfaceScale="15"
-            specularConstant="1"
-            specularExponent="1"
-            x="0%"
-            y="0%"
-            width="100%"
-            height="100%"
-            in="turbulence"
-            result="specularLighting"
-          >
-            <feDistantLight azimuth="3" elevation="100"></feDistantLight>
-          </feSpecularLighting>
-        </filter>
-        <filter
-          id="blur"
-          x="0"
-          y="0"
-          width="100%"
-          height="100%"
-          filterUnits="userSpaceOnUse"
-          colorInterpolationFilters="sRGB"
-        >
-          <feFlood floodOpacity="0.1" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="200"
-            result="effect1_foregroundBlur_49_400"
-          />
-        </filter>
-      </defs>
-
-      <g filter="url(#blur)">
-        <ellipse cx="1000" cy="300" rx="300" ry="300" fill="#40BAFF" />
-        <ellipse cx="700" cy="400" rx="300" ry="300" fill="#FFA4FB" />
-        <ellipse cx="500" cy="600" rx="200" ry="200" fill="#AD7FF9" />
-      </g>
-
-      <rect
-        width="100%"
-        height="100%"
-        fill="transparent"
-        filter="url(#noise)"
-        className="opacity-50 bg-blend-overlay dark:opacity-5"
-      ></rect>
-
-      <pattern
-        id="pattern-circles"
-        x="0"
-        y="0"
-        width="10"
-        height="10"
-        patternUnits="userSpaceOnUse"
-        patternContentUnits="userSpaceOnUse"
-      >
-        <circle
-          id="pattern-circle"
-          cx="5"
-          cy="5"
-          r="1"
-          className="fill-slate-300 dark:fill-black/10"
-        ></circle>
-      </pattern>
-
-      <rect
-        id="rect"
-        x="0"
-        y="0"
-        width="100%"
-        height="100%"
-        fill="url(#pattern-circles)"
-        opacity="0.5"
-      ></rect>
-    </svg>
-  );
-};
-
 const Layout = ({ children }: PropsWithChildren) => {
   return (
     <>
@@ -1075,7 +882,6 @@ const Layout = ({ children }: PropsWithChildren) => {
       {children}
 
       <Toaster />
-      <Menu />
       <Background />
     </>
   );
