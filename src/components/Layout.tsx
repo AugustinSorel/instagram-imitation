@@ -3,7 +3,7 @@ import { Grand_Hotel } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef, useState, useEffect, Fragment } from "react";
+import { useRef, useState, useEffect } from "react";
 import type { ChangeEvent, FormEvent, PropsWithChildren, UIEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
@@ -31,6 +31,7 @@ import {
   LogOut,
   Menu,
   PaletteIcon,
+  Search,
   Trash,
   User,
 } from "lucide-react";
@@ -600,6 +601,7 @@ const AvatarMenu = () => {
   const { theme, setTheme } = useTheme();
   const { removeUserHandler } = useRemoveUser();
   const router = useRouter();
+  const openSearchModal = useSearchModal((state) => state.open);
 
   return (
     <DropdownMenu>
@@ -618,16 +620,14 @@ const AvatarMenu = () => {
       )}
 
       {!session && (
-        <DropdownMenuTrigger asChild>
-          <div>
-            <Button className="hidden lg:block" variant="action">
-              sign in
-            </Button>
+        <DropdownMenuTrigger>
+          <Button asChild className="hidden lg:block" variant="action">
+            <span>sign in</span>
+          </Button>
 
-            <Button size="square" className="lg:hidden">
-              <Menu className="h-4 w-4" />
-            </Button>
-          </div>
+          <Button asChild size="square" className="lg:hidden" title="open menu">
+            <Menu className="p-2" />
+          </Button>
         </DropdownMenuTrigger>
       )}
 
@@ -638,6 +638,12 @@ const AvatarMenu = () => {
             <Home className="mr-2 h-4 w-4" />
             <span>Home</span>
           </DropdownMenuItem>
+
+          <DropdownMenuItem onClick={openSearchModal}>
+            <Search className="mr-2 h-4 w-4" />
+            <span>Search</span>
+          </DropdownMenuItem>
+
           {session && (
             <DropdownMenuItem
               onClick={() =>
