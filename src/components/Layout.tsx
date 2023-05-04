@@ -1,9 +1,9 @@
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { Grand_Hotel } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Fragment } from "react";
 import type { ChangeEvent, FormEvent, PropsWithChildren, UIEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
@@ -24,6 +24,37 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Background } from "./ui/background";
+import {
+  Github,
+  Globe,
+  Home,
+  LogOut,
+  Menu,
+  PaletteIcon,
+  Trash,
+  User,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import {
+  signInWithGithubHandler,
+  signInWithGoogleHandler,
+  signOutHandler,
+  useRemoveUser,
+} from "~/utils/auth";
 
 export const newPostSchema = z.object({
   location: z
@@ -359,219 +390,6 @@ const NewPostButton = ({ isMobile = false }: { isMobile?: boolean }) => {
   );
 };
 
-const ThemeButton = () => {
-  const { theme, setTheme } = useTheme();
-
-  return (
-    <Button
-      variant="ghost"
-      onClick={() => (theme == "dark" ? setTheme("light") : setTheme("dark"))}
-    >
-      {theme === "light" ? (
-        <>
-          <SvgIcon svgName="moon" />
-          darkmode
-        </>
-      ) : (
-        <>
-          <SvgIcon svgName="sun" />
-          lightmode
-        </>
-      )}
-    </Button>
-  );
-};
-
-const DeleteAccountButton = () => {
-  const addToast = useToaster((state) => state.addToast);
-
-  const removeMutation = api.user.remove.useMutation({
-    onSuccess: async () => {
-      await signOut({ redirect: false });
-    },
-
-    onError: () => {
-      addToast("something went wrong");
-    },
-  });
-
-  const clickHandler = () => {
-    removeMutation.mutate();
-  };
-
-  return (
-    <Button
-      onClick={clickHandler}
-      variant="ghost"
-      className="fill-current text-destructive hover:bg-destructive/20"
-    >
-      <SvgIcon svgName="trash" />
-      delete my account
-    </Button>
-  );
-};
-
-const SignOutButton = () => {
-  const clickHandler = async () => {
-    await signOut({ redirect: false });
-  };
-
-  return (
-    <Button variant="ghost" onClick={() => void clickHandler()}>
-      <SvgIcon svgName="logout" />
-      signout
-    </Button>
-  );
-};
-
-const SignInWithGoogle = () => {
-  const googleSignin = () => {
-    void signIn("google");
-  };
-
-  return (
-    <Button variant="ghost" onClick={googleSignin}>
-      <svg
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        className="aspect-square w-4"
-      >
-        <path
-          d="M8.16211 6.54541V9.64359H12.5555C12.3625 10.64 11.7836 11.4836 10.9154 12.0509L13.5647 14.0654C15.1083 12.6691 15.9989 10.6182 15.9989 8.18185C15.9989 7.61459 15.947 7.06908 15.8504 6.5455L8.16211 6.54541Z"
-          fill="#4285F4"
-        />
-        <path
-          d="M3.58762 9.52267L2.99009 9.97093L0.875 11.5854C2.21824 14.1963 4.97131 16 8.16242 16C10.3665 16 12.2143 15.2873 13.565 14.0655L10.9157 12.0509C10.1884 12.5309 9.26072 12.8218 8.16242 12.8218C6.03996 12.8218 4.23665 11.4182 3.59096 9.52729L3.58762 9.52267Z"
-          fill="#34A853"
-        />
-        <path
-          d="M0.875642 4.41455C0.31908 5.49087 0 6.70543 0 7.99995C0 9.29447 0.31908 10.509 0.875642 11.5854C0.875642 11.5926 3.59186 9.5199 3.59186 9.5199C3.42859 9.0399 3.33209 8.53085 3.33209 7.99987C3.33209 7.46889 3.42859 6.95983 3.59186 6.47983L0.875642 4.41455Z"
-          fill="#FBBC05"
-        />
-        <path
-          d="M8.16259 3.18545C9.36484 3.18545 10.4335 3.59271 11.2869 4.37817L13.6246 2.0873C12.2071 0.792775 10.3667 0 8.16259 0C4.97148 0 2.21824 1.79636 0.875 4.41454L3.59113 6.48C4.23674 4.58907 6.04012 3.18545 8.16259 3.18545Z"
-          fill="#EA4335"
-        />
-      </svg>
-      sign in with Google
-    </Button>
-  );
-};
-
-const SignInWithGithub = () => {
-  const githubSignin = () => {
-    void signIn("github");
-  };
-
-  return (
-    <Button variant="ghost" onClick={githubSignin}>
-      <svg
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        className="aspect-square w-4 fill-current"
-      >
-        <path d="M8.00564 0C3.57819 0 -0.000976562 3.66665 -0.000976562 8.2028C-0.000976562 11.8288 2.29232 14.8981 5.47373 15.9844C5.87148 16.0661 6.01718 15.8079 6.01718 15.5908C6.01718 15.4006 6.00407 14.7488 6.00407 14.0696C3.77682 14.5586 3.31302 13.0918 3.31302 13.0918C2.95508 12.1411 2.42474 11.8968 2.42474 11.8968C1.69576 11.3943 2.47784 11.3943 2.47784 11.3943C3.28647 11.4486 3.71078 12.2363 3.71078 12.2363C4.42648 13.4856 5.57976 13.1326 6.04373 12.9153C6.10994 12.3856 6.32218 12.0189 6.54753 11.8153C4.77114 11.6251 2.90215 10.919 2.90215 7.76813C2.90215 6.8718 3.22009 6.13847 3.72389 5.56814C3.6444 5.36448 3.36595 4.52231 3.80354 3.39515C3.80354 3.39515 4.47958 3.17782 6.00391 4.23715C6.65653 4.05759 7.32956 3.96625 8.00564 3.96548C8.68168 3.96548 9.37084 4.06065 10.0072 4.23715C11.5317 3.17782 12.2078 3.39515 12.2078 3.39515C12.6453 4.52231 12.3667 5.36448 12.2872 5.56814C12.8043 6.13847 13.1091 6.8718 13.1091 7.76813C13.1091 10.919 11.2402 11.6115 9.45049 11.8153C9.74221 12.0733 9.99394 12.5621 9.99394 13.3363C9.99394 14.4363 9.98083 15.3191 9.98083 15.5906C9.98083 15.8079 10.1267 16.0661 10.5243 15.9846C13.7057 14.8979 15.999 11.8288 15.999 8.2028C16.0121 3.66665 12.4198 0 8.00564 0Z" />
-      </svg>
-      sign in with Github
-    </Button>
-  );
-};
-
-const SearchButton = () => {
-  const openSearchModal = useSearchModal((state) => state.open);
-
-  const clickHandler = () => {
-    openSearchModal();
-  };
-
-  return (
-    <Button onClick={clickHandler} variant="ghost">
-      <SvgIcon svgName="magnifier" />
-      search
-    </Button>
-  );
-};
-
-const MenuContent = () => {
-  const { data: session } = useSession();
-  const router = useRouter();
-
-  return (
-    <nav
-      className="flex flex-col gap-1 fill-current pt-2 capitalize text-slate-100"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <Button asChild variant="ghost">
-        <Link aria-current={router.asPath === "/"} href="/">
-          <SvgIcon svgName="house" />
-          home
-        </Link>
-      </Button>
-
-      <SearchButton />
-
-      <ThemeButton />
-
-      {session && (
-        <>
-          <Button asChild variant="ghost">
-            <Link
-              aria-current={
-                router.asPath === `/users/${session?.user?.id}?tab=posts`
-              }
-              href={`/users/${session?.user?.id ?? ""}?tab=posts`}
-            >
-              <SvgIcon svgName="user" />
-              profile
-            </Link>
-          </Button>
-
-          <Button asChild variant="ghost">
-            <Link
-              aria-current={
-                router.asPath ===
-                `/users/${session?.user?.id ?? ""}?tab=bookmarked`
-              }
-              href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
-            >
-              <SvgIcon svgName="bookmark" />
-              bookmarked
-            </Link>
-          </Button>
-
-          <Button asChild variant="ghost">
-            <Link
-              aria-current={
-                router.asPath === `/users/${session?.user?.id ?? ""}?tab=liked`
-              }
-              href={`/users/${session?.user?.id ?? ""}?tab=liked`}
-            >
-              <SvgIcon svgName="heart" />
-              liked
-            </Link>
-          </Button>
-        </>
-      )}
-
-      <hr className="my-2 border-neutral-500" />
-
-      {session && (
-        <>
-          <SignOutButton />
-          <DeleteAccountButton />
-        </>
-      )}
-
-      {!session && (
-        <>
-          <SignInWithGithub />
-          <SignInWithGoogle />
-        </>
-      )}
-    </nav>
-  );
-};
-
 const ListOfUsersSkeleton = () => {
   return (
     <>
@@ -729,7 +547,7 @@ const QuickSearchButton = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [close]);
 
   useEffect(() => {
     const handleRouteChange = () => close();
@@ -737,7 +555,7 @@ const QuickSearchButton = () => {
     router.events.on("routeChangeStart", handleRouteChange);
 
     return () => router.events.off("routeChangeStart", handleRouteChange);
-  }, [router.events]);
+  }, [router.events, close]);
 
   const onOpenChange = () => {
     if (isOpen) {
@@ -777,54 +595,115 @@ type UseMenu = {
   close: () => void;
 };
 
-const MenuButton = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    const handleRouteChange = () => setIsOpen(() => false);
-
-    router.events.on("routeChangeStart", handleRouteChange);
-
-    return () => router.events.off("routeChangeStart", handleRouteChange);
-  }, [router.events, setIsOpen]);
-
-  return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button size="square" title="Open Menu">
-          <SvgIcon svgName="menu" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <MenuContent />
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-const SignInButton = () => {
-  return (
-    <Button onClick={() => null} variant="action">
-      signin
-    </Button>
-  );
-};
-
 const AvatarMenu = () => {
   const { data: session } = useSession();
+  const { theme, setTheme } = useTheme();
+  const { removeUserHandler } = useRemoveUser();
+  const router = useRouter();
 
   return (
-    <Avatar>
-      <AvatarImage
-        src={session?.user.image ?? ""}
-        role="button"
-        title="Open Menu"
-        onClick={() => null}
-        alt="user profile picture"
-      />
-      <AvatarFallback>CN</AvatarFallback>
-    </Avatar>
+    <DropdownMenu>
+      {session && (
+        <DropdownMenuTrigger asChild>
+          <Avatar>
+            <AvatarImage
+              tabIndex={0}
+              src={session?.user.image ?? ""}
+              role="button"
+              title="Open Menu"
+              alt="user profile picture"
+            />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+      )}
+
+      {!session && (
+        <DropdownMenuTrigger asChild>
+          <div>
+            <Button className="hidden lg:block" variant="action">
+              sign in
+            </Button>
+
+            <Button size="square" className="lg:hidden">
+              <Menu className="h-4 w-4" />
+            </Button>
+          </div>
+        </DropdownMenuTrigger>
+      )}
+
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => void router.push("/")}>
+            <Home className="mr-2 h-4 w-4" />
+            <span>Home</span>
+          </DropdownMenuItem>
+          {session && (
+            <DropdownMenuItem
+              onClick={() =>
+                void router.push(`/users/${session.user.id}?tab=posts`)
+              }
+            >
+              <User className="mr-2 h-4 w-4" />
+              <span>My account</span>
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <PaletteIcon className="mr-2 h-4 w-4" />
+              <span>theme</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+                  <DropdownMenuRadioItem value="dark">
+                    Dark
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="light">
+                    Light
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="system">
+                    System
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+        </DropdownMenuGroup>
+
+        <DropdownMenuSeparator />
+
+        {session ? (
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Danger Zone</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => void signOutHandler()}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>sign out</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="focus:bg-destructive/20"
+              onClick={removeUserHandler}
+            >
+              <Trash className="mr-2 h-4 w-4 stroke-destructive" />
+              <span className="text-destructive">Delete account</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        ) : (
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Sign in</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => void signInWithGithubHandler()}>
+              <Github className="mr-2 h-4 w-4" />
+              <span>GitHub</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => void signInWithGoogleHandler()}>
+              <Globe className="mr-2 h-4 w-4" />
+              <span>Google</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
@@ -846,8 +725,6 @@ const Title = () => {
 };
 
 const DesktopHeader = () => {
-  const { data: session } = useSession();
-
   return (
     <header className="sticky top-0 z-10 hidden p-5 after:absolute after:inset-0 after:-z-10 after:bg-white/50 after:backdrop-blur-md dark:after:bg-black/50 lg:block">
       <div className="mx-auto grid max-w-5xl grid-cols-[1fr_350px_1fr] items-center">
@@ -857,7 +734,7 @@ const DesktopHeader = () => {
 
         <div className="ml-auto flex items-center gap-2">
           <NewPostButton />
-          {session ? <AvatarMenu /> : <SignInButton />}
+          <AvatarMenu />
         </div>
       </div>
     </header>
@@ -868,7 +745,7 @@ const MobileHeader = () => {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-white/50 p-5 backdrop-blur-md dark:bg-black/50 lg:hidden">
       <NewPostButton isMobile />
-      <MenuButton />
+      <AvatarMenu />
     </div>
   );
 };
