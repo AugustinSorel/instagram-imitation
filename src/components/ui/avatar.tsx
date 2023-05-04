@@ -32,6 +32,7 @@ const Avatar = React.forwardRef<
   <AvatarPrimitive.Root
     ref={ref}
     className={cn(avatarVariants({ size, className }))}
+    aria-haspopup="false"
     {...props}
   />
 ));

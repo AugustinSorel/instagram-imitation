@@ -605,11 +605,10 @@ const AvatarMenu = () => {
     <DropdownMenu>
       {session && (
         <DropdownMenuTrigger asChild>
-          <Avatar>
+          <Avatar role="button">
             <AvatarImage
               tabIndex={0}
               src={session?.user.image ?? ""}
-              role="button"
               title="Open Menu"
               alt="user profile picture"
             />

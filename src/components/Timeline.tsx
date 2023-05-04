@@ -791,7 +791,10 @@ const Post = ({ post }: PostProps) => {
         <div className="grid w-32 grid-cols-[auto_1fr] gap-x-1 rounded-full border border-black/10 bg-white/50 p-1 backdrop-blur-md dark:bg-black/50">
           <Avatar className="row-span-2" size="sm">
             <AvatarFallback>CN</AvatarFallback>
-            <AvatarImage src={post.user.image ?? ""} />
+            <AvatarImage
+              src={post.user.image ?? ""}
+              alt={`${post.user.name ?? ""}'s avatar`}
+            />
           </Avatar>
           <Link
             href={`/users/${post.userId}?tab=posts`}
