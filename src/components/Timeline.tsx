@@ -9,12 +9,10 @@ import type { UIEvent, PropsWithChildren, FormEvent, ChangeEvent } from "react";
 import { api } from "~/utils/api";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
 import Link from "next/link";
-import { SvgIcon } from "./SvgIcon";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { z, ZodError } from "zod";
 import { v4 as uuidV4 } from "uuid";
-import { LoadingSpinner } from "./LoadingSpinner";
 import { useToaster } from "./Toaster";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -26,6 +24,14 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "./ui/dialog";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Bookmark,
+  Heart,
+  Loader2,
+  MessageSquare,
+} from "lucide-react";
 
 export const TimelineContext = createContext<
   RouterInputs["post"]["all"] | undefined
@@ -233,10 +239,10 @@ const LikeButton = ({ post }: PostProps) => {
       title={hasLiked ? "unlike this post" : "like this post"}
       name={hasLiked ? "unlike this post" : "like this post"}
       data-number-of-likes={post.likes.length}
-      className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-likes)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
+      className="group relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-likes)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
       onClick={clickHandler}
     >
-      <SvgIcon svgName={hasLiked ? "heartFilled" : "heart"} />
+      <Heart className="h-4 w-4 group-aria-[pressed=true]:fill-destructive group-aria-[pressed=true]:stroke-destructive" />
     </button>
   );
 };
@@ -377,10 +383,10 @@ const BookmarkButton = ({ post }: PostProps) => {
       title={hasBookmarked ? "unbookmark this post" : "bookmark this post"}
       name={hasBookmarked ? "unbookmark this post" : "bookmark this post"}
       data-number-of-bookmarked={post.bookmarks.length}
-      className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-bookmarked)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-slate-600 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100 dark:aria-[pressed=true]:fill-slate-400"
+      className="group relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-bookmarked)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-slate-600 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100 dark:aria-[pressed=true]:fill-slate-400"
       onClick={clickHandler}
     >
-      <SvgIcon svgName={hasBookmarked ? "bookmarkFilled" : "bookmark"} />
+      <Bookmark className="h-4 w-4 group-aria-[pressed=true]:fill-current group-aria-[pressed=true]:stroke-current" />
     </button>
   );
 };
@@ -522,9 +528,9 @@ const NewCommentForm = ({ post }: PostProps) => {
         onChange={changeHandler}
         value={comment}
       />
-      <Button className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center">
-        {isLoading && <LoadingSpinner />}
-        <span className="col-start-2">upload</span>
+      <Button className="mt-auto flex items-center">
+        <span>upload</span>
+        {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
       </Button>
       {errorComment && (
         <p className="text-sm text-red-500 first-letter:capitalize">
@@ -672,7 +678,7 @@ const CommentButton = ({ post }: PostProps) => {
           data-number-of-comments={post._count.comments}
           className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-comments)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
         >
-          <SvgIcon svgName="speech" />
+          <MessageSquare className="h-4 w-4" />
         </button>
       </DialogTrigger>
       <DialogContent className="bottom-0 flex h-4/5 w-full flex-col sm:w-4/5 sm:max-w-full">
@@ -822,7 +828,7 @@ const Post = ({ post }: PostProps) => {
             className="pointer-events-auto aspect-square rounded-full border border-black/20 bg-white/50 fill-neutral-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:fill-neutral-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
             onClick={viewPrevImage}
           >
-            <SvgIcon svgName="leftArrow" />
+            <ArrowLeft className="h-4 w-4" />
           </button>
           <button
             title="view next image"
@@ -830,7 +836,7 @@ const Post = ({ post }: PostProps) => {
             className="pointer-events-auto aspect-square rounded-full border border-black/20 bg-white/50 fill-neutral-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:fill-neutral-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
             onClick={viewNextImage}
           >
-            <SvgIcon svgName="rightArrow" />
+            <ArrowRight className="h-4 w-4" />
           </button>
         </nav>
       )}

@@ -8,8 +8,6 @@ import type { ChangeEvent, FormEvent, PropsWithChildren, UIEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
 import { api } from "~/utils/api";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { SvgIcon } from "./SvgIcon";
 import { Toaster, useToaster } from "./Toaster";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
@@ -26,12 +24,15 @@ import {
   Github,
   Globe,
   Home,
+  Loader2,
   LogOut,
   Menu,
   PaletteIcon,
+  Plus,
   Search,
   Trash,
   User,
+  X,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -290,7 +291,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
                   onClick={() => removeImage(image.id)}
                   size="square"
                 >
-                  <SvgIcon svgName="close" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
             ))}
@@ -347,9 +348,11 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
         disabled={isFormValid}
         className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center"
       >
-        {isLoading && <LoadingSpinner />}
-
         <span className="col-start-2">upload</span>
+
+        {isLoading && (
+          <Loader2 className="col-start-3 ml-auto h-4 w-4 animate-spin" />
+        )}
       </Button>
     </form>
   );
@@ -382,7 +385,7 @@ const NewPostButton = ({ isMobile = false }: { isMobile?: boolean }) => {
           variant={isMobile ? "action" : "default"}
           className={isMobile ? "col-start-2" : ""}
         >
-          <SvgIcon svgName="plus" />
+          <Plus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
 
@@ -458,7 +461,7 @@ const QuickSearchButton = () => {
         onClick={() => setOpen(() => true)}
         className="flex w-post items-center gap-2"
       >
-        <SvgIcon svgName="magnifier" />
+        <Search className="h-4 w-4" />
         quick search...
         <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
           <abbr className="no-underline" title="Control">
