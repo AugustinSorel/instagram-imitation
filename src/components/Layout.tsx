@@ -312,7 +312,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
           >
             <path d="M9 12c0-.552.448-1 1.001-1s.999.448.999 1-.446 1-.999 1-1.001-.448-1.001-1zm6.2 0l-1.7 2.6-1.3-1.6-3.2 4h10l-3.8-5zm5.8-7v-2h-21v15h2v-13h19zm3 2v14h-20v-14h20zm-2 2h-16v10h16v-10z" />
           </svg>
-          <p className="text-center mx-auto text-sm text-neutral-500">
+          <p className="mx-auto text-center text-sm text-neutral-500">
             Attach up to 5 files as you like
           </p>
           <input
