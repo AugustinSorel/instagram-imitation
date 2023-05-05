@@ -1,22 +1,69 @@
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { Grand_Hotel } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect } from "react";
 import type { ChangeEvent, FormEvent, PropsWithChildren, UIEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
 import { api } from "~/utils/api";
-import type { RouterOutputs } from "~/utils/api";
-import Backdrop from "./Backdrop";
-import { LoadingSpinner } from "./LoadingSpinner";
-import Modal from "./Modal";
-import { Avatar } from "./Avatar";
-import { SvgIcon } from "./SvgIcon";
-import { Toaster, useToaster } from "./Toaster";
-import { create } from "zustand";
 import { useTheme } from "next-themes";
+import { Button } from "./ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Background } from "./ui/background";
+import {
+  Github,
+  Globe,
+  Home,
+  Loader2,
+  LogOut,
+  Menu,
+  PaletteIcon,
+  Plus,
+  Search,
+  Trash,
+  User,
+  X,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import {
+  signInWithGithubHandler,
+  signInWithGoogleHandler,
+  signOutHandler,
+  useRemoveUser,
+} from "~/utils/auth";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "./ui/command";
+import { useToast } from "./ui/use-toast";
+import { Skeleton } from "~/\u0017\u0017components/ui/skeleton";
 
 export const newPostSchema = z.object({
   location: z
@@ -188,8 +235,6 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
       onSubmit={(e) => void submitHandler(e)}
       className="flex h-full flex-col gap-5"
     >
-      <h2 className="mb-auto text-center text-xl capitalize">new post</h2>
-
       <label className="flex flex-col gap-1 capitalize">
         location:{" "}
         <input
@@ -239,22 +284,23 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
                   className="aspect-square min-w-[49px] rounded-md"
                   src={image.src}
                 />
-                <button
+                <Button
                   name="remove-image"
                   title="remove image"
                   type="button"
-                  className="absolute right-1 top-0 flex aspect-square w-6 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border border-black/30 bg-white/20 p-0.5 backdrop-blur-sm"
+                  className="absolute right-1 top-0 flex w-6 -translate-y-1/2 translate-x-1/2 rounded-full"
                   onClick={() => removeImage(image.id)}
+                  size="square"
                 >
-                  <SvgIcon svgName="close" />
-                </button>
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
             ))}
           </div>
         )}
 
         <div
-          className="group relative hidden cursor-pointer grid-cols-[auto_1fr] gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 outline-none duration-300 hover:border-black/30 focus:border-black/30 dark:border-white/10 dark:hover:border-white/30 dark:focus:border-white/30 lg:grid"
+          className="group relative hidden cursor-pointer items-center gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 outline-none duration-300 hover:border-black/30 focus:border-black/30 dark:border-white/10 dark:hover:border-white/30 dark:focus:border-white/30 lg:flex"
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
@@ -266,10 +312,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
           >
             <path d="M9 12c0-.552.448-1 1.001-1s.999.448.999 1-.446 1-.999 1-1.001-.448-1.001-1zm6.2 0l-1.7 2.6-1.3-1.6-3.2 4h10l-3.8-5zm5.8-7v-2h-21v15h2v-13h19zm3 2v14h-20v-14h20zm-2 2h-16v10h16v-10z" />
           </svg>
-          <p className="self-center text-center text-xl font-semibold text-neutral-600 dark:text-neutral-400">
-            Drag Images here or click to select files
-          </p>
-          <p className="text-center text-sm text-neutral-500">
+          <p className="mx-auto text-center text-sm text-neutral-500">
             Attach up to 5 files as you like
           </p>
           <input
@@ -284,13 +327,13 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
           />
         </div>
 
-        <button
+        <Button
           type="button"
-          className="w-full rounded-md border border-black/10 bg-black/5 p-2 text-sm capitalize duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 lg:hidden"
+          className="w-full lg:hidden"
           onClick={() => inputRef.current?.click()}
         >
           browse
-        </button>
+        </Button>
 
         {formErrors.images && (
           <p className="text-center text-sm font-normal text-red-500">
@@ -299,294 +342,61 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
         )}
       </div>
 
-      <button
+      <Button
         disabled={isFormValid}
-        className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center rounded-md border border-black/10 bg-black/5 fill-slate-600 p-2 text-sm capitalize duration-300 hover:bg-black/10 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+        className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center"
       >
-        {isLoading && <LoadingSpinner />}
-
         <span className="col-start-2">upload</span>
-      </button>
+
+        {isLoading && (
+          <Loader2 className="col-start-3 ml-auto h-4 w-4 animate-spin" />
+        )}
+      </Button>
     </form>
   );
 };
 
-const NewPostButton = ({ className = "" }: { className?: string }) => {
+const NewPostButton = ({ isMobile = false }: { isMobile?: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const { data: session } = useSession();
-  const addToast = useToaster((state) => state.addToast);
+  const { toast } = useToast();
 
-  const showNewPostModal = () => {
+  const openChangeHandler = () => {
     if (!session) {
-      addToast("please sign in");
+      toast({
+        description: "Please Sign In",
+      });
       return;
     }
 
-    setIsOpen(() => true);
+    setIsOpen((prev) => !prev);
   };
 
-  const triggerCloseAnimation = () => {
-    setIsClosing(() => true);
-  };
-
-  const animationEndHandler = () => {
-    if (isClosing) {
-      setIsClosing(() => false);
-      setIsOpen(() => false);
-    }
+  const closeMenuHandler = () => {
+    setIsOpen(() => false);
   };
 
   return (
-    <>
-      <button
-        title="New Post"
-        className={`relative flex aspect-square h-9 items-center justify-center overflow-hidden rounded-md border border-black/10 bg-black/5 bg-origin-border fill-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:hover:bg-white/10 ${className}`}
-        onClick={showNewPostModal}
-      >
-        <SvgIcon svgName="plus" />
-      </button>
-
-      {isOpen && (
-        <Modal
-          backdropProps={{
-            isExpanded: !isClosing,
-            animationEndHandler: animationEndHandler,
-            clickHandler: triggerCloseAnimation,
-          }}
+    <Dialog open={isOpen} onOpenChange={openChangeHandler}>
+      <DialogTrigger asChild>
+        <Button
+          size={"square"}
+          title="New Post"
+          variant={isMobile ? "action" : "default"}
+          className={isMobile ? "col-start-2" : ""}
         >
-          <NewPostForm successHandler={triggerCloseAnimation} />
-        </Modal>
-      )}
-    </>
-  );
-};
+          <Plus className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
 
-const ThemeButton = () => {
-  const { theme, setTheme } = useTheme();
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>New Post</DialogTitle>
+        </DialogHeader>
 
-  return (
-    <button
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
-      onClick={() => (theme == "dark" ? setTheme("light") : setTheme("dark"))}
-    >
-      {theme === "light" ? (
-        <>
-          <SvgIcon svgName="moon" />
-          darkmode
-        </>
-      ) : (
-        <>
-          <SvgIcon svgName="sun" />
-          lightmode
-        </>
-      )}
-    </button>
-  );
-};
-
-const DeleteAccountButton = () => {
-  const closeMenu = useMenu((state) => state.close);
-  const addToast = useToaster((state) => state.addToast);
-
-  const removeMutation = api.user.remove.useMutation({
-    onSuccess: async () => {
-      await signOut({ redirect: false });
-      closeMenu();
-    },
-
-    onError: () => {
-      addToast("something went wrong");
-    },
-  });
-
-  const clickHandler = () => {
-    removeMutation.mutate();
-  };
-
-  return (
-    <button
-      onClick={clickHandler}
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize text-red-400 outline-none duration-300 hover:bg-red-400/30"
-    >
-      <SvgIcon svgName="trash" />
-      delete my account
-    </button>
-  );
-};
-
-const SignOutButton = () => {
-  const closeMenu = useMenu((state) => state.close);
-
-  const clickHandler = async () => {
-    await signOut({ redirect: false });
-    closeMenu();
-  };
-
-  return (
-    <button
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
-      onClick={() => void clickHandler()}
-    >
-      <SvgIcon svgName="logout" />
-      signout
-    </button>
-  );
-};
-
-const SignInWithGoogle = () => {
-  const googleSignin = () => {
-    void signIn("google");
-  };
-
-  return (
-    <button
-      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
-      onClick={googleSignin}
-    >
-      <svg
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        className="aspect-square w-4"
-      >
-        <path
-          d="M8.16211 6.54541V9.64359H12.5555C12.3625 10.64 11.7836 11.4836 10.9154 12.0509L13.5647 14.0654C15.1083 12.6691 15.9989 10.6182 15.9989 8.18185C15.9989 7.61459 15.947 7.06908 15.8504 6.5455L8.16211 6.54541Z"
-          fill="#4285F4"
-        />
-        <path
-          d="M3.58762 9.52267L2.99009 9.97093L0.875 11.5854C2.21824 14.1963 4.97131 16 8.16242 16C10.3665 16 12.2143 15.2873 13.565 14.0655L10.9157 12.0509C10.1884 12.5309 9.26072 12.8218 8.16242 12.8218C6.03996 12.8218 4.23665 11.4182 3.59096 9.52729L3.58762 9.52267Z"
-          fill="#34A853"
-        />
-        <path
-          d="M0.875642 4.41455C0.31908 5.49087 0 6.70543 0 7.99995C0 9.29447 0.31908 10.509 0.875642 11.5854C0.875642 11.5926 3.59186 9.5199 3.59186 9.5199C3.42859 9.0399 3.33209 8.53085 3.33209 7.99987C3.33209 7.46889 3.42859 6.95983 3.59186 6.47983L0.875642 4.41455Z"
-          fill="#FBBC05"
-        />
-        <path
-          d="M8.16259 3.18545C9.36484 3.18545 10.4335 3.59271 11.2869 4.37817L13.6246 2.0873C12.2071 0.792775 10.3667 0 8.16259 0C4.97148 0 2.21824 1.79636 0.875 4.41454L3.59113 6.48C4.23674 4.58907 6.04012 3.18545 8.16259 3.18545Z"
-          fill="#EA4335"
-        />
-      </svg>
-      sign in with Google
-    </button>
-  );
-};
-
-const SignInWithGithub = () => {
-  const githubSignin = () => {
-    void signIn("github");
-  };
-
-  return (
-    <button
-      className="flex items-center gap-3 rounded-md p-2 outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
-      onClick={githubSignin}
-    >
-      <svg
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        className="aspect-square w-4 fill-current"
-      >
-        <path d="M8.00564 0C3.57819 0 -0.000976562 3.66665 -0.000976562 8.2028C-0.000976562 11.8288 2.29232 14.8981 5.47373 15.9844C5.87148 16.0661 6.01718 15.8079 6.01718 15.5908C6.01718 15.4006 6.00407 14.7488 6.00407 14.0696C3.77682 14.5586 3.31302 13.0918 3.31302 13.0918C2.95508 12.1411 2.42474 11.8968 2.42474 11.8968C1.69576 11.3943 2.47784 11.3943 2.47784 11.3943C3.28647 11.4486 3.71078 12.2363 3.71078 12.2363C4.42648 13.4856 5.57976 13.1326 6.04373 12.9153C6.10994 12.3856 6.32218 12.0189 6.54753 11.8153C4.77114 11.6251 2.90215 10.919 2.90215 7.76813C2.90215 6.8718 3.22009 6.13847 3.72389 5.56814C3.6444 5.36448 3.36595 4.52231 3.80354 3.39515C3.80354 3.39515 4.47958 3.17782 6.00391 4.23715C6.65653 4.05759 7.32956 3.96625 8.00564 3.96548C8.68168 3.96548 9.37084 4.06065 10.0072 4.23715C11.5317 3.17782 12.2078 3.39515 12.2078 3.39515C12.6453 4.52231 12.3667 5.36448 12.2872 5.56814C12.8043 6.13847 13.1091 6.8718 13.1091 7.76813C13.1091 10.919 11.2402 11.6115 9.45049 11.8153C9.74221 12.0733 9.99394 12.5621 9.99394 13.3363C9.99394 14.4363 9.98083 15.3191 9.98083 15.5906C9.98083 15.8079 10.1267 16.0661 10.5243 15.9846C13.7057 14.8979 15.999 11.8288 15.999 8.2028C16.0121 3.66665 12.4198 0 8.00564 0Z" />
-      </svg>
-      sign in with Github
-    </button>
-  );
-};
-
-const SearchButton = () => {
-  const openSearchModal = useSearchModal((state) => state.open);
-  const closeMenu = useMenu((state) => state.close);
-
-  const clickHandler = () => {
-    openSearchModal();
-    closeMenu();
-  };
-
-  return (
-    <button
-      onClick={clickHandler}
-      className="flex items-center gap-2 rounded-md p-2 text-left capitalize outline-none duration-300 hover:bg-black/20 dark:hover:bg-white/10"
-    >
-      <SvgIcon svgName="magnifier" />
-      search
-    </button>
-  );
-};
-
-const MenuContent = () => {
-  const { data: session } = useSession();
-  const router = useRouter();
-
-  return (
-    <nav
-      className="m-auto flex flex-col gap-1 fill-current capitalize text-slate-100"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <Link
-        aria-current={router.asPath === "/"}
-        href="/"
-        className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
-      >
-        <SvgIcon svgName="house" />
-        home
-      </Link>
-
-      <SearchButton />
-
-      <ThemeButton />
-
-      {session && (
-        <>
-          <Link
-            aria-current={router.asPath === `/users/${session?.user?.id}`}
-            href={`/users/${session?.user?.id ?? ""}`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
-          >
-            <SvgIcon svgName="user" />
-            profile
-          </Link>
-
-          <Link
-            aria-current={
-              router.asPath ===
-              `/users/${session?.user?.id ?? ""}?tab=bookmarked`
-            }
-            href={`/users/${session?.user?.id ?? ""}?tab=bookmarked`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
-          >
-            <SvgIcon svgName="bookmark" />
-            bookmarked
-          </Link>
-
-          <Link
-            aria-current={
-              router.asPath === `/users/${session?.user?.id ?? ""}?tab=liked`
-            }
-            href={`/users/${session?.user?.id ?? ""}?tab=liked`}
-            className="flex items-center gap-2 rounded-md fill-slate-100 p-2 outline-none duration-300 hover:bg-black/20 aria-[current=true]:bg-black/20 dark:hover:bg-white/10 dark:aria-[current=true]:bg-white/10"
-          >
-            <SvgIcon svgName="heart" />
-            liked
-          </Link>
-        </>
-      )}
-
-      <hr className="my-2 border-neutral-500" />
-
-      {session && (
-        <>
-          <SignOutButton />
-          <DeleteAccountButton />
-        </>
-      )}
-
-      {!session && (
-        <>
-          <SignInWithGithub />
-          <SignInWithGoogle />
-        </>
-      )}
-    </nav>
+        <NewPostForm successHandler={closeMenuHandler} />
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -594,72 +404,20 @@ const ListOfUsersSkeleton = () => {
   return (
     <>
       {[...Array<unknown>(10)].map((_, i) => (
-        <div
-          key={i}
-          className="relative flex items-center gap-2 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-50deg] after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10"
-        >
-          <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
-          <div className="h-2 w-24 rounded-full bg-black/10 dark:bg-white/10" />
+        <div key={i} className="flex items-center gap-2 rounded-md p-2">
+          <Skeleton className="h-9 w-9 rounded-full" />
+          <Skeleton className="h-2 w-24 rounded-full" />
         </div>
       ))}
     </>
   );
 };
 
-type ListOfUserProps = {
-  users?: RouterOutputs["user"]["all"]["all"];
-};
-
-const ListOfUser = ({ users }: ListOfUserProps) => {
+const QuickSearchButton = () => {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
   const { data: session } = useSession();
 
-  if (!users) {
-    return <ListOfUsersSkeleton />;
-  }
-
-  if (users.length < 1) {
-    return (
-      <>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          className="mx-auto w-32 fill-black/50 dark:fill-white/50"
-        >
-          <path d="M12 2c3.032 0 5.5 2.467 5.5 5.5 0 1.458-.483 3.196-3.248 5.59 4.111 1.961 6.602 5.253 7.482 8.909h-19.486c.955-4.188 4.005-7.399 7.519-8.889-1.601-1.287-3.267-3.323-3.267-5.61 0-3.033 2.468-5.5 5.5-5.5zm0-2c-4.142 0-7.5 3.357-7.5 7.5 0 2.012.797 3.834 2.086 5.182-5.03 3.009-6.586 8.501-6.586 11.318h24c0-2.791-1.657-8.28-6.59-11.314 1.292-1.348 2.09-3.172 2.09-5.186 0-4.143-3.358-7.5-7.5-7.5z" />
-        </svg>
-        <p className="text-center text-xl text-black/50 dark:text-white/50">
-          no user
-        </p>
-      </>
-    );
-  }
-
-  return (
-    <>
-      {users.map((user) => (
-        <li key={user.id} className="flex items-center gap-2 p-2">
-          <Avatar src={user.image ?? ""} alt="image" />
-          <Link
-            href={`/users/${user.id}?tab=posts`}
-            className="truncate capitalize hover:underline"
-          >
-            {user.name}
-          </Link>
-          {user.followedBy.find(
-            (follower) => follower.followerId === session?.user.id
-          ) && (
-            <p className="ml-auto capitalize italic text-neutral-500">
-              • following
-            </p>
-          )}
-        </li>
-      ))}
-    </>
-  );
-};
-
-const QuickSearchContent = () => {
-  const [name, setName] = useState("");
   const allUsersInfiniteQuery = api.user.all.useInfiniteQuery(
     { name, limit: 10 },
     {
@@ -682,114 +440,25 @@ const QuickSearchContent = () => {
     }
   };
 
-  return (
-    <>
-      <div className="flex gap-5 fill-neutral-500">
-        <SvgIcon svgName="magnifier" />
-
-        <input
-          autoFocus
-          placeholder="Enter a name"
-          className="bg-transparent outline-none placeholder:text-neutral-500"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <kbd className="ml-auto mr-10 font-sans text-sm capitalize text-neutral-500 lg:mr-0">
-          <abbr className="no-underline" title="Escape">
-            esc
-          </abbr>
-        </kbd>
-      </div>
-
-      <hr className="my-5 border-black/20 dark:border-white/20" />
-
-      <ul
-        className="grow space-y-3 overflow-auto pr-5"
-        onScroll={scrollHandler}
-      >
-        <ListOfUser
-          users={allUsersInfiniteQuery.data?.pages
-            .map((page) => page.all)
-            .flatMap((z) => z)}
-        />
-        {allUsersInfiniteQuery.isFetchingNextPage && <ListOfUsersSkeleton />}
-      </ul>
-    </>
-  );
-};
-
-const useSearchModal = create<UseMenu>((set) => ({
-  isOpen: false,
-  open: () => set(() => ({ isOpen: true })),
-  close: () => set(() => ({ isOpen: false })),
-}));
-
-const QuickSearchButton = () => {
-  const isOpen = useSearchModal((state) => state.isOpen);
-  const close = useSearchModal((state) => state.close);
-  const open = useSearchModal((state) => state.open);
-  const [isClosing, setIsClosing] = useState(false);
-  const router = useRouter();
-
-  const triggerCloseAnimation = useCallback(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    setIsClosing(() => true);
-  }, [isOpen]);
-
-  const openQuickSearch = useCallback(() => {
-    open();
-  }, [open]);
-
-  const toggleQuickSearch = useCallback(() => {
-    if (isOpen) {
-      triggerCloseAnimation();
-      return;
-    }
-
-    openQuickSearch();
-  }, [isOpen, openQuickSearch, triggerCloseAnimation]);
-
-  const animationEndHandler = () => {
-    if (isClosing) {
-      setIsClosing(() => false);
-      close();
-    }
-  };
-
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const down = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.key === "k") {
         e.preventDefault();
-        toggleQuickSearch();
+        setOpen((open) => !open);
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [toggleQuickSearch]);
-
-  useEffect(() => {
-    const handleRouteChange = () => triggerCloseAnimation();
-
-    router.events.on("routeChangeStart", handleRouteChange);
-
-    return () => router.events.off("routeChangeStart", handleRouteChange);
-  }, [router.events, triggerCloseAnimation]);
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   return (
     <>
-      <button
-        onClick={openQuickSearch}
-        className="t-sm relative flex h-9 w-post items-center gap-2 rounded-md border border-black/10 bg-black/5 fill-slate-600 px-4 capitalize text-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:text-slate-300 dark:hover:bg-white/10"
+      <Button
+        onClick={() => setOpen(() => true)}
+        className="flex w-post items-center gap-2"
       >
-        <SvgIcon svgName="magnifier" />
+        <Search className="h-4 w-4" />
         quick search...
         <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
           <abbr className="no-underline" title="Control">
@@ -797,123 +466,176 @@ const QuickSearchButton = () => {
           </abbr>{" "}
           k
         </kbd>
-      </button>
+      </Button>
 
-      {isOpen && (
-        <Modal
-          backdropProps={{
-            isExpanded: !isClosing,
-            clickHandler: triggerCloseAnimation,
-            animationEndHandler: animationEndHandler,
-          }}
-        >
-          <QuickSearchContent />
-        </Modal>
-      )}
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput
+          placeholder="Enter a name"
+          value={name}
+          onValueChange={(e) => setName(e)}
+        />
+        <CommandList onScroll={scrollHandler}>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Users">
+            {(!allUsersInfiniteQuery.data ||
+              allUsersInfiniteQuery.isLoading) && <ListOfUsersSkeleton />}
+
+            {allUsersInfiniteQuery.data?.pages.map((page) =>
+              page.all.map((user) => (
+                <CommandItem key={user.id} className="flex gap-2">
+                  <Avatar size="sm">
+                    <AvatarImage src={user.image ?? ""} alt="profile picture" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <Link
+                    onClick={() => setOpen(() => false)}
+                    href={`/users/${user.id}?tab=posts`}
+                    className="truncate capitalize hover:underline"
+                  >
+                    {user.name}
+                  </Link>
+
+                  {user.followedBy.find(
+                    (follower) => follower.followerId === session?.user.id
+                  ) && (
+                    <p className="ml-auto capitalize italic text-neutral-500">
+                      • following
+                    </p>
+                  )}
+                </CommandItem>
+              ))
+            )}
+
+            {allUsersInfiniteQuery.isFetchingNextPage && (
+              <ListOfUsersSkeleton />
+            )}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
     </>
-  );
-};
-
-type UseMenu = {
-  isOpen: boolean;
-  open: () => void;
-  close: () => void;
-};
-
-const useMenu = create<UseMenu>((set) => ({
-  isOpen: false,
-  open: () => set(() => ({ isOpen: true })),
-  close: () => set(() => ({ isOpen: false })),
-}));
-
-const Menu = () => {
-  const [isClosing, setIsClosing] = useState(false);
-  const isOpen = useMenu((state) => state.isOpen);
-  const close = useMenu((state) => state.close);
-  const router = useRouter();
-
-  const animationEndHandler = () => {
-    if (isClosing) {
-      close();
-      setIsClosing(() => false);
-    }
-  };
-
-  const triggerClosingAnimation = useCallback(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    setIsClosing(() => true);
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleRouteChange = () => triggerClosingAnimation();
-
-    router.events.on("routeChangeStart", handleRouteChange);
-
-    return () => router.events.off("routeChangeStart", handleRouteChange);
-  }, [router.events, triggerClosingAnimation]);
-
-  if (!isOpen) {
-    return null;
-  }
-
-  return (
-    <Backdrop
-      clickHandler={triggerClosingAnimation}
-      animationEndHandler={animationEndHandler}
-      isExpanded={!isClosing}
-    >
-      <MenuContent />
-    </Backdrop>
-  );
-};
-
-const MenuButton = () => {
-  const openMenu = useMenu((state) => state.open);
-
-  return (
-    <button
-      title="Open Menu"
-      className="flex aspect-square items-center justify-center rounded-md border border-black/10 bg-black/5 fill-slate-600 duration-300 hover:bg-black/10 dark:border-white/10 dark:bg-white/5 dark:fill-slate-300 dark:hover:bg-white/10"
-      onClick={openMenu}
-    >
-      <SvgIcon svgName="menu" />
-    </button>
-  );
-};
-
-const SignInButton = () => {
-  const openMenu = useMenu((state) => state.open);
-
-  return (
-    <button
-      onClick={openMenu}
-      className="h-9 rounded-md border border-black/10 bg-brand-gradient bg-origin-border px-5 text-sm font-bold capitalize text-white opacity-75 backdrop-blur-sm duration-300 hover:opacity-100"
-    >
-      signin
-    </button>
   );
 };
 
 const AvatarMenu = () => {
   const { data: session } = useSession();
-  const openMenu = useMenu((state) => state.open);
+  const { theme, setTheme } = useTheme();
+  const { removeUserHandler } = useRemoveUser();
+  const router = useRouter();
+
+  const triggerSearchMenuOpen = () => {
+    const event = new KeyboardEvent("keydown", {
+      key: "k",
+      ctrlKey: true,
+    });
+    document.dispatchEvent(event);
+  };
 
   return (
-    <button
-      className="flex aspect-square w-9 items-center justify-center"
-      title="Open Menu"
-      onClick={openMenu}
-    >
-      <Avatar
-        src={session?.user?.image ?? ""}
-        height={100}
-        width={100}
-        alt="user profile picture"
-      />
-    </button>
+    <DropdownMenu>
+      {session && (
+        <DropdownMenuTrigger asChild>
+          <Avatar role="button">
+            <AvatarImage
+              tabIndex={0}
+              src={session?.user.image ?? ""}
+              title="Open Menu"
+              alt="user profile picture"
+            />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+      )}
+
+      {!session && (
+        <DropdownMenuTrigger>
+          <Button asChild className="hidden lg:block" variant="action">
+            <span>sign in</span>
+          </Button>
+
+          <Button asChild size="square" className="lg:hidden" title="open menu">
+            <Menu className="p-2" />
+          </Button>
+        </DropdownMenuTrigger>
+      )}
+
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => void router.push("/")}>
+            <Home className="mr-2 h-4 w-4" />
+            <span>Home</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem onClick={triggerSearchMenuOpen}>
+            <Search className="mr-2 h-4 w-4" />
+            <span>Search</span>
+          </DropdownMenuItem>
+
+          {session && (
+            <DropdownMenuItem
+              onClick={() =>
+                void router.push(`/users/${session.user.id}?tab=posts`)
+              }
+            >
+              <User className="mr-2 h-4 w-4" />
+              <span>My account</span>
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <PaletteIcon className="mr-2 h-4 w-4" />
+              <span>theme</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+                  <DropdownMenuRadioItem value="dark">
+                    Dark
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="light">
+                    Light
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="system">
+                    System
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+        </DropdownMenuGroup>
+
+        <DropdownMenuSeparator />
+
+        {session ? (
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Danger Zone</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => void signOutHandler()}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>sign out</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="focus:bg-destructive/20"
+              onClick={removeUserHandler}
+            >
+              <Trash className="mr-2 h-4 w-4 stroke-destructive" />
+              <span className="text-destructive">Delete account</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        ) : (
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Sign in</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => void signInWithGithubHandler()}>
+              <Github className="mr-2 h-4 w-4" />
+              <span>GitHub</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => void signInWithGoogleHandler()}>
+              <Globe className="mr-2 h-4 w-4" />
+              <span>Google</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
@@ -935,8 +657,6 @@ const Title = () => {
 };
 
 const DesktopHeader = () => {
-  const { data: session } = useSession();
-
   return (
     <header className="sticky top-0 z-10 hidden p-5 after:absolute after:inset-0 after:-z-10 after:bg-white/50 after:backdrop-blur-md dark:after:bg-black/50 lg:block">
       <div className="mx-auto grid max-w-5xl grid-cols-[1fr_350px_1fr] items-center">
@@ -946,7 +666,7 @@ const DesktopHeader = () => {
 
         <div className="ml-auto flex items-center gap-2">
           <NewPostButton />
-          {session ? <AvatarMenu /> : <SignInButton />}
+          <AvatarMenu />
         </div>
       </div>
     </header>
@@ -956,122 +676,9 @@ const DesktopHeader = () => {
 const MobileHeader = () => {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-30 grid grid-cols-[1fr_auto_1fr] justify-items-end rounded-t-3xl bg-white/50 p-5 backdrop-blur-md dark:bg-black/50 lg:hidden">
-      <NewPostButton className="col-start-2 bg-brand-gradient fill-white opacity-75 hover:opacity-100" />
-      <MenuButton />
+      <NewPostButton isMobile />
+      <AvatarMenu />
     </div>
-  );
-};
-
-const Background = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 1600 1080"
-      className="fixed inset-0 -z-50 h-full w-full"
-      preserveAspectRatio="none"
-    >
-      <defs>
-        <filter
-          id="noise"
-          x="0"
-          y="0"
-          width="100%"
-          height="100%"
-          filterUnits="objectBoundingBox"
-          primitiveUnits="userSpaceOnUse"
-          colorInterpolationFilters="sRGB"
-        >
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.6"
-            numOctaves="4"
-            seed="15"
-            stitchTiles="stitch"
-            x="0%"
-            y="0%"
-            width="100%"
-            height="100%"
-            result="turbulence"
-          ></feTurbulence>
-          <feSpecularLighting
-            surfaceScale="15"
-            specularConstant="1"
-            specularExponent="1"
-            x="0%"
-            y="0%"
-            width="100%"
-            height="100%"
-            in="turbulence"
-            result="specularLighting"
-          >
-            <feDistantLight azimuth="3" elevation="100"></feDistantLight>
-          </feSpecularLighting>
-        </filter>
-        <filter
-          id="blur"
-          x="0"
-          y="0"
-          width="100%"
-          height="100%"
-          filterUnits="userSpaceOnUse"
-          colorInterpolationFilters="sRGB"
-        >
-          <feFlood floodOpacity="0.1" result="BackgroundImageFix" />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="BackgroundImageFix"
-            result="shape"
-          />
-          <feGaussianBlur
-            stdDeviation="200"
-            result="effect1_foregroundBlur_49_400"
-          />
-        </filter>
-      </defs>
-
-      <g filter="url(#blur)">
-        <ellipse cx="1000" cy="300" rx="300" ry="300" fill="#40BAFF" />
-        <ellipse cx="700" cy="400" rx="300" ry="300" fill="#FFA4FB" />
-        <ellipse cx="500" cy="600" rx="200" ry="200" fill="#AD7FF9" />
-      </g>
-
-      <rect
-        width="100%"
-        height="100%"
-        fill="transparent"
-        filter="url(#noise)"
-        className="opacity-50 bg-blend-overlay dark:opacity-5"
-      ></rect>
-
-      <pattern
-        id="pattern-circles"
-        x="0"
-        y="0"
-        width="10"
-        height="10"
-        patternUnits="userSpaceOnUse"
-        patternContentUnits="userSpaceOnUse"
-      >
-        <circle
-          id="pattern-circle"
-          cx="5"
-          cy="5"
-          r="1"
-          className="fill-slate-300 dark:fill-black/10"
-        ></circle>
-      </pattern>
-
-      <rect
-        id="rect"
-        x="0"
-        y="0"
-        width="100%"
-        height="100%"
-        fill="url(#pattern-circles)"
-        opacity="0.5"
-      ></rect>
-    </svg>
   );
 };
 
@@ -1083,8 +690,6 @@ const Layout = ({ children }: PropsWithChildren) => {
 
       {children}
 
-      <Toaster />
-      <Menu />
       <Background />
     </>
   );

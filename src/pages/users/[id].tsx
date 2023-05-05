@@ -10,9 +10,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import type { PropsWithChildren } from "react";
 import SuperJSON from "superjson";
-import { Avatar } from "~/components/Avatar";
 import { Timeline, TimelineContext } from "~/components/Timeline";
-import { useToaster } from "~/components/Toaster";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
+import { useToast } from "~/components/ui/use-toast";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
@@ -20,7 +21,7 @@ import type { RouterOutputs } from "~/utils/api";
 
 const FollowButton = ({ user }: UserProps) => {
   const { data: session } = useSession();
-  const addToast = useToaster((state) => state.addToast);
+  const { toast } = useToast();
   const utils = api.useContext();
 
   const isFollowing = user.followedBy.find(
@@ -83,7 +84,9 @@ const FollowButton = ({ user }: UserProps) => {
 
   const clickHandler = () => {
     if (!session) {
-      addToast("Please sign in");
+      toast({
+        description: "Please Sign In",
+      });
       return;
     }
 
@@ -100,12 +103,9 @@ const FollowButton = ({ user }: UserProps) => {
   }
 
   return (
-    <button
-      onClick={clickHandler}
-      className="ml-auto rounded-md border border-white/10 bg-brand-gradient bg-origin-border px-10 py-1 font-medium capitalize text-white opacity-75 duration-300 hover:opacity-100"
-    >
+    <Button onClick={clickHandler} variant="action" className="ml-auto px-10">
       {isFollowing ? "unfollow" : "follow"}
-    </button>
+    </Button>
   );
 };
 
@@ -116,13 +116,13 @@ type UserProps = {
 const UserDetails = ({ user }: UserProps) => {
   return (
     <div className="flex items-center">
-      <Avatar
-        src={user.image ?? ""}
-        height={56}
-        width={56}
-        priority
-        alt={`${user.name ?? ""}'s profile picture`}
-      />
+      <Avatar size="lg">
+        <AvatarImage
+          src={user.image ?? ""}
+          alt={`${user.name ?? ""}'s profile picture`}
+        />
+        <AvatarFallback>CN</AvatarFallback>
+      </Avatar>
 
       <h2 className="ml-2 truncate font-medium capitalize">{user.name}</h2>
 
@@ -136,30 +136,30 @@ const Tabs = () => {
   const userId = router.query.id as string;
   const { data: session } = useSession();
   return (
-    <nav className="relative mt-7 flex text-center capitalize text-neutral-600 dark:text-neutral-400">
-      <Link
+    <nav className="relative mt-7 flex gap-1 capitalize text-neutral-600 dark:text-neutral-400">
+      <Button
+        asChild
         aria-current={router.query.tab === "posts"}
-        href={`/users/${userId}?tab=posts`}
-        className="flex-1 rounded-md border-black/10 py-1 transition-colors duration-300 aria-[current=true]:border aria-[current=true]:bg-black/5 aria-[current=true]:text-slate-900 dark:border-white/10 aria-[current=true]:dark:bg-white/5 dark:aria-[current=true]:text-slate-100"
+        className="flex-1 aria-[current=false]:border-none aria-[current=false]:bg-transparent"
       >
-        posts
-      </Link>
+        <Link href={`/users/${userId}?tab=posts`}>posts</Link>
+      </Button>
       {session?.user.id === userId && (
-        <Link
+        <Button
+          asChild
           aria-current={router.query.tab === "bookmarked"}
-          href={`/users/${userId}?tab=bookmarked`}
-          className="flex-1 rounded-md border-black/10 py-1 transition-colors duration-300 aria-[current=true]:border aria-[current=true]:bg-black/5 aria-[current=true]:text-slate-900 dark:border-white/10 aria-[current=true]:dark:bg-white/5 dark:aria-[current=true]:text-slate-100"
+          className="flex-1 aria-[current=false]:border-none aria-[current=false]:bg-transparent"
         >
-          bookmarked
-        </Link>
+          <Link href={`/users/${userId}?tab=bookmarked`}>bookmarked</Link>
+        </Button>
       )}
-      <Link
+      <Button
+        asChild
+        className="flex-1 aria-[current=false]:border-none aria-[current=false]:bg-transparent"
         aria-current={router.query.tab === "liked"}
-        href={`/users/${userId}?tab=liked`}
-        className="flex-1 rounded-md border-black/10 py-1 transition-colors duration-300 aria-[current=true]:border aria-[current=true]:bg-black/5 aria-[current=true]:text-slate-900 dark:border-white/10 aria-[current=true]:dark:bg-white/5 dark:aria-[current=true]:text-slate-100"
       >
-        liked
-      </Link>
+        <Link href={`/users/${userId}?tab=liked`}>liked</Link>
+      </Button>
     </nav>
   );
 };

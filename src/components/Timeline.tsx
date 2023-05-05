@@ -8,16 +8,31 @@ import {
 import type { UIEvent, PropsWithChildren, FormEvent, ChangeEvent } from "react";
 import { api } from "~/utils/api";
 import type { RouterInputs, RouterOutputs } from "~/utils/api";
-import { Avatar } from "./Avatar";
 import Link from "next/link";
-import { SvgIcon } from "./SvgIcon";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { z, ZodError } from "zod";
-import { BottomSheet } from "./BottomSheet";
 import { v4 as uuidV4 } from "uuid";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { useToaster } from "./Toaster";
+import { Button } from "./ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from "./ui/dialog";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Bookmark,
+  Heart,
+  Loader2,
+  MessageSquare,
+} from "lucide-react";
+import { useToast } from "./ui/use-toast";
+import { Skeleton } from "~/\u0017\u0017components/ui/skeleton";
 
 export const TimelineContext = createContext<
   RouterInputs["post"]["all"] | undefined
@@ -35,19 +50,16 @@ const useTimeline = () => {
 
 const SkeletonPost = () => {
   return (
-    <div className="relative flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 bg-white/20 p-2 shadow-2xl backdrop-blur-md after:absolute after:bottom-0 after:left-0 after:top-0 after:w-32 after:rotate-[20deg] after:scale-150 after:animate-post-skeleton after:bg-black/10 after:blur-xl dark:border-white/10 dark:bg-black/20 dark:after:bg-white/10">
+    <div className="flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 bg-white/10 p-2 shadow-2xl backdrop-blur-md">
       <header className="grid grid-cols-[auto_1fr] gap-1 p-1">
-        <div className="row-span-2 my-auto aspect-square w-7 rounded-full bg-black/10 dark:bg-white/10" />
-        <div className="h-3 w-20 self-end rounded-full bg-black/10 dark:bg-white/10" />
-        <div className="h-2 w-14 rounded-full bg-black/10 dark:bg-white/10" />
+        <Skeleton className=" row-span-2 my-auto aspect-square w-7 rounded-full" />
+        <Skeleton className="h-3 w-20 self-end rounded-full" />
+        <Skeleton className="h-2 w-14 rounded-full" />
       </header>
 
       <div className="mb-3 flex items-center justify-center gap-3">
         {[...Array<unknown>(3)].map((_, i) => (
-          <div
-            key={i}
-            className="aspect-square w-5 rounded-full bg-black/10 dark:bg-white/10"
-          />
+          <Skeleton className="aspect-square w-5  rounded-full" key={i} />
         ))}
       </div>
     </div>
@@ -66,13 +78,13 @@ const ListOfPostSkeleton = () => {
 
 const SkeletonComment = () => {
   return (
-    <li className="relative grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-30deg] after:animate-comment-skeleton after:bg-black/10 after:blur-xl dark:after:bg-white/10">
-      <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
-      <div className="h-3 w-28 rounded-md bg-black/10 dark:bg-white/10" />
+    <li className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 overflow-hidden rounded-md p-2">
+      <Skeleton className="aspect-square w-9 rounded-full " />
+      <Skeleton className="h-3 w-28 rounded-md " />
       <div className="col-span-full space-y-1">
-        <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
-        <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
-        <div className="h-3 w-1/2 rounded-md bg-black/10 dark:bg-white/10" />
+        <Skeleton className="h-3 w-full rounded-md " />
+        <Skeleton className="h-3 w-full rounded-md " />
+        <Skeleton className="h-3 w-1/2 rounded-md " />
       </div>
     </li>
   );
@@ -90,9 +102,9 @@ const ListOfCommentSkeletons = () => {
 
 const LikeButton = ({ post }: PostProps) => {
   const { data: session } = useSession();
-  const addToast = useToaster((state) => state.addToast);
   const utils = api.useContext();
   const timeline = useTimeline();
+  const { toast } = useToast();
   const hasLiked = post.likes.some(
     (like) => like.postId === post.id && like.userId === session?.user.id
   );
@@ -208,7 +220,9 @@ const LikeButton = ({ post }: PostProps) => {
 
   const clickHandler = () => {
     if (!session) {
-      addToast("Please sign in");
+      toast({
+        description: "Please Sign In",
+      });
       return;
     }
     if (hasLiked) {
@@ -225,10 +239,10 @@ const LikeButton = ({ post }: PostProps) => {
       title={hasLiked ? "unlike this post" : "like this post"}
       name={hasLiked ? "unlike this post" : "like this post"}
       data-number-of-likes={post.likes.length}
-      className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-likes)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
+      className="group relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-likes)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
       onClick={clickHandler}
     >
-      <SvgIcon svgName={hasLiked ? "heartFilled" : "heart"} />
+      <Heart className="h-4 w-4 group-aria-[pressed=true]:fill-destructive group-aria-[pressed=true]:stroke-destructive" />
     </button>
   );
 };
@@ -236,7 +250,7 @@ const LikeButton = ({ post }: PostProps) => {
 const BookmarkButton = ({ post }: PostProps) => {
   const { data: session } = useSession();
   const utils = api.useContext();
-  const addToast = useToaster((state) => state.addToast);
+  const { toast } = useToast();
   const timeline = useTimeline();
   const hasBookmarked = post.bookmarks.some(
     (like) => like.postId === post.id && like.userId === session?.user.id
@@ -352,7 +366,9 @@ const BookmarkButton = ({ post }: PostProps) => {
 
   const clickHandler = () => {
     if (!session) {
-      addToast("Please sign in");
+      toast({
+        description: "Please Sign In",
+      });
       return;
     }
     if (hasBookmarked) {
@@ -369,10 +385,10 @@ const BookmarkButton = ({ post }: PostProps) => {
       title={hasBookmarked ? "unbookmark this post" : "bookmark this post"}
       name={hasBookmarked ? "unbookmark this post" : "bookmark this post"}
       data-number-of-bookmarked={post.bookmarks.length}
-      className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-bookmarked)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-slate-600 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100 dark:aria-[pressed=true]:fill-slate-400"
+      className="group relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-bookmarked)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-slate-600 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100 dark:aria-[pressed=true]:fill-slate-400"
       onClick={clickHandler}
     >
-      <SvgIcon svgName={hasBookmarked ? "bookmarkFilled" : "bookmark"} />
+      <Bookmark className="h-4 w-4 group-aria-[pressed=true]:fill-current group-aria-[pressed=true]:stroke-current" />
     </button>
   );
 };
@@ -382,7 +398,7 @@ const NewCommentForm = ({ post }: PostProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const utils = api.useContext();
   const { data: session } = useSession();
-  const addToast = useToaster((state) => state.addToast);
+  const { toast } = useToast();
 
   const addCommentSchema = z.object({
     content: z
@@ -488,7 +504,10 @@ const NewCommentForm = ({ post }: PostProps) => {
   const submitHandler = (e: FormEvent) => {
     e.preventDefault();
     if (!session) {
-      return addToast("Please sign in");
+      toast({
+        description: "Please Sign In",
+      });
+      return;
     }
 
     try {
@@ -503,7 +522,7 @@ const NewCommentForm = ({ post }: PostProps) => {
 
   return (
     <form
-      className="grid grid-cols-[1fr_auto] items-center gap-x-5"
+      className="grid w-full grid-cols-[1fr_auto] items-center gap-x-5"
       onSubmit={submitHandler}
     >
       <input
@@ -514,10 +533,10 @@ const NewCommentForm = ({ post }: PostProps) => {
         onChange={changeHandler}
         value={comment}
       />
-      <button className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center gap-x-2 rounded-md border border-black/10 bg-black/5 fill-slate-600 px-2 py-2 text-sm capitalize duration-300 hover:bg-black/10 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-        {isLoading && <LoadingSpinner />}
-        <span className="col-start-2">upload</span>
-      </button>
+      <Button className="mt-auto flex items-center">
+        <span>upload</span>
+        {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+      </Button>
       {errorComment && (
         <p className="text-sm text-red-500 first-letter:capitalize">
           {errorComment}
@@ -563,10 +582,13 @@ const Comment = ({ comment }: CommentProps) => {
       className="flex max-w-full flex-wrap items-center gap-2 p-2"
       key={comment.id}
     >
-      <Avatar
-        src={comment.user.image ?? ""}
-        alt={`${comment.user.image ?? ""} profile picture`}
-      />
+      <Avatar>
+        <AvatarFallback>CN</AvatarFallback>
+        <AvatarImage
+          src={comment.user.image ?? ""}
+          alt={`${comment.user.name ?? ""}'s avatar`}
+        />
+      </Avatar>
       <Link
         href={`/users/${comment.user.id}?tab=posts`}
         className="text-lg hover:underline"
@@ -652,69 +674,51 @@ const ListOfComments = ({ post }: PostProps) => {
 };
 
 const CommentButton = ({ post }: PostProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-
-  const showComments = () => {
-    setIsOpen(() => true);
-  };
-
-  const triggerCloseAnimation = () => {
-    setIsClosing(() => true);
-  };
-
-  const animationEndHandler = () => {
-    if (isClosing) {
-      setIsClosing(() => false);
-      setIsOpen(() => false);
-    }
-  };
-
   return (
-    <>
-      <button
-        title="view comments"
-        name="view comments"
-        data-number-of-comments={post._count.comments}
-        className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-comments)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
-        onClick={showComments}
-      >
-        <SvgIcon svgName="speech" />
-      </button>
-
-      {isOpen && (
-        <BottomSheet
-          backdropProps={{
-            isExpanded: !isClosing,
-            animationEndHandler: animationEndHandler,
-            clickHandler: triggerCloseAnimation,
-          }}
+    <Dialog>
+      <DialogTrigger asChild>
+        <button
+          title="view comments"
+          name="view comments"
+          data-number-of-comments={post._count.comments}
+          className="relative aspect-square rounded-full border border-black/20 bg-white/50 p-2 opacity-0 backdrop-blur-md duration-300 after:absolute after:-right-1 after:-top-1 after:flex after:aspect-square after:w-4 after:items-center after:justify-center after:rounded-full after:border after:border-white/20 after:bg-white after:text-[0.6rem] after:backdrop-blur-md after:content-[attr(data-number-of-comments)] hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 aria-[pressed=true]:fill-red-500 dark:border-white/20 dark:bg-black/50 dark:after:bg-black dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-300 dark:aria-[pressed=true]:fill-red-500"
         >
-          <header className="flex flex-wrap items-center gap-5 p-2">
-            <Avatar
-              alt={`${post.user.name ?? ""} avatar`}
+          <MessageSquare className="h-4 w-4" />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="bottom-0 flex h-4/5 w-full flex-col sm:w-4/5 sm:max-w-full">
+        <DialogHeader className="flex flex-row flex-wrap items-center gap-5 p-2">
+          <Avatar>
+            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage
               src={post.user.image ?? ""}
+              alt={`${post.user.name ?? ""}'s avatar`}
             />
-            <Link
-              href={`/users/${post.user.name ?? ""}`}
-              className="text-2xl capitalize hover:underline"
-            >
-              {post.user.name}
-            </Link>
+          </Avatar>
 
-            <p className="line-clamp-5 basis-full">{post.description}</p>
-          </header>
+          <Link
+            href={`/users/${post.user.name ?? ""}`}
+            className="text-2xl capitalize hover:underline"
+          >
+            {post.user.name}
+          </Link>
 
-          <hr className="my-5 border-black/20 dark:border-white/20" />
+          <DialogDescription className="basis-full">
+            {post.description}
+          </DialogDescription>
+        </DialogHeader>
 
-          <ListOfComments post={post} />
+        <hr className="border-black/20 dark:border-white/20" />
 
-          <hr className="my-5 border-black/20 dark:border-white/20" />
+        <ListOfComments post={post} />
 
+        <hr className="border-black/20 dark:border-white/20" />
+
+        <DialogFooter>
           <NewCommentForm post={post} />
-        </BottomSheet>
-      )}
-    </>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -796,13 +800,13 @@ const Post = ({ post }: PostProps) => {
     <div className="group relative isolate flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 p-2 shadow-xl duration-300 hover:shadow-2xl dark:border-white/10">
       <header className="flex items-center justify-between">
         <div className="grid w-32 grid-cols-[auto_1fr] gap-x-1 rounded-full border border-black/10 bg-white/50 p-1 backdrop-blur-md dark:bg-black/50">
-          <Avatar
-            alt="avatar"
-            width={28}
-            height={28}
-            src={post.user.image ?? ""}
-            className="row-span-2 w-7"
-          />
+          <Avatar className="row-span-2" size="sm">
+            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage
+              src={post.user.image ?? ""}
+              alt={`${post.user.name ?? ""}'s avatar`}
+            />
+          </Avatar>
           <Link
             href={`/users/${post.userId}?tab=posts`}
             className="self-end truncate text-[0.7rem] font-medium capitalize leading-3 hover:underline"
@@ -829,7 +833,7 @@ const Post = ({ post }: PostProps) => {
             className="pointer-events-auto aspect-square rounded-full border border-black/20 bg-white/50 fill-neutral-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:fill-neutral-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
             onClick={viewPrevImage}
           >
-            <SvgIcon svgName="leftArrow" />
+            <ArrowLeft className="h-4 w-4" />
           </button>
           <button
             title="view next image"
@@ -837,7 +841,7 @@ const Post = ({ post }: PostProps) => {
             className="pointer-events-auto aspect-square rounded-full border border-black/20 bg-white/50 fill-neutral-600 p-2 opacity-0 backdrop-blur-md duration-300 hover:bg-white/80 hover:fill-slate-900 focus-visible:bg-white/80 focus-visible:fill-slate-900 focus-visible:opacity-100 group-hover:opacity-100 dark:border-white/20 dark:bg-black/50 dark:fill-neutral-400 dark:hover:bg-black/80 dark:hover:fill-slate-100 dark:focus-visible:bg-black/80 dark:focus-visible:fill-slate-100"
             onClick={viewNextImage}
           >
-            <SvgIcon svgName="rightArrow" />
+            <ArrowRight className="h-4 w-4" />
           </button>
         </nav>
       )}
