@@ -8,11 +8,9 @@ import type { ChangeEvent, FormEvent, PropsWithChildren, UIEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
 import { api } from "~/utils/api";
-import type { RouterOutputs } from "~/utils/api";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { SvgIcon } from "./SvgIcon";
 import { Toaster, useToaster } from "./Toaster";
-import { create } from "zustand";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -56,6 +54,14 @@ import {
   signOutHandler,
   useRemoveUser,
 } from "~/utils/auth";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "./ui/command";
 
 export const newPostSchema = z.object({
   location: z
@@ -407,63 +413,11 @@ const ListOfUsersSkeleton = () => {
   );
 };
 
-type ListOfUserProps = {
-  users?: RouterOutputs["user"]["all"]["all"];
-};
-
-const ListOfUser = ({ users }: ListOfUserProps) => {
+const QuickSearchButton = () => {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
   const { data: session } = useSession();
 
-  if (!users) {
-    return <ListOfUsersSkeleton />;
-  }
-
-  if (users.length < 1) {
-    return (
-      <>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          className="mx-auto w-32 fill-black/50 dark:fill-white/50"
-        >
-          <path d="M12 2c3.032 0 5.5 2.467 5.5 5.5 0 1.458-.483 3.196-3.248 5.59 4.111 1.961 6.602 5.253 7.482 8.909h-19.486c.955-4.188 4.005-7.399 7.519-8.889-1.601-1.287-3.267-3.323-3.267-5.61 0-3.033 2.468-5.5 5.5-5.5zm0-2c-4.142 0-7.5 3.357-7.5 7.5 0 2.012.797 3.834 2.086 5.182-5.03 3.009-6.586 8.501-6.586 11.318h24c0-2.791-1.657-8.28-6.59-11.314 1.292-1.348 2.09-3.172 2.09-5.186 0-4.143-3.358-7.5-7.5-7.5z" />
-        </svg>
-        <p className="text-center text-xl text-black/50 dark:text-white/50">
-          no user
-        </p>
-      </>
-    );
-  }
-
-  return (
-    <>
-      {users.map((user) => (
-        <li key={user.id} className="flex items-center gap-2 p-2">
-          <Avatar>
-            <AvatarImage src={user.image ?? ""} alt="profile picture" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-          <Link
-            href={`/users/${user.id}?tab=posts`}
-            className="truncate capitalize hover:underline"
-          >
-            {user.name}
-          </Link>
-          {user.followedBy.find(
-            (follower) => follower.followerId === session?.user.id
-          ) && (
-            <p className="ml-auto capitalize italic text-neutral-500">
-              • following
-            </p>
-          )}
-        </li>
-      ))}
-    </>
-  );
-};
-
-const QuickSearchContent = () => {
-  const [name, setName] = useState("");
   const allUsersInfiniteQuery = api.user.all.useInfiniteQuery(
     { name, limit: 10 },
     {
@@ -486,89 +440,24 @@ const QuickSearchContent = () => {
     }
   };
 
-  return (
-    <>
-      <div className="flex gap-5 fill-neutral-500">
-        <SvgIcon svgName="magnifier" />
-
-        <input
-          autoFocus
-          placeholder="Enter a name"
-          className="bg-transparent outline-none placeholder:text-neutral-500"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <kbd className="ml-auto mr-10 font-sans text-sm capitalize text-neutral-500 lg:mr-0">
-          <abbr className="no-underline" title="Escape">
-            esc
-          </abbr>
-        </kbd>
-      </div>
-
-      <hr className="my-5 border-black/20 dark:border-white/20" />
-
-      <ul
-        className="grow space-y-3 overflow-auto pr-5"
-        onScroll={scrollHandler}
-      >
-        <ListOfUser
-          users={allUsersInfiniteQuery.data?.pages
-            .map((page) => page.all)
-            .flatMap((z) => z)}
-        />
-        {allUsersInfiniteQuery.isFetchingNextPage && <ListOfUsersSkeleton />}
-      </ul>
-    </>
-  );
-};
-
-const useSearchModal = create<UseMenu>((set) => ({
-  isOpen: false,
-  open: () => set(() => ({ isOpen: true })),
-  close: () => set(() => ({ isOpen: false })),
-}));
-
-const QuickSearchButton = () => {
-  const isOpen = useSearchModal((state) => state.isOpen);
-  const close = useSearchModal((state) => state.close);
-  const open = useSearchModal((state) => state.open);
-  const router = useRouter();
-
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const down = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.key === "k") {
         e.preventDefault();
-        close();
+        setOpen((open) => !open);
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [close]);
-
-  useEffect(() => {
-    const handleRouteChange = () => close();
-
-    router.events.on("routeChangeStart", handleRouteChange);
-
-    return () => router.events.off("routeChangeStart", handleRouteChange);
-  }, [router.events, close]);
-
-  const onOpenChange = () => {
-    if (isOpen) {
-      return close();
-    }
-
-    open();
-  };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   return (
     <>
-      <Button onClick={open} className="flex w-post items-center gap-2">
+      <Button
+        onClick={() => setOpen(() => true)}
+        className="flex w-post items-center gap-2"
+      >
         <SvgIcon svgName="magnifier" />
         quick search...
         <kbd className="ml-auto font-sans text-sm capitalize text-slate-400">
@@ -579,21 +468,52 @@ const QuickSearchButton = () => {
         </kbd>
       </Button>
 
-      {isOpen && (
-        <Dialog open={isOpen} onOpenChange={onOpenChange}>
-          <DialogContent>
-            <QuickSearchContent />
-          </DialogContent>
-        </Dialog>
-      )}
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandInput
+          placeholder="Enter a name"
+          value={name}
+          onValueChange={(e) => setName(e)}
+        />
+        <CommandList onScroll={scrollHandler}>
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Users">
+            {(!allUsersInfiniteQuery.data ||
+              allUsersInfiniteQuery.isLoading) && <ListOfUsersSkeleton />}
+
+            {allUsersInfiniteQuery.data?.pages.map((page) =>
+              page.all.map((user) => (
+                <CommandItem key={user.id} className="flex gap-2">
+                  <Avatar size="sm">
+                    <AvatarImage src={user.image ?? ""} alt="profile picture" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <Link
+                    onClick={() => setOpen(() => false)}
+                    href={`/users/${user.id}?tab=posts`}
+                    className="truncate capitalize hover:underline"
+                  >
+                    {user.name}
+                  </Link>
+
+                  {user.followedBy.find(
+                    (follower) => follower.followerId === session?.user.id
+                  ) && (
+                    <p className="ml-auto capitalize italic text-neutral-500">
+                      • following
+                    </p>
+                  )}
+                </CommandItem>
+              ))
+            )}
+
+            {allUsersInfiniteQuery.isFetchingNextPage && (
+              <ListOfUsersSkeleton />
+            )}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
     </>
   );
-};
-
-type UseMenu = {
-  isOpen: boolean;
-  open: () => void;
-  close: () => void;
 };
 
 const AvatarMenu = () => {
@@ -601,7 +521,14 @@ const AvatarMenu = () => {
   const { theme, setTheme } = useTheme();
   const { removeUserHandler } = useRemoveUser();
   const router = useRouter();
-  const openSearchModal = useSearchModal((state) => state.open);
+
+  const triggerSearchMenuOpen = () => {
+    const event = new KeyboardEvent("keydown", {
+      key: "k",
+      ctrlKey: true,
+    });
+    document.dispatchEvent(event);
+  };
 
   return (
     <DropdownMenu>
@@ -639,7 +566,7 @@ const AvatarMenu = () => {
             <span>Home</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={openSearchModal}>
+          <DropdownMenuItem onClick={triggerSearchMenuOpen}>
             <Search className="mr-2 h-4 w-4" />
             <span>Search</span>
           </DropdownMenuItem>
