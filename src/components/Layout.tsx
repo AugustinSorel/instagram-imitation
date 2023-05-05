@@ -288,7 +288,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
                   name="remove-image"
                   title="remove image"
                   type="button"
-                  className="absolute right-1 top-0 flex w-6 -translate-y-1/2 translate-x-1/2 rounded-full"
+                  className="absolute right-1 top-0 flex w-6 h-6 -translate-y-1/2 translate-x-1/2 rounded-full"
                   onClick={() => removeImage(image.id)}
                   size="square"
                 >
