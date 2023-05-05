@@ -32,6 +32,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { useToast } from "./ui/use-toast";
+import { Skeleton } from "~/\u0017\u0017components/ui/skeleton";
 
 export const TimelineContext = createContext<
   RouterInputs["post"]["all"] | undefined
@@ -49,19 +50,16 @@ const useTimeline = () => {
 
 const SkeletonPost = () => {
   return (
-    <div className="after:animate-post-skeleton relative flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 bg-white/20 p-2 shadow-2xl backdrop-blur-md after:absolute after:bottom-0 after:left-0 after:top-0 after:w-32 after:rotate-[20deg] after:scale-150 after:bg-black/10 after:blur-xl dark:border-white/10 dark:bg-black/20 dark:after:bg-white/10">
+    <div className="flex h-post w-post flex-col justify-between overflow-hidden rounded-3xl border border-black/20 bg-white/10 p-2 shadow-2xl backdrop-blur-md">
       <header className="grid grid-cols-[auto_1fr] gap-1 p-1">
-        <div className="row-span-2 my-auto aspect-square w-7 rounded-full bg-black/10 dark:bg-white/10" />
-        <div className="h-3 w-20 self-end rounded-full bg-black/10 dark:bg-white/10" />
-        <div className="h-2 w-14 rounded-full bg-black/10 dark:bg-white/10" />
+        <Skeleton className=" row-span-2 my-auto aspect-square w-7 rounded-full" />
+        <Skeleton className="h-3 w-20 self-end rounded-full" />
+        <Skeleton className="h-2 w-14 rounded-full" />
       </header>
 
       <div className="mb-3 flex items-center justify-center gap-3">
         {[...Array<unknown>(3)].map((_, i) => (
-          <div
-            key={i}
-            className="aspect-square w-5 rounded-full bg-black/10 dark:bg-white/10"
-          />
+          <Skeleton className="aspect-square w-5  rounded-full" key={i} />
         ))}
       </div>
     </div>
@@ -80,13 +78,13 @@ const ListOfPostSkeleton = () => {
 
 const SkeletonComment = () => {
   return (
-    <li className="after:animate-comment-skeleton relative grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-30deg] after:bg-black/10 after:blur-xl dark:after:bg-white/10">
-      <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
-      <div className="h-3 w-28 rounded-md bg-black/10 dark:bg-white/10" />
+    <li className="grid grid-cols-[auto_auto_auto_1fr] items-center gap-2 overflow-hidden rounded-md p-2">
+      <Skeleton className="aspect-square w-9 rounded-full " />
+      <Skeleton className="h-3 w-28 rounded-md " />
       <div className="col-span-full space-y-1">
-        <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
-        <div className="h-3 w-full rounded-md bg-black/10 dark:bg-white/10" />
-        <div className="h-3 w-1/2 rounded-md bg-black/10 dark:bg-white/10" />
+        <Skeleton className="h-3 w-full rounded-md " />
+        <Skeleton className="h-3 w-full rounded-md " />
+        <Skeleton className="h-3 w-1/2 rounded-md " />
       </div>
     </li>
   );

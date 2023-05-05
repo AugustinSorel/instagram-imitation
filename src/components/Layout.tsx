@@ -63,6 +63,7 @@ import {
   CommandList,
 } from "./ui/command";
 import { useToast } from "./ui/use-toast";
+import { Skeleton } from "~/\u0017\u0017components/ui/skeleton";
 
 export const newPostSchema = z.object({
   location: z
@@ -406,12 +407,9 @@ const ListOfUsersSkeleton = () => {
   return (
     <>
       {[...Array<unknown>(10)].map((_, i) => (
-        <div
-          key={i}
-          className="after:animate-comment-skeleton relative flex items-center gap-2 overflow-hidden rounded-md p-2 after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:rotate-[-50deg] after:bg-black/10 after:blur-xl dark:after:bg-white/10"
-        >
-          <div className="aspect-square w-9 rounded-full bg-black/10 dark:bg-white/10" />
-          <div className="h-2 w-24 rounded-full bg-black/10 dark:bg-white/10" />
+        <div key={i} className="flex items-center gap-2 rounded-md p-2">
+          <Skeleton className="h-9 w-9 rounded-full" />
+          <Skeleton className="h-2 w-24 rounded-full" />
         </div>
       ))}
     </>
