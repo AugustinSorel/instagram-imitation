@@ -8,7 +8,6 @@ import type { ChangeEvent, FormEvent, PropsWithChildren, UIEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { ZodError, z } from "zod";
 import { api } from "~/utils/api";
-import { Toaster, useToaster } from "./Toaster";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -63,6 +62,7 @@ import {
   CommandItem,
   CommandList,
 } from "./ui/command";
+import { useToast } from "./ui/use-toast";
 
 export const newPostSchema = z.object({
   location: z
@@ -361,11 +361,13 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
 const NewPostButton = ({ isMobile = false }: { isMobile?: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
-  const addToast = useToaster((state) => state.addToast);
+  const { toast } = useToast();
 
   const openChangeHandler = () => {
     if (!session) {
-      addToast("please sign in");
+      toast({
+        description: "Please Sign In",
+      });
       return;
     }
 
@@ -693,7 +695,6 @@ const Layout = ({ children }: PropsWithChildren) => {
 
       {children}
 
-      <Toaster />
       <Background />
     </>
   );

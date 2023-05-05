@@ -11,9 +11,9 @@ import { useRouter } from "next/router";
 import type { PropsWithChildren } from "react";
 import SuperJSON from "superjson";
 import { Timeline, TimelineContext } from "~/components/Timeline";
-import { useToaster } from "~/components/Toaster";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
+import { useToast } from "~/components/ui/use-toast";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
@@ -21,7 +21,7 @@ import type { RouterOutputs } from "~/utils/api";
 
 const FollowButton = ({ user }: UserProps) => {
   const { data: session } = useSession();
-  const addToast = useToaster((state) => state.addToast);
+  const { toast } = useToast();
   const utils = api.useContext();
 
   const isFollowing = user.followedBy.find(
@@ -84,7 +84,9 @@ const FollowButton = ({ user }: UserProps) => {
 
   const clickHandler = () => {
     if (!session) {
-      addToast("Please sign in");
+      toast({
+        description: "Please Sign In",
+      });
       return;
     }
 

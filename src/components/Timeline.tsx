@@ -13,7 +13,6 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { z, ZodError } from "zod";
 import { v4 as uuidV4 } from "uuid";
-import { useToaster } from "./Toaster";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -32,6 +31,7 @@ import {
   Loader2,
   MessageSquare,
 } from "lucide-react";
+import { useToast } from "./ui/use-toast";
 
 export const TimelineContext = createContext<
   RouterInputs["post"]["all"] | undefined
@@ -104,9 +104,9 @@ const ListOfCommentSkeletons = () => {
 
 const LikeButton = ({ post }: PostProps) => {
   const { data: session } = useSession();
-  const addToast = useToaster((state) => state.addToast);
   const utils = api.useContext();
   const timeline = useTimeline();
+  const { toast } = useToast();
   const hasLiked = post.likes.some(
     (like) => like.postId === post.id && like.userId === session?.user.id
   );
@@ -222,7 +222,9 @@ const LikeButton = ({ post }: PostProps) => {
 
   const clickHandler = () => {
     if (!session) {
-      addToast("Please sign in");
+      toast({
+        description: "Please Sign In",
+      });
       return;
     }
     if (hasLiked) {
@@ -250,7 +252,7 @@ const LikeButton = ({ post }: PostProps) => {
 const BookmarkButton = ({ post }: PostProps) => {
   const { data: session } = useSession();
   const utils = api.useContext();
-  const addToast = useToaster((state) => state.addToast);
+  const { toast } = useToast();
   const timeline = useTimeline();
   const hasBookmarked = post.bookmarks.some(
     (like) => like.postId === post.id && like.userId === session?.user.id
@@ -366,7 +368,9 @@ const BookmarkButton = ({ post }: PostProps) => {
 
   const clickHandler = () => {
     if (!session) {
-      addToast("Please sign in");
+      toast({
+        description: "Please Sign In",
+      });
       return;
     }
     if (hasBookmarked) {
@@ -396,7 +400,7 @@ const NewCommentForm = ({ post }: PostProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const utils = api.useContext();
   const { data: session } = useSession();
-  const addToast = useToaster((state) => state.addToast);
+  const { toast } = useToast();
 
   const addCommentSchema = z.object({
     content: z
@@ -502,7 +506,10 @@ const NewCommentForm = ({ post }: PostProps) => {
   const submitHandler = (e: FormEvent) => {
     e.preventDefault();
     if (!session) {
-      return addToast("Please sign in");
+      toast({
+        description: "Please Sign In",
+      });
+      return;
     }
 
     try {

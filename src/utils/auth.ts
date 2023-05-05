@@ -1,6 +1,7 @@
 import { signIn, signOut } from "next-auth/react";
-import { useToaster } from "~/components/Toaster";
+
 import { api } from "./api";
+import { useToast } from "~/components/ui/use-toast";
 
 export const signOutHandler = async () => {
   await signOut({ redirect: false });
@@ -15,7 +16,7 @@ export const signInWithGoogleHandler = async () => {
 };
 
 export const useRemoveUser = () => {
-  const addToast = useToaster((state) => state.addToast);
+  const { toast } = useToast();
 
   const removeUserMutation = api.user.remove.useMutation({
     onSuccess: async () => {
@@ -23,7 +24,11 @@ export const useRemoveUser = () => {
     },
 
     onError: () => {
-      addToast("something went wrong");
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+      });
     },
   });
 
