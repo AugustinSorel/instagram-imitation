@@ -300,7 +300,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
         )}
 
         <div
-          className="group relative hidden cursor-pointer grid-cols-[auto_1fr] gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 outline-none duration-300 hover:border-black/30 focus:border-black/30 dark:border-white/10 dark:hover:border-white/30 dark:focus:border-white/30 lg:grid"
+          className="group relative hidden cursor-pointer items-center gap-x-2 rounded-md border-2 border-dashed border-black/10 p-3 outline-none duration-300 hover:border-black/30 focus:border-black/30 dark:border-white/10 dark:hover:border-white/30 dark:focus:border-white/30 lg:flex"
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
@@ -312,10 +312,7 @@ const NewPostForm = ({ successHandler }: { successHandler: () => void }) => {
           >
             <path d="M9 12c0-.552.448-1 1.001-1s.999.448.999 1-.446 1-.999 1-1.001-.448-1.001-1zm6.2 0l-1.7 2.6-1.3-1.6-3.2 4h10l-3.8-5zm5.8-7v-2h-21v15h2v-13h19zm3 2v14h-20v-14h20zm-2 2h-16v10h16v-10z" />
           </svg>
-          <p className="self-center text-center text-xl font-semibold text-neutral-600 dark:text-neutral-400">
-            Drag Images here or click to select files
-          </p>
-          <p className="text-center text-sm text-neutral-500">
+          <p className="text-center mx-auto text-sm text-neutral-500">
             Attach up to 5 files as you like
           </p>
           <input
